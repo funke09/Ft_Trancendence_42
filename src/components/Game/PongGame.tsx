@@ -23,6 +23,7 @@ interface Score {
 	player1 : number;
 	player2 : number;
 }
+
 const PongGame = () => {
   const [canvas, setCanvas] = useState<Canvas>({
 	width: 1280,
@@ -32,16 +33,16 @@ const PongGame = () => {
   const [ball, setBall] = useState<Ball>({
 	x: canvas.width / 2,
 	y: canvas.height / 2,
-	speedX: 5,
-	speedY: 5,
+	speedX: 10,
+	speedY: 10,
   });
-  const [paddle1, setPaddle1] = useState<Paddle>({
+  const [paddle1, setPaddle2] = useState<Paddle>({
 	  width: (canvas.width / 100) * 1.5,
 	  height: (canvas.height / 100) * 25,
 	  x: canvas.width - (canvas.width / 100) * 1.5 - 10,
 	  y: (canvas.height / 2) - ((canvas.height / 100) * 25 / 2),
   });
-  const [paddle2, setPaddle2] = useState<Paddle>({
+  const [paddle2, setPaddle1] = useState<Paddle>({
 	  width: (canvas.width / 100) * 1.5,
 	  height: (canvas.height / 100) * 25,
 	  x: (canvas.width / 100) / 1.5,
@@ -61,11 +62,12 @@ const PongGame = () => {
 
 	const draw = () =>
 	{
-	  // Draw background and paddles
+	  // Draw background
 	  context.fillStyle = 'black';
 	  context.fillRect(0, 0, width, height);
+
+	  // Draw paddles
 	  context.fillStyle = 'white';
-	  context.fillRect(ball.x, ball.y, 20, 20);
 	  context.fillRect(paddle1.x, paddle1.y, paddle1.width, paddle1.height);
 	  context.fillRect(paddle2.x, paddle2.y, paddle2.width, paddle2.height);
 	  
@@ -79,12 +81,17 @@ const PongGame = () => {
 	  context.stroke();
 	  context.closePath();
 
-	  // Draw Ball
+	//   Draw Ball
       context.beginPath();
-      context.arc(ball.x, ball.y, 23, 0, Math.PI * 2);
+	  context.arc(ball.x, ball.y, 15, 0, Math.PI * 2);
       context.fillStyle = '#FFFFFF';
       context.fill();
       context.closePath();
+
+	// Draw score
+	  context.font = '50px Arial';
+	  context.fillText(`${Score.player1}`, width / 2 + (width / 4), 50);
+	  context.fillText(`${Score.player2}`, width / 2 - (width / 4), 50);
 	}
 
 
@@ -95,42 +102,31 @@ const PongGame = () => {
 
 		// Check if ball hits top or bottom
 		if (ball.y + ball.speedY > height || ball.y + ball.speedY < 0) {
+			
 			ball.speedY *= -1;
 		}
 		// Check if ball hits paddle
-		if (ball.x + ball.speedX > paddle1.x && ball.x + ball.speedX < paddle1.x + paddle1.width && ball.y + ball.speedY > paddle1.y && ball.y + ball.speedY < paddle1.y + paddle1.height) {
-			ball.speedX *= -1;
-		}
-		
-		// Check if ball hits paddle
-		if (ball.x + ball.speedX > paddle2.x && ball.x + ball.speedX < paddle2.x + paddle2.width && ball.y + ball.speedY > paddle2.y && ball.y + ball.speedY < paddle2.y + paddle2.height) {
+		if (ball.x + ball.speedX > paddle1.x && ball.x + ball.speedX < paddle1.x + paddle1.width && ball.y + ball.speedY > paddle1.y && ball.y + ball.speedY < paddle1.y + paddle1.height
+			|| ball.x + ball.speedX > paddle2.x && ball.x + ball.speedX < paddle2.x + paddle2.width && ball.y + ball.speedY > paddle2.y && ball.y + ball.speedY < paddle2.y + paddle2.height) {
 			ball.speedX *= -1;
 		}
 
 		// Check if ball hits
-		if (ball.x + ball.speedX > width) // ball hit right wall
+		else if (ball.x + ball.speedX > width) // ball hit right wall
 		{
-			ball.speedX *= -1;
+			ball.x = width / 2;
+			ball.y = height / 2;
 			setScore({player1: Score.player1 + 1, player2: Score.player2});
 		}
 
-		if (ball.x + ball.speedX < 0) // ball hit left wall
+		else if (ball.x + ball.speedX < 0) // ball hit left wall
 		{
-			ball.speedX *= -1;
+			ball.x = width / 2;
+			ball.y = height / 2;
 			setScore({player1: Score.player1, player2: Score.player2 + 1});
 		}
-
-		// Move paddle with up and down arrow keys
-		document.addEventListener('keydown', function(e) {
-			if (e.keyCode === 38 && paddle1.y > 0) {
-				paddle1.y -= 5;
-			}
-			if (e.keyCode === 40 && paddle1.y < height - paddle1.height) {
-				paddle1.y += 5;
-			}
-		});
-
-	}
+		
+	};
 
 	const loop = () => {
 	  draw();
@@ -140,6 +136,8 @@ const PongGame = () => {
 
 	window.requestAnimationFrame(loop);
   }, []);
+
+  const keys: any = {};
 
   return (
 	<div className="App">
