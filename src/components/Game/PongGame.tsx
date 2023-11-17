@@ -25,13 +25,18 @@ interface Score {
   player2: number;
 }
 
+interface Rounds {
+	player1: number;
+	player2: number;
+}
+
 const PongGame = () => {
   const [canvas, setCanvas] = useState<Canvas>({
     width: 1920,
     height: 1080,
   });
 
-  const initialBallSpeed = 5;
+  const initialBallSpeed = 10;
 
   const [ball, setBall] = useState<Ball>({
     x: canvas.width / 2,
@@ -44,18 +49,23 @@ const PongGame = () => {
     height: (canvas.height / 100) * 25,
     x: canvas.width - (canvas.width / 100) * 1.5 - 10,
     y: (canvas.height / 2) - ((canvas.height / 100) * 25 / 2),
-    speed: 15,
+    speed: 20,
   });
   const [paddle2, setPaddle2] = useState<Paddle>({
     width: (canvas.width / 100) * 1.5,
     height: (canvas.height / 100) * 25,
     x: (canvas.width / 100) / 1.5,
     y: (canvas.height / 2) - ((canvas.height / 100) * 25 / 2),
-    speed: 15,
+    speed: 6,
   });
   const [score, setScore] = useState<Score>({
     player1: 0,
     player2: 0,
+  });
+
+  const [rounds, setRounds] = useState<Rounds>({
+	player1: 0,
+	player2: 0,
   });
 
   useEffect(() => {
@@ -93,8 +103,13 @@ const PongGame = () => {
 
       // Draw score
       context.font = '50px Arial';
-      context.fillText(`${score.player1}`, width / 2 + (width / 4), 50);
-      context.fillText(`${score.player2}`, width / 2 - (width / 4), 50);
+      context.fillText(`${score.player2}`, width / 2 + (width / 4), 50);
+      context.fillText(`${score.player1}`, width / 2 - (width / 4), 50);
+
+	  // Draw rounds
+	  context.font = '30px Arial';
+	  context.fillText(`Round: ${rounds.player2}`, width / 2 + (width / 4), 80);
+	  context.fillText(`Round: ${rounds.player1}`, width / 2 - (width / 4), 80);
     };
 
 	const update = () => {
@@ -122,22 +137,43 @@ const PongGame = () => {
 		// Check if ball hits
 		else if (ball.x + ball.speedX > width) {
 		  // ball hit right wall
-		  setScore({ player1: score.player1 + 1, player2: score.player2 });
-		  ball.speedX = initialBallSpeed;
-		  ball.speedY = initialBallSpeed;
 		  ball.x = width / 2;
 		  ball.y = height / 2;
+		  score.player1++;
 		} else if (ball.x + ball.speedX < 0) {
 		  // ball hit left wall
-		  setScore({ player1: score.player1, player2: score.player2 + 1 });
-		  ball.speedX = initialBallSpeed;
-		  ball.speedY = initialBallSpeed;
 		  ball.x = width / 2;
 		  ball.y = height / 2;
+		  score.player2++;
+		}
+
+		// AI for computer paddle
+		if (paddle2.y + paddle2.height / 2 < ball.y) {
+		  paddle2.y += paddle2.speed;
+		} else {
+		  paddle2.y -= paddle2.speed;
+		}
+
+		// Check if round over
+		if (score.player1 === 5) {
+			rounds.player1++;
+			score.player1 = 0;
+		} else if (score.player2 === 5) {
+			rounds.player2++;
+			score.player2 = 0;
+		}
+
+		// Check if game over
+		if (rounds.player1 === 3) {
+			alert('Player 1 wins!');
+			rounds.player1 = 0;
+			rounds.player2 = 0;
+		} else if (rounds.player2 === 3) {
+			alert('Player 2 wins!');
+			rounds.player1 = 0;
+			rounds.player2 = 0;
 		}
 	}
-	console.log(ball.speedX, ball.speedY);
-
 	  
     const loop = () => {
 	  update();
@@ -149,9 +185,9 @@ const PongGame = () => {
 
     // Key event handlers
     const keyDownHandler = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowUp') {
+      if (e.key === 'ArrowUp' && paddle1.y > 0) {
         paddle1.y -= paddle1.speed;
-      } else if (e.key === 'ArrowDown') {
+      } else if (e.key === 'ArrowDown' && paddle1.y < height - paddle1.height) {
         paddle1.y += paddle1.speed;
       }
     };
@@ -170,7 +206,6 @@ const PongGame = () => {
       document.removeEventListener('keyup', keyUpHandler);
     };
   }, [ball, paddle1, paddle2, score]);
-
 
   return (
     <div className="App">
