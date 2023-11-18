@@ -1,0 +1,27 @@
+my-nest-app:
+
+    test/app.e2e-spec.ts: End-to-end test file.
+    test/jest-e2e.json: Jest configuration for end-to-end tests.
+    dist/: Compiled TypeScript files and associated maps.
+    nest-cli.json: Nest CLI configuration.
+    README.md: Documentation for the Nest app.
+    package-lock.json and package.json: Node.js package management files.
+    tsconfig.build.json, tsconfig.json: TypeScript configuration files.
+    .prettierrc and .eslintrc.js: Configuration files for Prettier and ESLint.
+    src/: Source code files, including controllers, services, and the main application file.
+
+my-react-app:
+
+    public/: Public assets like HTML, images, and manifest files.
+    src/: Source code files for the React app.
+        index.tsx: Entry point for the React app.
+        App.tsx: Main component for the React app.
+        Other standard React files like tests, styles, and configuration files.
+    package-lock.json and package.json: Node.js package management files.
+    tsconfig.json: TypeScript configuration file.
+    README.md: Documentation for the React app.
+
+Additional Files:
+
+    folder.txt: A text file in the root directory.
+    package-lock.json and package.json: Package management files for the entire project.

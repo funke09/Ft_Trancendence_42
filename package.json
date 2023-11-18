@@ -1,6 +1,12 @@
 {
   "dependencies": {
     "@chatscope/chat-ui-kit-react": "^1.10.1",
-    "@chatscope/chat-ui-kit-styles": "^1.4.0"
+    "@chatscope/chat-ui-kit-styles": "^1.4.0",
+    "@nestjs/typeorm": "^10.0.1",
+    "pg": "^8.11.3",
+    "typeorm": "^0.3.17"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.10.9"
   }
 }
