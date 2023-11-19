@@ -1,6 +1,6 @@
 import PongGame from "@/components/Game/PongGame";
 import { AuthProvider } from "@/components/Auth/AuthProvider";
-import Login from "@/components/Login";
+import Login from "@/components/Auth/Login";
 
 
 function Home() {
