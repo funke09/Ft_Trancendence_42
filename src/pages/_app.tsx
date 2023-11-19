@@ -1,8 +1,13 @@
-import { AppProps } from 'next/app'; // Import AppProps from next/app
-import '../style/global.css'; // Adjust the path based on your project structure
+import { AppProps } from 'next/app';
+import { AuthProvider } from '../components/Auth/AuthProvider';
+import '../style/global.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
-}
+	return (
+	  <AuthProvider>
+		<Component {...pageProps} />
+	  </AuthProvider>
+	);
+  }
 
 export default MyApp;
