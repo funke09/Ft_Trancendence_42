@@ -21,13 +21,13 @@ const Home = () => {
 
 const styles = {
   container: {
-    background: 'linear-gradient(to bottom, #00C9FF, #92FE9D)',
-    color: '#333333',
+    background: 'linear-gradient(to bottom, #00C11F, #92F11D)',
+    color: '#111555',
     padding: '20px',
     minHeight: '100vh',
   },
   heading: {
-    color: '#FF1493', // Deep pink color for the heading
+    color: '#111111', // Deep pink color for the heading
   },
   paragraph: {
     marginBottom: '20px',

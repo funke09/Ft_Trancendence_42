@@ -51,11 +51,12 @@ const About = () => {
 const styles = {
   container: {
     background: 'linear-gradient(to bottom, #1E1E3F, #6A0572)',
-    color: '#FFFFFF',
+    color: '#111111',
     padding: '20px',
     minHeight: '100vh', // Ensures the background covers the entire viewport height
   },
   heading: {
+    // color: '#111111', // Gold color for the heading
     color: '#FFD700', // Gold color for the heading
   },
   paragraph: {
