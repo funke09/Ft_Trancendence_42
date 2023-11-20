@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
         <Image
           src="/static/images/logo/logo.svg"
           alt="42 Logo"
-          width={221}
+          width={100}
           height={136}
         />
       </Link>
