@@ -1,0 +1,17 @@
+@font-face {
+  font-family: "Monofett";
+  src: url("../fonts/Monofett/Monofett-Regular.ttf") format("truetype");
+}
+
+.Monofett {
+  font-family: "Monofett";
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("../fonts/Manrope/Manrope-VariableFont_wght.ttf") format("truetype");
+}
+
+.Manrope {
+  font-family: "Manrope";
+}
