@@ -1,44 +1,36 @@
 NEW FILE STRUCTURE:
 ```
-ft_trancendence_42/
-│
-├── public/
-│   ├── favicon.ico
-│   └── ...
-│
-├── src/
-│   ├── components/
-│   │   ├── Chat/
-│   │   │   ├── ChatRoom.tsx
-│   │   │   ├── DirectMessage.tsx
-│   │   │   └── ...
-│   │   ├── Game/
-│   │   │   ├── PongGame.tsx
-│   │   │   ├── Matchmaking.tsx
-│   │   │   └── ...
-│   │   ├── User/
-│   │   │   ├── UserProfile.tsx
-│   │   │   └── ...
-│   │   └── ...
-│   ├── pages/
-│   │   ├── index.tsx
-│   │   ├── _app.tsx
-│   │   └── ...
-│   ├── styles/
-│   │   ├── global.css
-│   │   └── ...
-│   └── utils/
-│       ├── api.ts
-│       ├── auth.ts
-│       └── ...
-│
-├── .gitignore
-├── package.json
-├── tsconfig.json
-├── next.config.js
-├── Dockerfile
-├── docker-compose.yml
-└── README.md
+/ft-trancendence
+  /frontend
+    /components
+    /pages
+    /styles
+    /public
+    /...
+
+  /backend
+    /src
+      /modules
+        /game
+          game.controller.ts
+          game.service.ts
+          ...
+      /middlewares
+      /database
+      main.ts
+      ...
+
+  /shared
+    /models
+    /utils
+    ...
+
+  /public
+    /avatars
+    ...
+
+  Dockerfile
+  docker-compose
 
 ```
 
