@@ -1,18 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { GameGateway } from './game.gateway';
-import { MiddlewareConsumer, NestModule } from '@nestjs/common';
-import { AccessControllerMiddleware } from './access.controller.middleware';
+import { GameGateway } from './modules/game/game.gateway';
+import { GameService } from './modules/game/game.service';
 
 @Module({
   imports: [],
-  controllers: [AppController],
-  providers: [AppService, GameGateway],
+  controllers: [],
+  providers: [GameGateway, GameService],
 })
-
-export class AppModule implements NestModule {
-	configure(consumer: MiddlewareConsumer) {
-	  consumer.apply(AccessControllerMiddleware).forRoutes('*');
-	}
-  }
+export class AppModule {}
