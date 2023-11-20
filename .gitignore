@@ -3,6 +3,8 @@ node_modules/
 
 # Next.js build output
 /.next/
+.next
+.DS_Store]
 
 # Runtime data
 pids
