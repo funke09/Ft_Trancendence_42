@@ -4,21 +4,19 @@ import React from "react";
 const Navbar: React.FC = () => {
   return (
     <div className="w-full h-[480px] bg-zinc-800 bg-opacity-75 rounded-2xl shadow flex flex-row my-12">
-      <div className="text-center mx-14 my-20">
-        <h1 className="text-white text-2xl font-bold Manrope tracking-wider m-2 rounded-s">
+      <div className="flex flex-col justify-center mx-auto my-20 m-12">
+        <h1 className="text-white text-2xl font-bold Manrope tracking-wider m-12 rounded-s justify-center" style={{ backgroundColor: '#333', width: '265px', padding: '10px' }}>
           Classic Pong Game
         </h1>
-        <div>
-          <div className="text-center text-white text-2xl font-medium Manrope tracking-wider my-9">
-            Dive into the classic excitement
-            <br />
-            of Pong with PongMania! <br />
-            Enjoy the timeless thrill of bouncing <br />
-            balls and competitive fun. <br />
-            Ready to play?
-          </div>
+        <div className="text-center text-white text-2xl font-medium Manrope tracking-wider my-9 m-12">
+          Dive into the classic excitement
+          <br />
+          of Pong with PongMania! <br />
+          Enjoy the timeless thrill of bouncing <br />
+          balls and competitive fun. <br />
+          Ready to play?
         </div>
-        <button className="pink-button">Get Started</button>
+        <button className="pink-button m-12">Get Started</button>
       </div>
 
       <div className="m-4 flex flex-grow justify-end">
@@ -32,5 +30,9 @@ const Navbar: React.FC = () => {
     </div>
   );
 };
+
+
+
+
 
 export default Navbar;
