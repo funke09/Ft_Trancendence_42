@@ -17,11 +17,11 @@ const Navbar: React.FC = () => {
         <Link href="/" className="nav-button">
           HOME
         </Link>
-        <Link href="/features" className="nav-button">
-          FEATURES
-        </Link>
         <Link href="/team" className="nav-button">
           OUR TEAM
+        </Link>
+        <Link href="/features" className="nav-button">
+        Sing in with 42 intra 
         </Link>
         <button className="pink-button">PLAY NOW!</button>
       </div>
