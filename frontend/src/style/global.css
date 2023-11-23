@@ -2,31 +2,140 @@
 @tailwind components;
 @tailwind utilities;
 
-canvas{
-	display: block;
-	margin: 0 auto;
-	width: 100%;
-	height: 100%;
-
-}
+@import "./fonts.css";
 
 body {
-	font-family: 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', 'Helvetica',
-	  'Arial', sans-serif;
-	padding: 20px 20px 60px;
-	max-width: 680px;
-	margin: 0 auto;
+	background-color: #162635;
+	position: relative;
+  }
+  
+  body::before {
+	content: "";
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(180deg, rgba(255, 63, 167, 0.4) 0%, rgba(56, 42, 57, 0.4) 100%);
+	z-index: 0; /* Set a lower z-index for the body background */
+	pointer-events: none; /* Ensure that the overlay doesn't interfere with interactions */
   }
 
-#login-button {
-	background-color: #4caf9e;
-	border: none;
-	color: white;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	font-size: 16px;
-	margin: 4px 2px;
-	cursor: pointer;
+.navBar{
+	position: fixed;
+	top: 15px; /* Adjust the top spacing */
+	left: 15px; /* Adjust the left spacing */
+	right: 15px; /* Adjust the right spacing */
+	width: auto;
+	height: 75px;
+	padding: 15px;
+	border-radius: 15px;
+	background: #3B2A3D;
+	opacity: 0.75; /* Adjust the opacity if needed */
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+
+.text-container {
+	width: 100%;
+	background-color: rgba(163, 53, 117, 0.5);
+	border-radius: 30px;
+	padding: 16px;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	margin-left: 2rem;
   }
+  
+  .header {
+	background: #382A39BF;
+	opacity: 75%;
+	border-radius: 1rem;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	display: flex;
+	flex-direction: row;
+	margin: 15px;
+	margin-top: 8rem;
+	position: relative; /* Add this to make position:absolute; relative to the .header */
+  }
+  
+  .features-bar {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 249px;
+	height: 83px;
+	border-radius: 0px 0px 20px 20px;
+	background: rgb(199, 57, 136);
+	opacity: 100%;
+	box-shadow: 0px 9px 4px 0px rgba(0, 0, 0, 0.25);
+  }
+  
+.features-slides{
+	width: 462px;
+	height: 86px;
+	border-radius: 30px;
+	padding: 2rem;
+	background: #A43575;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	margin: 2rem;
+}
+
+.nav-button {
+	color: #EAEAEA;
+	font-family: Monofett;
+	font-size: 35px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	opacity: 85%;
+}
+.nav-button:hover {
+  margin-left: 16px;
+  color: #5DD0D9;
+  opacity: 100%;
+  font-family: "Monofett";
+}
+
+.pink-button {
+	width: 147px;
+	height: 47px;
+	flex-shrink: 0;
+	border-radius: 50px;
+	background: rgba(245, 63, 161, 0.85);
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	color: rgba(255, 255, 255, 1);
+	font-family: Manrope;
+	font-size: 24px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+	margin-left: 10rem;
+}
+
+.pink-button:hover {
+	width: 147px;
+	height: 47px;
+	flex-shrink: 0;
+	border-radius: 50px;
+	background: rgba(245, 63, 161, 1);
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	color: rgba(255, 255, 255, 0.88);
+	font-family: Manrope;
+	font-size: 24px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+}
+
+#login-button {
+  background-color: #4caf9e;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}

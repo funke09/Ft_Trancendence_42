@@ -1,17 +1,21 @@
 import PongGame from "../components/Game/PongGame";
 import { AuthProvider } from "../components/Auth/AuthProvider";
 import Login from "../components/Auth/Login";
+import Navbar from "@/components/Layout/NavBar";
+import Header from "@/components/Layout/Header";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
 
 function Home() {
-  // Check authentication here if needed
-
   return (
-    <div>
-      {/* <h1>Login Page</h1> */}
-	  <PongGame />
-      {/* <Login /> */}
-    </div>
+	<div>
+		<Navbar/>
+		<div>
+			<Header/>
+		</div>
+	</div>
   );
 }
   export default Home;

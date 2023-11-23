@@ -7,6 +7,20 @@ const config: Config = {
 	'./src/utils/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+	colors: {
+		transparent: 'transparent',
+		'white': '#ffffff',
+		'purple': '#3f3cbb',
+		'midnight': '#121063',
+		'metal': '#565584',
+		'tahiti': '#3ab7bf',
+		'silver': '#ecebff',
+		'bubble-gum': '#ff77e9',
+		'bermuda': '#78dcca',
+		'bg1' : '#821F54',
+		'bg2' : '#382A39',
+		'nav' : '#3B2A3DBF'
+	  },
     extend: {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
