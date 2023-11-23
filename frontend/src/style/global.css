@@ -40,7 +40,7 @@ body {
 	width: 100%;
 	background-color: rgba(163, 53, 117, 0.5);
 	border-radius: 30px;
-	padding: 16px;
+	padding: 20px;
 	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 	margin-left: 2rem;
   }
@@ -70,35 +70,39 @@ body {
 	box-shadow: 0px 9px 4px 0px rgba(0, 0, 0, 0.25);
   }
   
-.features-slides{
+  .features-slides {
 	width: 462px;
 	height: 86px;
 	border-radius: 30px;
-	padding: 2rem;
-	background: #A43575;
+	padding: 1rem; /* Adjusted padding */
+	background: #a43575;
 	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-	margin: 2rem;
-}
+	margin: 1.5rem; /* Adjusted margin */
+  }
+  
 
 .nav-button {
 	color: #EAEAEA;
-	font-family: Monofett;
-	font-size: 35px;
-	font-style: normal;
-	font-weight: 400;
+	font-family: Manrope;
+	font-size: 24px;
+	font-style: bold;
+	font-weight: 700;
 	line-height: normal;
 	opacity: 85%;
 }
 .nav-button:hover {
-  margin-left: 16px;
-  color: #5DD0D9;
-  opacity: 100%;
-  font-family: "Monofett";
+	color: #ffffff;
+	font-family: Manrope;
+	font-size: 24px;
+	font-style: bold;
+	font-weight: 700;
+	line-height: normal;
+	opacity: 100%;
 }
 
 .pink-button {
-	width: 147px;
-	height: 47px;
+	width: 150px;
+	height: 50px;
 	flex-shrink: 0;
 	border-radius: 50px;
 	background: rgba(245, 63, 161, 0.85);
@@ -109,12 +113,12 @@ body {
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
-	margin-left: 10rem;
+	margin-left: 200px;
 }
 
 .pink-button:hover {
-	width: 147px;
-	height: 47px;
+	width: 150px;
+	height: 50px;
 	flex-shrink: 0;
 	border-radius: 50px;
 	background: rgba(245, 63, 161, 1);
