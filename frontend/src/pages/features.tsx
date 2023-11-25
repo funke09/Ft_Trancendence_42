@@ -8,13 +8,13 @@ const Features: React.FC = () => {
 	return (
 		<div>
 			<Navbar/>
-			<div className="bg-[#372938] opacity-75 shadow-md m-8 rounded-[15px] flex-col max-w-[1080px] pb-4">
+			<div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex-col max-w-[1080px] pb-4">
 				<div className="flex justify-center">
 					<div className="bg-[#C73988] flex-wrap shadow-2xl rounded-b-[20px]">
 					<div className="text-white text-center p-4 text-[40px] font-bold">FEATURES</div>
 					</div>
 				</div>
-				<div className="flex flex-col justify-center max-w-[1080px]">
+				<div className="flex flex-col justify-center ">
 			<div className=" flex justify-between">
           {/* Left Bars */}
           <div className="flex flex-col items-center">

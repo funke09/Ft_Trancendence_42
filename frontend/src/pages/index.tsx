@@ -1,6 +1,5 @@
 import PongGame from "../components/Game/PongGame";
 import { AuthProvider } from "../components/Auth/AuthProvider";
-import Login from "../components/Auth/Login";
 import Navbar from "@/components/Layout/NavBar";
 import Header from "@/components/Layout/Header";
 import Image from "next/image";

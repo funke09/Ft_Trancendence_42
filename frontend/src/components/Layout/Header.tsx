@@ -1,9 +1,20 @@
 import Image from "next/image";
 import React from "react";
+import { useRouter } from "next/router";
+import { useAuth } from "../Auth/AuthProvider";
 
 const Navbar: React.FC = () => {
+	const router = useRouter();
+
+	const handlePlayNowClick = () => {
+		router.push('/login');
+	  };
+
+	const { isAuthenticated, signInWith42, signOut } = useAuth();
+
+
 	return (
-	  <div className="bg-[#372938] opacity-75 shadow-md m-8 rounded-[15px] flex max-w-[1650px]">
+	  <div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex max-w-[1080px] pb-4">
 		<div className="flex-col justify-center inline-flex items-center">
 		  <div className="bg-[#A4357580] shadow-md rounded-[15px] p-6 m-8">
 			<h1 className="text-white text-4xl font-bold Manrope tracking-wider mb-4 text-center">
@@ -16,7 +27,7 @@ const Navbar: React.FC = () => {
 			  competitive fun. <br />
 			</div>
 		  </div>
-		  <button className="bg-[#F53FA1] bg-opacity-[75%] rounded-full m-4 w-fit p-4 text-white text-[20px] font-bold Manrope text-opacity-[100%] hover:bg-opacity-100">
+		  <button onClick={handlePlayNowClick} className="bg-[#F53FA1] bg-opacity-[75%] rounded-full m-4 w-fit p-4 text-white text-[20px] font-bold Manrope text-opacity-[100%] hover:bg-opacity-100">
 			GET STARTED</button>
 		</div>
   

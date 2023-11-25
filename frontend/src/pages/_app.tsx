@@ -4,7 +4,9 @@ import '../style/global.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
 	return (
+		<AuthProvider>
 		<Component {...pageProps} />
+		</AuthProvider>
 	);
   }
 
