@@ -7,6 +7,7 @@
 body {
 	background-color: #162635;
 	position: relative;
+	font-family: 'Manrope';
   }
   
   body::before {
@@ -21,20 +22,6 @@ body {
 	pointer-events: none; /* Ensure that the overlay doesn't interfere with interactions */
   }
 
-.navBar{
-	position: fixed;
-	top: 15px; /* Adjust the top spacing */
-	left: 15px; /* Adjust the left spacing */
-	right: 15px; /* Adjust the right spacing */
-	width: auto;
-	height: 75px;
-	padding: 15px;
-	border-radius: 15px;
-	background: #3B2A3D;
-	opacity: 0.75; /* Adjust the opacity if needed */
-	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-}
-
 
 .text-container {
 	width: 100%;
@@ -45,7 +32,7 @@ body {
 	margin-left: 2rem;
   }
   
-  .header {
+  /* .header {
 	background: #382A39BF;
 	opacity: 75%;
 	border-radius: 1rem;
@@ -54,9 +41,13 @@ body {
 	flex-direction: row;
 	margin: 15px;
 	margin-top: 8rem;
-	position: relative; /* Add this to make position:absolute; relative to the .header */
-  }
+	position: relative; Add this to make position:absolute; relative to the .header
+  } */
   
+  .navBar {
+	margin: 20px;
+  }
+
   .features-bar {
 	position: absolute;
 	top: 0;
@@ -103,7 +94,7 @@ body {
 .pink-button {
 	width: 150px;
 	height: 50px;
-	flex-shrink: 0;
+	/* flex-shrink: 0; */
 	border-radius: 50px;
 	background: rgba(245, 63, 161, 0.85);
 	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -113,13 +104,13 @@ body {
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
-	margin-left: 200px;
+	/* margin-left: 200px; */
 }
 
 .pink-button:hover {
 	width: 150px;
 	height: 50px;
-	flex-shrink: 0;
+	/* flex-shrink: 0; */
 	border-radius: 50px;
 	background: rgba(245, 63, 161, 1);
 	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);

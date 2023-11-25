@@ -3,12 +3,12 @@ import React from "react";
 
 const Navbar: React.FC = () => {
 	return (
-	  <div className="header p-4 md:p-8 flex">
-		<div className="flex flex-col justify-center mx-auto my-20 m-12">
-		  <div className="text-container">
+	  <div className="bg-[#372938] opacity-75 shadow-md m-8 rounded-[15px] flex max-w-[1650px]">
+		<div className="flex-col justify-center inline-flex items-center">
+		  <div className="bg-[#A4357580] shadow-md rounded-[15px] p-6 m-8">
 			<h1 className="text-white text-4xl font-bold Manrope tracking-wider mb-4 text-center">
 			  Classic Pong
-			<hr className="border-1 border-white opacity-50 m-4" />
+			<hr className="border-1 border-[#5CD0D7] shadow-xl opacity-60 m-4 rounded-full" />
 			</h1>
 			<div className="text-align text-white text-3xl font-semibold Manrope tracking-wider mb-4">
 			  Enjoy the timeless thrill of <br />
@@ -16,10 +16,11 @@ const Navbar: React.FC = () => {
 			  competitive fun. <br />
 			</div>
 		  </div>
-		  <button className="pink-button mt-5 ">Get Started</button>
+		  <button className="bg-[#F53FA1] bg-opacity-[75%] rounded-full m-4 w-fit p-4 text-white text-[20px] font-bold Manrope text-opacity-[100%] hover:bg-opacity-100">
+			GET STARTED</button>
 		</div>
   
-		<div className="m-4 flex flex-grow justify-end">
+		<div className="m-4 flex flex-grow justify-end min-[0px]:hidden sm:hidden md:flex">
 		  <Image
 			src="/images/gameboy.svg"
 			alt="gameboy Image"

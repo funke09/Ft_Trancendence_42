@@ -17,9 +17,7 @@ const config: Config = {
 		'silver': '#ecebff',
 		'bubble-gum': '#ff77e9',
 		'bermuda': '#78dcca',
-		'bg1' : '#821F54',
-		'bg2' : '#382A39',
-		'nav' : '#3B2A3DBF'
+		'primary1' : '#3B2A3D'
 	  },
     extend: {
       backgroundImage: {

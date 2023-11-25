@@ -8,12 +8,14 @@ const Features: React.FC = () => {
 	return (
 		<div>
 			<Navbar/>
-			<div className="header p-4 md:p-8 flex">
-				<div className="flex flex-col justify-center mx-auto my-20 m-12">
-					<div className="features-bar">
-					<div className="text-white text-center pt-2 text-[40px] font-semibold font-Manrope">FEATURES</div>
+			<div className="bg-[#372938] opacity-75 shadow-md m-8 rounded-[15px] flex-col max-w-[1080px] pb-4">
+				<div className="flex justify-center">
+					<div className="bg-[#C73988] flex-wrap shadow-2xl rounded-b-[20px]">
+					<div className="text-white text-center p-4 text-[40px] font-bold">FEATURES</div>
 					</div>
-					<div className="features-container flex justify-between m-8">
+				</div>
+				<div className="flex flex-col justify-center max-w-[1080px]">
+			<div className=" flex justify-between">
           {/* Left Bars */}
           <div className="flex flex-col items-center">
 		  <div className="features-slides">
@@ -26,7 +28,7 @@ const Features: React.FC = () => {
 				className="pr-3"
 				></Image>
 				<div>
-				<h3 className="text-white text-xl font-semibold">Unleash the thrill of real-time battles</h3>
+				<h3 className="text-white Manrope text-xl font-semibold">Unleash the thrill of real-time battles</h3>
 				<h3 className="text-white text-xl font-semibold">where every move counts</h3>
 				</div>
 			</div>
@@ -91,8 +93,8 @@ const Features: React.FC = () => {
 				className="pr-3"
 				></Image>
 				<div>
-				<h3 className="text-white text-xl font-semibold">Dive into a world where every battle</h3>
-				<h3 className="text-white text-xl font-semibold">is an adventure that keeps you hooked</h3>
+				<h3 className="text-white text-xl font-semibold">Dive into a world of adventures</h3>
+				<h3 className="text-white text-xl font-semibold">that keeps you hooked</h3>
 				</div>
 			</div>
 			</div>
