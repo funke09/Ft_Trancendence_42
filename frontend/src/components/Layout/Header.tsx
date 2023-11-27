@@ -1,13 +1,12 @@
 import Image from "next/image";
 import React from "react";
-import { useRouter } from "next/router";
 import { signIn, useSession } from "next-auth/react";
 
 const Navbar: React.FC = () => {
 	const {data: session} = useSession();
 
 	return (
-	  <div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex max-w-[1080px] pb-4">
+	  <div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex max-w-[1500px] pb-4">
 		<div className="flex-col justify-center inline-flex items-center">
 		  <div className="bg-[#A4357580] shadow-md rounded-[15px] p-6 m-8">
 			<h1 className="text-white text-4xl font-bold Manrope tracking-wider mb-4 text-center">
@@ -37,10 +36,5 @@ const Navbar: React.FC = () => {
 	  </div>
 	);
   };
-  
-
-
-
-
 
 export default Navbar;
