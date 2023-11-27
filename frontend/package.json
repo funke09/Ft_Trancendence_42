@@ -11,11 +11,15 @@
   "dependencies": {
     "@chatscope/chat-ui-kit-react": "^1.10.1",
     "@chatscope/chat-ui-kit-styles": "^1.4.0",
+    "@prisma/client": "^5.6.0",
     "cookie": "^0.6.0",
     "js-cookie": "^3.0.5",
     "next": "^14.0.3",
+    "next-auth": "^4.24.5",
+    "prisma": "^5.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0",
     "socket.io-client": "^4.7.2",
     "tailwind": "^4.0.0"
   },
