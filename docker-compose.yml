@@ -1,0 +1,52 @@
+version: '3.5'
+
+services:
+
+  backend:
+    container_name: nestjs
+    build: ./backend
+    env_file:
+      - .env
+    networks:
+      - warper-network
+    ports:
+      - "5000:5000"
+      - "5555:5555"
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+    depends_on:
+      - postgres  
+
+  postgres:
+    container_name: postgres
+    build: ./database
+    env_file:
+      - .env
+    networks:
+      - warper-network
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/:/var/lib/postgresql/data
+    environment:
+      - PGDATA=/var/lib/postgresql/custom-data
+    restart: unless-stopped
+
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    env_file:
+      - .env
+    networks:
+      - warper-network
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    restart: unless-stopped
+
+networks:
+  warper-network:
+    name: warper-network
+    driver: bridge

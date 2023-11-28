@@ -4,6 +4,8 @@ node_modules/
 # Next.js build output
 /.next/
 
+/.env.local
+
 # Runtime data
 pids
 *.pid
