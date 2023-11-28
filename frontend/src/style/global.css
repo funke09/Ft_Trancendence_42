@@ -8,9 +8,9 @@ body {
 	background-color: #162635;
 	position: relative;
 	font-family: 'Manrope';
-  }
-  
-  body::before {
+}
+
+body::before {
 	content: "";
 	position: fixed;
 	top: 0;
@@ -18,9 +18,11 @@ body {
 	width: 100%;
 	height: 100%;
 	background: linear-gradient(180deg, rgba(255, 63, 167, 0.4) 0%, rgba(56, 42, 57, 0.4) 100%);
-	z-index: 0; /* Set a lower z-index for the body background */
-	pointer-events: none; /* Ensure that the overlay doesn't interfere with interactions */
-  }
+	z-index: 0;
+	/* Set a lower z-index for the body background */
+	pointer-events: none;
+	/* Ensure that the overlay doesn't interfere with interactions */
+}
 
 
 .text-container {
@@ -30,9 +32,9 @@ body {
 	padding: 20px;
 	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 	margin-left: 2rem;
-  }
-  
-  /* .header {
+}
+
+/* .header {
 	background: #382A39BF;
 	opacity: 75%;
 	border-radius: 1rem;
@@ -43,12 +45,12 @@ body {
 	margin-top: 8rem;
 	position: relative; Add this to make position:absolute; relative to the .header
   } */
-  
-  .navBar {
-	margin: 20px;
-  }
 
-  .features-bar {
+.navBar {
+	margin: 20px;
+}
+
+.features-bar {
 	position: absolute;
 	top: 0;
 	left: 50%;
@@ -59,35 +61,35 @@ body {
 	background: rgb(199, 57, 136);
 	opacity: 100%;
 	box-shadow: 0px 9px 4px 0px rgba(0, 0, 0, 0.25);
-  }
-  
-  .features-slides {
+}
+
+.features-slides {
 	width: 462px;
 	height: 86px;
 	border-radius: 30px;
-	padding: 1rem; /* Adjusted padding */
+	padding: 1rem;
+	/* Adjusted padding */
 	background: #a43575;
 	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-	margin: 1.5rem; /* Adjusted margin */
-  }
-  
+	margin: 1.5rem;
+	/* Adjusted margin */
+}
+
 
 .nav-button {
 	color: #EAEAEA;
 	font-family: Manrope;
-	font-size: 24px;
+	font-size: 1rem;
 	font-style: bold;
 	font-weight: 700;
 	line-height: normal;
 	opacity: 85%;
+	transition: all .3s ease-in;
 }
+
 .nav-button:hover {
 	color: #ffffff;
-	font-family: Manrope;
-	font-size: 24px;
-	font-style: bold;
-	font-weight: 700;
-	line-height: normal;
+	transform: scale(1.1);
 	opacity: 100%;
 }
 
@@ -100,37 +102,28 @@ body {
 	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 	color: rgba(255, 255, 255, 1);
 	font-family: Manrope;
-	font-size: 24px;
+	font-size: 1rem;
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
+	transition: all .3s ease-in;
 	/* margin-left: 200px; */
 }
 
 .pink-button:hover {
-	width: 150px;
-	height: 50px;
-	/* flex-shrink: 0; */
-	border-radius: 50px;
-	background: rgba(245, 63, 161, 1);
-	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-	color: rgba(255, 255, 255, 0.88);
-	font-family: Manrope;
-	font-size: 24px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: normal;
+
+	transform: scale(1.05);
 }
 
 #login-button {
-  background-color: #4caf9e;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
+	background-color: #4caf9e;
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
 }
