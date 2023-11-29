@@ -127,3 +127,33 @@ body::before {
 	margin: 4px 2px;
 	cursor: pointer;
 }
+
+/* Your existing styles... */
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .navBar {
+        /* Adjustments for smaller screens */
+        display: flex;
+        flex-direction: column; /* Change the direction to column for stacking items */
+
+        /* Optionally, you can hide the buttons or elements you want in the menu */
+        .nav-button {
+            display: none; /* Hide the buttons in the menu */
+        }
+    }
+
+    /* Show a menu icon */
+    .menu-icon {
+        display: block; /* Display the menu icon */
+        /* Add styles for the menu icon (e.g., a hamburger icon) */
+        /* Example styles: */
+        /* background-image: url('menu-icon.png'); */
+        /* Add other necessary styles for the icon */
+    }
+}
+
+/* Other adjustments for smaller screens */
+/* ... */
+
+/* Your existing styles... */

@@ -1,1 +1,40 @@
-./.env
+
+# Ignore nest & react
+/my-nest-app
+/my-react-app
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore Next.js build directory
+.next/
+
+# Ignore Nest.js build directories
+dist/
+output/
+
+# Ignore environment variables
+.env
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE files
+.idea/
+.vscode/
+
+# Ignore logs
+logs/
+*.log
+
+# Ignore package-lock files
+package-lock.json
+yarn.lock
+
+# Ignore build artifacts
+*.build
+*.pid
+
+# Ignore Tailwind CSS build directory
+styles/tailwind.css
