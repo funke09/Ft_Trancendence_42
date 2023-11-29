@@ -8,7 +8,7 @@ const Features: React.FC = () => {
 	return (
 		<div>
 			<Navbar/>
-			<div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex-col max-w-[1500px] pb-4">
+			<div className="features-container bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex-col max-w-[1500px] pb-4">
 				<div className="flex justify-center">
 					<div className="bg-[#C73988] flex-wrap shadow-2xl rounded-b-[20px]">
 					<div className="text-white text-center p-4 text-[40px] font-bold">FEATURES</div>
