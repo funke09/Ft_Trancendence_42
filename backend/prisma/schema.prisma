@@ -1,23 +1,26 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-	id	Int @default(autoincrement()) @id
-	usernam String @unique
-	email String @unique
-	avatarUrl String
-	oAuthId String @unique
-	userStatus String @default("Offline") // Online, Away, In-game
-	socketId String?
+generator client {
+  provider = "prisma-client-js"
 }
 
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
 
+model User {
+  id          Int     @default(autoincrement()) @id
+  login       String  @unique
+  email       String? @unique
+  name        String?
+  avatar      String?
+  intraId     Int     @unique
+  banner      String?
+  fortytwoId  String?  @unique
+}

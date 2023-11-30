@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 
 
 const NavBarNotLogged = () => {
@@ -24,11 +23,6 @@ const NavBarNotLogged = () => {
   };
   
   const NavBarLogged = () => {
-	const { data: session } = useSession();
-  
-	// Check if session and user information are available
-	if (session && session.user) {
-		const { user } = session;
 		
 	  return (
 		<div className="flex items-center place-content-evenly gap-4">
@@ -44,7 +38,7 @@ const NavBarNotLogged = () => {
 		  <button className="pink-button ">PLAY NOW!</button>
 		  <button className="">
 			<Image
-			  src={user?.image || ''} // Assuming the avatar URL is available in user.image
+			  src={''} // Assuming the avatar URL is available in user.image
 			  alt="avatar"
 			  width={60}
 			  height={60}
@@ -53,12 +47,9 @@ const NavBarNotLogged = () => {
 		  </button>
 		</div>
 	  );
-	}
-  	return null;
-  };
+};
   
   const Navbar: React.FC = () => {
-	const { data: session } = useSession();
 	return (
 	  <div className="flex shadow-xl bg-[#3B2A3DBF] opacity-75 justify-between p-6 m-auto mt-6 mb-6 rounded-[15px] max-w-[1500px]">
 		<div className="items-center place-content-start inline-flex">
@@ -71,7 +62,7 @@ const NavBarNotLogged = () => {
 			/>
 		  </Link>
 		</div>
-		{session ? <NavBarLogged /> : <NavBarNotLogged />}
+		{/* {session ? <NavBarLogged /> : <NavBarNotLogged />} */}
 	  </div>
 	);
   };

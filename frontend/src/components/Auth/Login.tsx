@@ -1,16 +1,15 @@
+import { redirect } from "next/dist/server/api-utils";
 import Image from "next/image";
-import { signIn, useSession, getSession, GetSessionParams } from 'next-auth/react';
 import { useRouter } from "next/router";
 
 
 const Login: React.FC = () => {
-	const { data: session } = useSession();
-  const router = useRouter();
 
-  const handleSignIn = async (provider: string) => {
-    await signIn(provider, { callbackUrl: '/' });
-  };
+	const router = useRouter();
 	
+	const hadnleLogin = () => {
+		router.push('http://localhost:5000/api/auth/login')
+	}
 	return (
 	  <div className="flex flex-row h-screen">
 		<div className="flex flex-col bg-[#382A39] w-1/2 relative min-[0px]:hidden sm:hidden md:flex">
@@ -26,7 +25,7 @@ const Login: React.FC = () => {
 		</div>
 	
 		<div className="flex flex-col bg-gradient-to-t from-[#382A39] items-center justify-center w-1/2 sm:w-screen md:w-1/2">
-		<button onClick={() => handleSignIn('42')} className="bg-[#4CAF9E] absolute items-center flex justify-center rounded-full w-[100px] h-[100px] opacity-75 hover:opacity-100">
+		<button onClick={hadnleLogin} className="bg-[#4CAF9E] absolute items-center flex justify-center rounded-full w-[100px] h-[100px] opacity-75 hover:opacity-100">
 			<Image src="/images/school_42.png" alt="42 logo" width={100} height={100}></Image>
 		  </button>
 		  <p className="text-white text-2xl font-bold Manrope tracking-wider text-center mt-[150px]">SIGN IN</p>
@@ -36,20 +35,3 @@ const Login: React.FC = () => {
 };
 
 export default Login;
-
-export async function getServerSideProps(context: GetSessionParams | undefined) {
-	const session = await getSession(context);
-  
-	if (session) {
-	  return {
-		redirect: {
-		  destination: '/',
-		  permanent: false,
-		},
-	  };
-	}
-  
-	return {
-	  props: {},
-	};
-  }

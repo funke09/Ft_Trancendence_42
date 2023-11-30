@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Navbar from "@/components/Layout/NavBar";
+import { UseSessionOptions } from "next-auth/react";
 
 const Game: React.FC = () => {
 	return (
