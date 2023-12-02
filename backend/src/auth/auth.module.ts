@@ -1,14 +1,36 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './guards/auth.jwt.guard';
+import { FTStrategy } from './strategies';
+import { FTAuthGuard } from './guards/auth.ft.guard';
 import { PassportModule } from '@nestjs/passport';
-import { FortyTwoStrategy } from './strategies';
-import { PrismaService } from '../prisma/prisma.service';
-import { SessionSerializer } from './utils/Serialize';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports: [PassportModule],
-  providers: [AuthService, FortyTwoStrategy, PrismaService, SessionSerializer],
+  imports: [
+    JwtModule.register({
+      global: true,
+      secret: new ConfigService().get('JWT_SECRET'),
+      signOptions: { expiresIn: '30d' },
+    }),
+    PassportModule.register({ session: false }),
+    MulterModule.register({
+      dest: './uploads',
+    }),
+  ],
   controllers: [AuthController],
+  providers: [
+    AuthService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    FTAuthGuard,
+    FTStrategy,
+  ],
 })
 export class AuthModule {}

@@ -16,11 +16,10 @@ model Session {
 
 model User {
   id          Int     @default(autoincrement()) @id
-  login       String  @unique
   email       String? @unique
+  login       String  @unique
   name        String?
   avatar      String?
-  intraId     Int     @unique
-  banner      String?
-  fortytwoId  String?  @unique
+  hash		  String
+  isAuthenticated Boolean
 }
