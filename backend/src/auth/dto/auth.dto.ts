@@ -38,19 +38,16 @@ export class signinDTO {
 }
 
 export class signupDTO {
-  @IsString()
-  @IsNotEmpty()
-  email: string;
+	@IsString()
+	@IsNotEmpty()
+	login: string;
 
-  @IsString()
-  @IsNotEmpty()
-  login: string;
+	@IsString()
+	@IsNotEmpty()
+	email: string;
 
-  @IsString()
-  @IsNotEmpty()
-  password: string;
 
-  @IsString()
-  @IsNotEmpty()
-  passwordConf: string;
+	@IsString()
+	@IsNotEmpty()
+	password: string;
 }

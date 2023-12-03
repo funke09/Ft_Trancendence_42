@@ -1,3 +1,5 @@
+// TODO: On build phase remember to activate password hashing back (argon2)
+
 import {
 	ForbiddenException,
 	Injectable,
@@ -19,7 +21,7 @@ import {
 	) {}
   
 	async signup(dto: authDTO) {
-	  const hash = await argon.hash(dto.password);
+	//   const hash = await argon.hash(dto.password);
 	  try {
 		await this.prisma.user.create({
 		  data: {
@@ -28,7 +30,7 @@ import {
 			login: dto.login,
 			name: dto.name,
 			avatar: dto.avatar,
-			hash: hash,
+			hash: dto.password, // hash: hash;
 			isAuthenticated: false,
 		  },
 		});
@@ -52,9 +54,9 @@ import {
 	  if (!user) throw new ForbiddenException('login or password incorrect');
 	  if (!user.isAuthenticated)
 		throw new ForbiddenException('Unauthenticated User');
-	  const pwMatch = await argon.verify(user.hash, dto.password);
-	  if (!pwMatch)
-		throw new ForbiddenException('login or password incorrect');
+	//   const pwMatch = await argon.verify(user.hash, dto.password);
+	//   if (!pwMatch)
+	// 	throw new ForbiddenException('login or password incorrect');
 	  return this.signToken(user.id, user.login);
 	}
   
@@ -72,20 +74,17 @@ import {
 		throw new ForbiddenException('you need to signup with intra first');
 	  if (user.isAuthenticated)
 		throw new ForbiddenException('User Already Authenticated ');
-	  if (dto.password !== dto.passwordConf)
-		throw new ForbiddenException("passwords don't match");
-	  const hash = await argon.hash(dto.password);
+	//   const hash = await argon.hash(dto.password);
 	  await this.prisma.user.updateMany({
 		where: {
 		  email: dto.email,
 		},
 		data: {
 		  login: dto.login,
-		  hash: hash,
+		  hash: dto.password, // hash: hash;
 		  isAuthenticated: true,
 		},
 	  });
-	  user = await this.findUser(dto.email);
 	  return this.signToken(user.id, user.login);
 	}
   

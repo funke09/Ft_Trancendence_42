@@ -14,8 +14,8 @@ const SignUp: React.FC<User> = ({ login, email }) => {
 	
 	const handleSignUp = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log("data:", email, newUsername, password);
-		signup(email, newUsername, password, router);
+		console.log("data:", newUsername, newEmail, password);
+		signup(newUsername, newEmail, password, router);
 	}
 
 	return (
@@ -84,7 +84,7 @@ const SignUp: React.FC<User> = ({ login, email }) => {
 								<img
 								src="images/42_Logo.png"
 								alt="42"
-								className="inline-block max-w-[50px] max-h-[30px]">
+								className="inline-block max-w-[50px] max-h-[30px] shadow-md">
 								</img>
 								Sign Up with Intra</a>
 							</li>

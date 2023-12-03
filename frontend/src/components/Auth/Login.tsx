@@ -57,13 +57,13 @@ const Login: React.FC = () => {
 						<ul className="-mx-2 mb-12 flex justify-center">
 							<li className="w-[75%] px-2">
 							<a
-								href="/#"
+								href="http://localhost:5000/auth/42"
 								className="flex h-11 items-center text-semibold text-white text-[18px] justify-center gap-4 rounded-full bg-[#1B1B1B] hover:bg-opacity-90"
 							>
 								<img
 								src="images/42_Logo.png"
 								alt="42"
-								className="inline-block max-w-[50px] max-h-[30px]">
+								className="inline-block max-w-[50px] max-h-[30px] shadow-md">
 								</img>
 								Login with Intra</a>
 							</li>

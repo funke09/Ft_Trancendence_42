@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useEffect, useState } from 'react';
-import SignUpPage from "@/components/Auth/signup";
+import SignUpPage from "@/components/Auth/SignUpPage";
 import Login from "@/components/Auth/login";
 
 

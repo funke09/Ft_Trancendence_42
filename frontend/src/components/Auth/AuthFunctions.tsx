@@ -1,6 +1,6 @@
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
-export const signup = async (username: string, email: string, password: string, router: AppRouterInstance) => {
+export const signup = async (login: string, email: string, password: string, router: AppRouterInstance) => {
 	const response = await fetch("http://localhost:5000/auth/finish_signup", {
 		credentials: "include",
 		method: "POST",
@@ -9,7 +9,7 @@ export const signup = async (username: string, email: string, password: string, 
 			Accept: "application/json",
 		},
 		body: JSON.stringify({
-			username: username,
+			login: login,
 			email: email,
 			password: password,
 		}),
@@ -18,7 +18,7 @@ export const signup = async (username: string, email: string, password: string, 
 		const res = await response.json();
 		console.log("res: ", res);
 		router.push("/profile");
-	} else alert("Failed to SugnUp");
+	} else alert("Failed to SignUp");
 }
 
 export const login = async (username: string, password: string, router: AppRouterInstance) => {

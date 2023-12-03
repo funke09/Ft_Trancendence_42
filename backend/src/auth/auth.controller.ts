@@ -47,14 +47,14 @@ import {
 		  req.user.login,
 		);
 		res.cookie('JWT_TOKEN', accessToken);
-		res.redirect('http://localhost:3000/');
+		res.redirect('http://localhost:3000/profile');
 	  } else {
 		const userToken = await this.jwtService.signAsync({
 		  sub: -42,
 		  email: req.user.email,
 		});
 		res.cookie('USER', userToken);
-		res.redirect('http://localhost:3000/auth');
+		res.redirect('http://localhost:3000/42-redirect');
 	  }
 	}
   
@@ -86,10 +86,10 @@ import {
 	  @Req() req: Request,
 	  @Res({ passthrough: true }) res: Response,
 	) {
-	  const UserToken = req.cookies['USER'];
-	  const token = await this.authService.finish_signup(dto, UserToken);
-	  res.cookie('JWT_TOKEN', token.accessToken);
-	  res.cookie('USER', '', { expires: new Date() });
+		const UserToken = req.cookies['USER'];
+		const token = await this.authService.finish_signup(dto, UserToken);
+		res.cookie('JWT_TOKEN', token.accessToken, { domain: 'http://localhost:3000', path: '/' });
+		res.cookie('USER', '', { expires: new Date(), domain: 'http://localhost:3000', path: '/' });
 	  return { msg: 'Success' };
 	}
   
