@@ -13,7 +13,7 @@ export class FTStrategy extends PassportStrategy(Strategy, '42') {
     super({
       clientID: config.get('CLIENT_ID'),
       clientSecret: config.get('CLIENT_SECRET'),
-      callbackURL: config.get('CALLBACK_URI'),
+      callbackURL: config.get('CALLBACK_URL'),
       Scope: ['profile', 'email'],
     });
   }

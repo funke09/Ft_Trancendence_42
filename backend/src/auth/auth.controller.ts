@@ -21,6 +21,7 @@ import {
   import { FileInterceptor } from '@nestjs/platform-express';
   import { diskStorage } from 'multer';
   import { PrismaService } from 'src/prisma/prisma.service';
+  import * as Cookies from 'js-cookie';
   
   @Controller('auth')
   export class AuthController {
@@ -60,25 +61,23 @@ import {
 	@SetMetadata('isPublic', true)
 	@Get('preAuthData')
 	async getPreAuthData(@Req() req) {
-	  const token = req.cookies['USER'];
+	  const token = Cookies.get('USER', req.cookies);
 	  if (!token) throw new UnauthorizedException('Invalid Request');
 	  try {
 		const payload = await this.jwtService.verifyAsync(token, {
 		  secret: this.config.get('JWT_SECRET'),
 		});
-		const { email, login, avatar } = await this.authService.findUser(
-		  payload.email,
-		);
+		const { email, login } = await this.authService.findUser(payload.email);
 		const user = {
-		  email,
 		  login,
-		  avatar,
+		  email,
 		};
 		return { user };
 	  } catch {
 		throw new UnauthorizedException();
 	  }
 	}
+	
   
 	@SetMetadata('isPublic', true)
 	@Post('finish_signup')
