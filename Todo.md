@@ -1,6 +1,6 @@
 - Implement backend authentication:
 
-    -> Create the necessary routes and controllers for user authentication.
+    -> Create the necessary routes and controllers for user authentication. | DONE
     -> Use the 42 intra API to handle user sign-in.
 
 - Display user profile:
