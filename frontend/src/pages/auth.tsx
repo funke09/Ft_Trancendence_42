@@ -2,13 +2,29 @@ import Image from "next/image";
 import { useEffect, useState } from 'react';
 import SignUpPage from "@/components/Auth/SignUpPage";
 import Login from "@/components/Auth/login";
+import { User } from "@/utils/types";
+import { getPreAuthData } from "@/components/Auth/SignUpPage"
 
 
-export default function Auth () {
+export default function Auth() {
 	const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
+	const [userData, setUserData] = useState<User | null>(null);
   
 	const switchToLogin = () => setActiveTab('login');
 	const switchToSignUp = () => setActiveTab('signup');
+  
+	useEffect(() => {
+	  const fetchUserData = async () => {
+		try {
+		  const user = await getPreAuthData();
+		  setUserData(user);
+		} catch (error) {
+		  console.error("Failed to fetch user data", error);
+		}
+	  };
+  
+	  fetchUserData();
+	}, []);
 
 	
 	return (
@@ -51,7 +67,7 @@ export default function Auth () {
           <div className="flex justify-center p-10 text-[75px] font-bold text-white ">
             <h1>{activeTab === 'login' ? 'Welcome Back' : 'Get Started'}</h1>
           </div>
-          {activeTab === 'login' ? <Login /> :  <SignUpPage />}
+          {activeTab === 'login' ? <Login /> :  <SignUpPage user={userData} />}
         </div>
       </section>
 		</main>

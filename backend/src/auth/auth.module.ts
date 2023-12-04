@@ -3,34 +3,27 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './guards/auth.jwt.guard';
-import { FTStrategy } from './strategies';
-import { FTAuthGuard } from './guards/auth.ft.guard';
+import { FTStrategy } from './auth.42.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { MulterModule } from '@nestjs/platform-express';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { JwtStrategy } from './auth.jwt.strategy';
 
 @Module({
   imports: [
     JwtModule.register({
       global: true,
       secret: new ConfigService().get('JWT_SECRET'),
-      signOptions: { expiresIn: '30d' },
+      signOptions: { expiresIn: '7d' },
     }),
-    PassportModule.register({ session: false }),
-    MulterModule.register({
-      dest: './uploads',
-    }),
+    PassportModule.register({ defaultStrategy: '42' }),
   ],
   controllers: [AuthController],
   providers: [
     AuthService,
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-    FTAuthGuard,
     FTStrategy,
+	PrismaService,
+	JwtStrategy,
   ],
+  exports: [AuthService],
 })
 export class AuthModule {}

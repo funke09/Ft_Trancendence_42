@@ -7,19 +7,72 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Session {
-  id        String   @id
-  sid       String   @unique
-  data      String
-  expiresAt DateTime
-}
-
 model User {
   id          Int     @default(autoincrement()) @id
   email       String? @unique
-  login       String  @unique
-  name        String?
+  username    String  @unique
+  name        String
   avatar      String?
-  hash		  String
-  isAuthenticated Boolean
+  oAuthId	  String? @unique
+  is2FA		  Boolean @default(false)
+  twoFaSecret String? @unique
+  userStatus  String  @default("Offline") // online | in-game | away ...
+  blockedIds  Int[]   @default([])
+  confirmed   Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  socketId	  String?
+  isBanned	  Boolean @default(false)
+  UserStats	  UserStats?
+  Matches	  Matches[] @relation("Matches")
+
+  friends Friends[] @relation("UserFriends")
+  userFriends Friends[] @relation("Friend")
+
+}
+
+model Friends {
+	id		  Int @id @default(autoincrement())
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+
+	FriendId  Int
+	friendshipStatus	String @default("Pending") // accepted, decliend, blocked ...
+
+	reqSentById Int
+	reqSentToId Int
+
+	user User @relation("UserFriends", fields: [userId], references: [id])
+	userId Int
+
+	friend User @relation("Friend", fields: [friendId], references: [id])
+	friendId Int
+}
+
+model UserStats {
+	id Int @id @default(autoincrement())
+	// achiev Achievements[]
+	wins	Int @default(0)
+	losses	Int @default(0)
+	rank 	String @default("Iron") // Bronze, Silver, Gold, Emerald, Diamond, Master, Challenger
+
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+
+	user User @relation(fields: [userId], references: [id])
+	userId Int @unique
+}
+
+model Matches {
+	id			Int @id @default(autoincrement())
+	res			String @default("Undefined") // win or loss
+	playerScore Int @default(0)
+	opponentScore Int @default(0)
+	gameMode 	String @default("Undefined")
+	opponentId	Int
+	createdAt 	DateTime @default(now())
+	updatedAt 	DateTime @updatedAt
+
+	user User @relation("Matches", fields: [userId], references: [id])
+	userId Int
 }

@@ -1,128 +1,186 @@
-// TODO: On build phase remember to activate password hashing back (argon2)
-
 import {
-	ForbiddenException,
 	Injectable,
-	UnauthorizedException,
+	HttpException,
+	BadRequestException
   } from '@nestjs/common';
-  import { authDTO, signinDTO, signupDTO } from './dto';
-  import * as argon from 'argon2';
   import { PrismaService } from '../prisma/prisma.service';
-  import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+  import { User, Prisma } from '@prisma/client';
+  import { Response } from 'express';
   import { JwtService } from '@nestjs/jwt';
-  import { ConfigService } from '@nestjs/config';
   
   @Injectable()
   export class AuthService {
 	constructor(
 	  private prisma: PrismaService,
 	  private jwtService: JwtService,
-	  private config: ConfigService,
 	) {}
-  
-	async signup(dto: authDTO) {
-	//   const hash = await argon.hash(dto.password);
-	  try {
-		await this.prisma.user.create({
-		  data: {
-			id: dto.id,
-			email: dto.email,
-			login: dto.login,
-			name: dto.name,
-			avatar: dto.avatar,
-			hash: dto.password, // hash: hash;
-			isAuthenticated: false,
-		  },
+
+	async createUser(data: Prisma.UserCreateInput): Promise<User>
+	{
+		return this.prisma.user.create({
+			data: {
+				email: data, email,
+				name: data.name,
+				username: data.username,
+				UserStats: {
+					create: {
+						wins: 0,
+						losses: 0,
+						rank: 'Iron',
+					},
+				},
+				avatar: data.avatar,
+			},
 		});
-	  } catch (error) {
-		if (error instanceof PrismaClientKnownRequestError) {
-		  if (error.code === 'P2002') {
-			throw new ForbiddenException(
-			  'An account with email or login already exists',
-			);
-		  }
+	}
+
+	async searchByUsername(username: string): Promise<any>
+	{
+		return this.prisma.user.findUnique({
+			where: { username: username },
+			select: {
+				email: true,
+				name: true,
+				username: true,
+				avatar: true,
+				userStatus: true,
+				confirmed: true,
+				is2FA : true,
+				id: true,
+			},
+		});
+	}
+
+	async getUserById(id: number)
+	{
+		return await this.prisma.user.findUnique({
+			where: { id:id },
+			select: {
+				email: true,
+				name: true,
+				username: true,
+				avatar: true,
+				userStatus: true,
+				confirmed: true,
+				is2FA : true,
+				id: true,
+			},
+		});
+	}
+
+	async searchById(userId: number, lookId: number): Promise<any>
+	{
+		const currUser = await this.prisma.user.findUnique({
+			where: { id: userId },
+		});
+		if (!currUser)
+			throw new HttpException('User not found', 404);
+
+		const lookUser = await this.prisma.user.findUnique({
+			where: { id: lookId },
+		});
+		if (!lookUser)
+			throw new HttpException('User not found', 404);
+
+		if (currUser.id === lookUser.id)
+		{
+			return this.prisma.user.findUnique({
+				where: { id: userId },
+				select: {
+					email: true,
+					name: true,
+					username: true,
+					avatar: true,
+					userStatus: true,
+					confirmed: true,
+					is2FA : true,
+					id: true,
+					friends: true,
+				},
+			});
 		}
-	  }
-	}
-  
-	async signin(dto: signinDTO): Promise<{ accessToken: string }> {
-	  const user = await await this.prisma.user.findFirst({
-		where: {
-		  login: dto.login,
-		},
-	  });
-	  if (!user) throw new ForbiddenException('login or password incorrect');
-	  if (!user.isAuthenticated)
-		throw new ForbiddenException('Unauthenticated User');
-	//   const pwMatch = await argon.verify(user.hash, dto.password);
-	//   if (!pwMatch)
-	// 	throw new ForbiddenException('login or password incorrect');
-	  return this.signToken(user.id, user.login);
-	}
-  
-	async finish_signup(dto: signupDTO, UserToken: string) {
-	  if (!UserToken) throw new UnauthorizedException('Invalid Request');
-	  try {
-		await this.jwtService.verifyAsync(UserToken, {
-		  secret: this.config.get('JWT_SECRET'),
+		return this.prisma.user.findUnique({
+			where: { id: lookId },
+			select: {
+				email: true,
+				name: true,
+				username: true,
+				avatar: true,
+				userStatus: true,
+				id: true,
+				friends: {
+					where: {
+						friendId: userId,
+						userId: lookId,
+					},
+					select: {
+						friendId: true,
+						friendshipStatus: true,
+					},
+				},
+			},
 		});
-	  } catch {
-		throw new UnauthorizedException();
-	  }
-	  let user = await this.findUser(dto.email);
-	  if (!user)
-		throw new ForbiddenException('you need to signup with intra first');
-	  if (user.isAuthenticated)
-		throw new ForbiddenException('User Already Authenticated ');
-	//   const hash = await argon.hash(dto.password);
-	  await this.prisma.user.updateMany({
-		where: {
-		  email: dto.email,
-		},
-		data: {
-		  login: dto.login,
-		  hash: dto.password, // hash: hash;
-		  isAuthenticated: true,
-		},
-	  });
-	  return this.signToken(user.id, user.login);
 	}
-  
-	async saveAvatar(userToken: string, file: Express.Multer.File) {
-	  try {
-		const payload = await this.jwtService.verifyAsync(userToken, {
-		  secret: this.config.get('JWT_SECRET'),
+
+	async searchByEmail(email: string): Promise<any>
+	{
+		return this.prisma.user.findUnique({
+			where: { email: email },
+			select: {
+				email: true,
+				name: true,
+				username: true,
+				avatar: true,
+				userStatus: true,
+				confirmed: true,
+				is2FA : true,
+				id: true,
+			},
 		});
-		await this.prisma.user.updateMany({
-		  where: {
-			email: payload.email,
-		  },
-		  data: {
-			avatar: file.path,
-		  },
-		});
-	  } catch {
-		throw new UnauthorizedException();
-	  }
 	}
-  
-	async signToken(
-	  userID: number,
-	  login: string,
-	): Promise<{ accessToken: string }> {
-	  const payload = { sub: userID, login };
-	  return {
-		accessToken: await this.jwtService.signAsync(payload),
-	  };
+
+	async searchOrCreate(profile: any): Promise<any>
+	{
+		let user = await this.searchByEmail(profile.emails[0].value);
+
+		if (!user)
+		{
+			user = await this.createUser({
+				email: profile.emails[0].value,
+				name: profile.displayName,
+				username: profile.username,
+				oAuthId: '',
+				avatar: profile._jason.image.link,
+			});
+		}
+		return user;
 	}
-  
-	async findUser(email: string) {
-	  const user = await this.prisma.user.findFirst({
-		where: {
-		  email: email,
-		},
-	  });
-	  return user;
+
+	async login(user: any, res: Response)
+	{
+		try
+		{
+			const is2F = user.is2FA;
+			const payload = { username: user.username, uid: user.id, is2F: is2F};
+			const token = this.jwtService.sign(payload);
+			res.cookie('jwt', token, { httpOnly: false, path: '/'});
+			res.redirect(!is2F ? "http://localhost:3000/auth" : "http://localhost:3000/2fa-auth");
+		} catch (error) {
+			throw new BadRequestException('Error: ', error.message);
+		}
 	}
-  }
-  
+
+	async logout(res: Response)
+	{
+		res.clearCookie('jwt');
+		res.redirect("http://localhost:3000/logout");
+	}
+
+	async updateProfile(user: any, res: Response): Promise<any>
+	{
+		const payload = { username: user.username, uid: user.id };
+		const token = this.jwtService.sign(payload);
+		res.cookie('jwt', token, { httpOnly: false, path: '/'});
+		res.status(200).send({ message: 'Username Update Done' });
+	}
+}
