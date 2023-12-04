@@ -1,5 +1,4 @@
-import { FunctionComponent, useState } from "react";
-import { login } from "./AuthFunctions";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 
@@ -9,8 +8,8 @@ const Login: React.FC = () => {
 	const router = useRouter();
   
 	const handleLogin = (e: React.FormEvent) => {
-	  e.preventDefault();
-	  login(username, password, router);
+	//   e.preventDefault();
+	//   login(username, password, router);
 	};
 
 	return (

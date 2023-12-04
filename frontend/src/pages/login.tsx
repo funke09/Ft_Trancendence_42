@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { useState } from 'react';
-import Login from "@/components/Auth/login";
 import api from "@/api";
 import { FtAuth } from "@/components/Auth/FtAuth";
 import type { auth } from "@/components/Auth/FtAuth";
+import Login from "@/components/Auth/login";
 
 
 export default function Auth() {

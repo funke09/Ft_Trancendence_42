@@ -6,7 +6,6 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class FTStrategy extends PassportStrategy(Strategy, '42') {
-	logger: Logger;
   constructor(
     private config: ConfigService,
     private authService: AuthService,
@@ -16,7 +15,6 @@ export class FTStrategy extends PassportStrategy(Strategy, '42') {
       clientSecret: config.get('CLIENT_SECRET'),
       callbackURL: config.get('CALLBACK_URL'),
     });
-    this.logger = new Logger('FORTY-TWO-STRATEGY');
   }
 
   async validate(accessToken: string, refreshToken: string, profile: Profile, done: Function) {
