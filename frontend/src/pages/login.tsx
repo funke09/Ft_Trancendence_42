@@ -1,32 +1,25 @@
 import Image from "next/image";
-import { useEffect, useState } from 'react';
-import SignUpPage from "@/components/Auth/SignUpPage";
+import { useState } from 'react';
 import Login from "@/components/Auth/login";
-import { User } from "@/utils/types";
-import { getPreAuthData } from "@/components/Auth/SignUpPage"
+import api from "@/api";
+import { FtAuth } from "@/components/Auth/FtAuth";
+import type { auth } from "@/components/Auth/FtAuth";
 
 
 export default function Auth() {
 	const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
-	const [userData, setUserData] = useState<User | null>(null);
   
 	const switchToLogin = () => setActiveTab('login');
 	const switchToSignUp = () => setActiveTab('signup');
   
-	useEffect(() => {
-	  const fetchUserData = async () => {
-		try {
-		  const user = await getPreAuthData();
-		  setUserData(user);
-		} catch (error) {
-		  console.error("Failed to fetch user data", error);
-		}
-	  };
-  
-	  fetchUserData();
-	}, []);
+	const intraAuth = () => {
+		window.location.href = api.getUri() + "auth/42";
+	};
 
-	
+	const auth: auth = {
+		intra: intraAuth,
+	};
+
 	return (
 		<main className="flex flex-row h-screen">
 			<section className="flex flex-col bg-[#382A39] w-2/5 relative min-[0px]:hidden sm:hidden md:flex bg-opacity-75">
@@ -67,7 +60,7 @@ export default function Auth() {
           <div className="flex justify-center p-10 text-[75px] font-bold text-white ">
             <h1>{activeTab === 'login' ? 'Welcome Back' : 'Get Started'}</h1>
           </div>
-          {activeTab === 'login' ? <Login /> :  <SignUpPage user={userData} />}
+          {activeTab === 'login' ? <Login /> : <FtAuth auth={auth} />}
         </div>
       </section>
 		</main>

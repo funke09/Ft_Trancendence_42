@@ -19,7 +19,7 @@ import {
 	{
 		return this.prisma.user.create({
 			data: {
-				email: data, email,
+				email: data.email,
 				name: data.name,
 				username: data.username,
 				UserStats: {
