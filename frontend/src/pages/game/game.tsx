@@ -1,7 +1,6 @@
 import React from "react";
 import Image from "next/image";
 import Navbar from "@/components/Layout/NavBar";
-import { UseSessionOptions } from "next-auth/react";
 
 const Game: React.FC = () => {
 	return (
@@ -40,7 +39,7 @@ const Game: React.FC = () => {
 							<Image src={"/"} alt="p2" width={60} height={60} className="rounded-full h-[60px] w-[60px] bg-white flex justify-center items-center shadow-md"></Image>
 						</div>
 					</div>
-					<div className="bg-[#48354A] rounded-[15px] min-h-[800px] m-5">
+					<div className="bg-[#48354A] rounded-[15px] m-5">
 						{/* game here... */}
 					</div>
 				</div>
