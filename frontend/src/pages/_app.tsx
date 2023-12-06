@@ -5,6 +5,7 @@ import store, { setProfile } from '@/redux/store';
 import { useEffect } from 'react';
 import api from '@/api';
 import { AxiosError } from 'axios';
+import SocketComp from '@/api/sockets';
 
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -19,6 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 	
   return (
 	<Provider store={store}>
+		<SocketComp/>
 		<main>
     		<Component {...pageProps} />
 		</main>

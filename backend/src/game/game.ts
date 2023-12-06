@@ -88,7 +88,8 @@ export class Game {
 			},
 			score: this.score,
 		};
-		this.client1 && this.client1.emit('GAME_STATE', state);
+		this.client1 && this.client1.emit('GAME-STATE', state);
+		this.client2 && this.client2.emit('GAME-STATE', state);
 	}
 
 	updateBall = () => {

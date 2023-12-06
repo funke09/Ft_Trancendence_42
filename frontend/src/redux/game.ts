@@ -25,7 +25,7 @@ const initialStateProfile = {
 };
 
 const gameSlice = createSlice({
-	name: "game",
+	name: "GAME-STATE",
 	initialState: initialStateProfile as { gameState: GameState, opp: oppType },
 	reducers: {
 		setGameState: (state, action) => {

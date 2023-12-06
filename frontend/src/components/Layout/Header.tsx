@@ -1,8 +1,10 @@
 import Image from "next/image";
+import router from "next/router";
 import React from "react";
 
 const Navbar: React.FC = () => {
 
+	const isAuth: boolean = true;
 	return (
 	  <div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex max-w-[1500px] pb-4">
 		<div className="flex-col justify-center inline-flex items-center">
@@ -17,10 +19,10 @@ const Navbar: React.FC = () => {
 			  competitive fun. <br />
 			</div>
 		  </div>
-		  {/* {session ? <button className="bg-[#F53FA1] bg-opacity-[75%] rounded-full m-4 w-fit p-4 text-white text-[20px] font-bold Manrope text-opacity-[100%] hover:bg-opacity-100"> */}
-			{/* GET STARTED</button> : <button onClick={() => signIn('42')} className="bg-[#F53FA1] bg-opacity-[75%] rounded-full m-4 w-fit p-4 text-white text-[20px] font-bold Manrope text-opacity-[100%] hover:bg-opacity-100"> */}
-			{/* GET STARTED</button> */}
-			{/* } */}
+		  {isAuth ? <button className="bg-[#F53FA1] bg-opacity-[75%] rounded-full m-4 w-fit p-4 text-white text-[20px] font-bold Manrope text-opacity-[100%] hover:bg-opacity-100">
+			GET STARTED</button> : <button onClick={() => router.push('/login')} className="bg-[#F53FA1] bg-opacity-[75%] rounded-full m-4 w-fit p-4 text-white text-[20px] font-bold Manrope text-opacity-[100%] hover:bg-opacity-100">
+			GET STARTED</button>
+			}
 		</div>
   
 		<div className="m-4 flex flex-grow justify-end min-[0px]:hidden sm:hidden md:flex">

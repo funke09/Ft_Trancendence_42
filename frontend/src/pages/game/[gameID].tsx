@@ -1,8 +1,13 @@
 import React from "react";
 import Image from "next/image";
 import Navbar from "@/components/Layout/NavBar";
+import { useRouter } from "next/router";
+import { GameLogic } from "@/components/Layout/game";
 
 const Game: React.FC = () => {
+	const router = useRouter();
+	const { gameID } = router.query;
+	
 	return (
 		<div>
 			<Navbar/>
@@ -40,7 +45,7 @@ const Game: React.FC = () => {
 						</div>
 					</div>
 					<div className="bg-[#48354A] rounded-[15px] m-5">
-						{/* game here... */}
+						<GameLogic gameID={gameID} />
 					</div>
 				</div>
 			</div>

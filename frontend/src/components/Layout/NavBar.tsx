@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { useRouter } from "next/router";
+import store from "@/redux/store";
+import router, { useRouter } from "next/router";
+import {Play} from '@/components/Layout/Play'
 
 
 const NavBarNotLogged = () => {
-	const router = useRouter();
 	return (
 	  <div className="flex items-center place-content-evenly gap-5 min-[0px]:hidden sm:hidden md:flex">
 		<Link href="/" className="nav-button hover:bg-primary1 p-2 rounded-xl min-[0px]:hidden md:flex">
@@ -23,7 +24,7 @@ const NavBarNotLogged = () => {
   };
   
   const NavBarLogged = () => {
-		
+	 const router = useRouter();
 	  return (
 		<div className="flex items-center place-content-evenly gap-4">
 		  <Link href="/" className="nav-button hover:bg-primary1 p-2 rounded-xl min-[0px]:hidden md:flex">
@@ -35,10 +36,10 @@ const NavBarNotLogged = () => {
 		  <Link href="/leaderboard" className="nav-button hover:bg-primary1 p-2 rounded-xl shadow-sm min-[0px]:hidden md:flex">
 			LEADERBOARD
 		  </Link>
-		  <button className="pink-button ">PLAY NOW!</button>
-		  <button className="">
+		  {router.pathname != "/game/[gameID]" && <Play/>}
+		  <button>
 			<Image
-			  src={''} // Assuming the avatar URL is available in user.image
+			  src={store.getState().profile.user.avatar} // Assuming the avatar URL is available in user.image
 			  alt="avatar"
 			  width={60}
 			  height={60}
@@ -50,6 +51,9 @@ const NavBarNotLogged = () => {
 };
   
   const Navbar: React.FC = () => {
+
+	const isAuth: boolean = true;
+	
 	return (
 	  <div className="flex shadow-xl bg-[#3B2A3DBF] opacity-75 justify-between p-6 m-auto mt-6 mb-6 rounded-[15px] max-w-[1500px]">
 		<div className="items-center place-content-start inline-flex">
@@ -62,7 +66,7 @@ const NavBarNotLogged = () => {
 			/>
 		  </Link>
 		</div>
-		{/* {session ? <NavBarLogged /> : <NavBarNotLogged />} */}
+		{isAuth ? <NavBarLogged /> : <NavBarNotLogged />}
 	  </div>
 	);
   };
