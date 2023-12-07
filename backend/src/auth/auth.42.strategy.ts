@@ -17,11 +17,11 @@ export class FTStrategy extends PassportStrategy(Strategy, '42') {
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: Profile, done: Function) {
+  async validate(accessToken: string, refreshToken: string, profile: Profile, cb: Function) {
 	const user = await this.authService.searchOrCreate(profile);
 	if (user == undefined || user == null) {
 		throw new BadRequestException();
 		}
-	done(null, user);
+	return cb(null, user);
 	}
 }

@@ -4,7 +4,7 @@ node_modules/
 # Next.js build output
 /.next/
 
-/.env.local
+/.env
 
 # Runtime data
 pids

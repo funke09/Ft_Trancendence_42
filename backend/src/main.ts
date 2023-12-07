@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { RequestMethod, ValidationPipe } from '@nestjs/common';
 import * as passport from 'passport';
 import * as cookieParser from 'cookie-parser';
-import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function bootstrap() {
@@ -14,9 +14,9 @@ async function bootstrap() {
     methods: [RequestMethod.ALL.toString()],
   });
   app.use(cookieParser());
-  app.use(passport.initialize());
+//   app.use(passport.initialize());
   app.useWebSocketAdapter(new IoAdapter(app));
-  app.useGlobalPipes(new ValidationPipe());
+//   app.useGlobalPipes(new ValidationPipe());
   await app.listen(5000);
 }
 bootstrap();

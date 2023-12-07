@@ -50,7 +50,7 @@ const initialStateProfile: { user: UserType } = {
 			id: 0,
 			wins: 0,
 			losses: 0,
-			rank: "",
+			rank: "iron",
 			createdAt: "",
 			updatedAt: "",
 			userId: 0,

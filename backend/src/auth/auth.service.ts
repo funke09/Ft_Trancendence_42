@@ -163,8 +163,8 @@ import {
 			const is2F = user.is2FA;
 			const payload = { username: user.username, uid: user.id, is2F: is2F};
 			const token = this.jwtService.sign(payload);
-			res.cookie('jwt', token, { httpOnly: false, path: '/'});
-			res.redirect(!is2F ? "http://localhost:3000/auth" : "http://localhost:3000/2fa-auth");
+			res.cookie('jwt', token, { httpOnly: true, path: '/'});
+			// res.redirect(!is2F ? "http://localhost:3000/auth/42" : "http://localhost:3000/auth/2fa-auth");
 		} catch (error) {
 			throw new BadRequestException('Error: ', error.message);
 		}
@@ -181,6 +181,6 @@ import {
 		const payload = { username: user.username, uid: user.id };
 		const token = this.jwtService.sign(payload);
 		res.cookie('jwt', token, { httpOnly: false, path: '/'});
-		res.status(200).send({ message: 'Username Update Done' });
+		res.status(200).send({ message: 'Username Updated' });
 	}
 }

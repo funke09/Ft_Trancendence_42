@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import api from '@/api';
 import { AxiosError } from 'axios';
 import SocketComp from '@/api/sockets';
+import { ChakraProvider } from '@chakra-ui/react'
 
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -20,10 +21,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 	
   return (
 	<Provider store={store}>
-		<SocketComp/>
-		<main>
-    		<Component {...pageProps} />
-		</main>
+		<ChakraProvider>
+			<SocketComp/>
+			<main>
+				<Component {...pageProps} />
+			</main>
+		</ChakraProvider>
 	</Provider>
   );
 }

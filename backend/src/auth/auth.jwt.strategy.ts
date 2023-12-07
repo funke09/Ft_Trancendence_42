@@ -20,6 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (payload.is2f) {
       return false;
     }
-    return this.AuthService.getUserById(payload.uid);
+    // return this.AuthService.getUserById(payload.uid);
+	return { username: payload.username}
   }
 }

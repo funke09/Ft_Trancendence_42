@@ -9,7 +9,7 @@ export type { auth };
 export function FtAuth({ auth } : { auth: auth}) {
 	return (
 		<button
-		className="bg-black"
+		className="text-white text-lg rounded-full bg-bubble-gum"
 		onClick={() => {
 			auth.intra();
 		}}
