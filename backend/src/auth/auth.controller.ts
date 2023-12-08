@@ -1,97 +1,36 @@
-import { Body, Controller, Get, HttpCode, Post, Req, Res, SetMetadata, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, UsePipes, Req, Res, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { Request, Response } from 'express';
-import { signinDTO, signupDTO } from './auth.dto';
-import { FTAuthGuard } from './auth.42.guard';
+import { TradeDto } from './dto/auth.dto';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FToAuthGuard } from './guard/ft.guard';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private config: ConfigService,
-    private jwtService: JwtService,
-    private prisma: PrismaService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(FTAuthGuard)
-  @SetMetadata('isPublic', true)
   @Get('42')
-  auth42() {}
-
-  @UseGuards(FTAuthGuard)
-  @SetMetadata('isPublic', true)
-  @Get('42-redirect')
-  async auth42Redirect(@Req() req, @Res({ passthrough: true }) res) {
-    if (req.user.isAuth) {
-      const { accessToken } = await this.authService.signToken(
-        req.user.id,
-        req.user.username,
-      );
-      res.cookie('JWT_TOKEN', accessToken);
-      res.redirect("http://localhost:3000/dashboard");
-    } else {
-      const userToken = await this.jwtService.signAsync({
-        sub: -42,
-        email: req.user.email,
-      });
-      res.cookie('USER', userToken);
-      res.redirect('http://localhost:3000/auth/signup');
-    }
+  @ApiOperation({ summary: 'ftAuth', description: 'Endpoint to redirect to 42 intar oAuth'})
+  @ApiBearerAuth()
+  @UseGuards(FToAuthGuard)
+  ftAuth(@Req() req){
+	return;
   }
 
-  @SetMetadata('isPublic', true)
-  @Get('preAuthData')
-  async getPreAuthData(@Req() req: Request) {
-    try {
-      // Extract JWT token from the request
-      const token = req.cookies['JWT_TOKEN'];
-      if (!token) {
-        throw new UnauthorizedException('Invalid Request');
-      }
-
-      // Verify the JWT token and fetch user data
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.config.get('JWT_SECRET'),
-      });
-      const { email, username, avatar } = await this.authService.findUser(payload.email);
-      const user = {
-        email,
-        username,
-        avatar,
-      };
-      return { user };
-    } catch {
-      throw new UnauthorizedException();
-    }
+  @Get('42/redirect')
+  @ApiBearerAuth()
+  @UseGuards(FToAuthGuard)
+  @ApiOperation({ summary: 'ftAuthCallback', description: 'Endpoint 42oauth service redirect endpoint, returns otp in query to use with 42/trade enpoint'})
+  async ftAuthCallback(@Req() req, @Res() res) {
+	const code = await this.authService.oAuthLogin(req.user);
+	res.redirect(code);
   }
 
-  @SetMetadata('isPublic', true)
-  @Post('finish_signup')
-  async finish_signup(@Body() dto: signupDTO, @Res({ passthrough: true }) res: Response) {
-	const token = await this.authService.finish_signup(dto);
-	res.cookie('JWT_TOKEN', token.accessToken, { httpOnly: true, sameSite: 'none', secure: true });
-	return { msg: 'Success' };
-  }
-  
-
-  @HttpCode(200)
-  @SetMetadata('isPublic', true)
-  @Post('signin')
-  async signin(
-    @Body() dto: signinDTO,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const token = await this.authService.signin(dto);
-    res.cookie('JWT_TOKEN', token.accessToken);
-    return { token: token };
-  }
-
-  @Get('signout')
-  logout(@Res({ passthrough: true }) res: Response) {
-    res.cookie('JWT_TOKEN', '', { expires: new Date() });
-    return { msg: 'Success' };
+  @Post('42/trade')
+  @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Trade 42 oAuth_code and 2FA', description: 'Trade the 42 OAuth code and 2fa code if necessary for a JWT access token'})
+  @ApiBody({ type: TradeDto })
+  async ftAuthTrade(@Body() body: TradeDto) {
+	return await this.authService.oAuthTrade(body.oAuth_code, body.otp_code);
   }
 }

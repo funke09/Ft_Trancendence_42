@@ -5,28 +5,14 @@ export interface UserType {
 	email: string;
 	name: string;
 	username: string;
+	password: string;
 	avatar: string;
-	oAuthId: null | string;
-	is2FA: boolean;
-	twoFaSecret: null | string;
-	userStatus: string;
-	blockedIds: number[];
+	oAuth_code: string;
+	oAuth_exp: string;
+	userStatus: any[];
 	createdAt: string;
-	updatedAt: string;
-	confirmed: boolean;
-	socketId: null | string;
-	isBanned: boolean;
-	UserStats: {
-		id: number;
-		wins: number;
-		losses: number;
-		rank: string;
-		createdAt: string;
-		updatedAt: string;
-		userId: number;
-	};
-	Matches: any[];
-	friends: any[];
+	UserStats: any[];
+	Games: any[];
 }
 
 const initialStateProfile: { user: UserType } = {
@@ -35,28 +21,14 @@ const initialStateProfile: { user: UserType } = {
 		email: "",
 		name: "",
 		username: "",
+		password: "",
 		avatar: "",
-		oAuthId: null,
-		is2FA: false,
-		twoFaSecret: "",
-		userStatus: "offline",
-		blockedIds: [],
+		oAuth_code: "",
+		oAuth_exp: "",
+		userStatus: [],
 		createdAt: "",
-		updatedAt: "",
-		confirmed: false,
-		socketId: null,
-		isBanned: false,
-		UserStats: {
-			id: 0,
-			wins: 0,
-			losses: 0,
-			rank: "iron",
-			createdAt: "",
-			updatedAt: "",
-			userId: 0,
-		},
-		Matches: [],
-		friends: [],
+		UserStats: [],
+		Games: [],
 	},
 }
 
@@ -69,9 +41,6 @@ const profileSlice = createSlice({
 		},
 		updateAvatar: (state, action) => {
 			state.user.avatar = action.payload.avatar;
-		},
-		set2FA: (state, action) => {
-			state.user.is2FA = action.payload;
 		},
 	},
 });

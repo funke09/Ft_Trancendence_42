@@ -1,6 +1,17 @@
 import { GameState, oppType } from "@/components/Game/types.d";
 import { createSlice } from "@reduxjs/toolkit";
 
+export type Game = {
+	id: number,
+	player1Id: number,
+	player1Score: number,
+	player2Id: number,
+	player2Score: number,
+	winner: number,
+	gameType: string,
+	status?: string,
+}
+
 const initialStateProfile = {
 	gameState: {
 		ball: {
