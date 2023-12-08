@@ -18,7 +18,9 @@ const NavBarNotLogged = () => {
 		<Link href="/features" className="nav-button hover:bg-primary1 p-2 rounded-xl shadow-sm min-[0px]:hidden md:flex">
 		  FEATURES
 		</Link>
-		<button onClick={() => router.push('/login')} className="pink-button">PLAY NOW!</button>
+		<Link href={"/auth/login"}>
+			<button className="pink-button">PLAY NOW!</button>
+		</Link>
 	  </div>
 	);
   };
@@ -52,7 +54,7 @@ const NavBarNotLogged = () => {
   
   const Navbar: React.FC = () => {
 
-	const isAuth: boolean = true;
+	const isAuth: boolean = false;
 	
 	return (
 	  <div className="flex shadow-xl bg-[#3B2A3DBF] opacity-75 justify-between p-6 m-auto mt-6 mb-6 rounded-[15px] max-w-[1500px]">

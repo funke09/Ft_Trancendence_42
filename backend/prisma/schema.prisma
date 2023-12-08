@@ -11,9 +11,11 @@ model User {
   id          Int     @default(autoincrement()) @id
   email       String? @unique
   username    String  @unique
-  name        String
+  name        String?
   avatar      String?
   oAuthId	  String? @unique
+  hash		  String
+  isAuth	  Boolean
   is2FA		  Boolean @default(false)
   twoFaSecret String? @unique
   userStatus  String  @default("Offline") // online | in-game | away ...

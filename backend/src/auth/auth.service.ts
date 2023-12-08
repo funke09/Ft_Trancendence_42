@@ -1,186 +1,101 @@
-import {
-	Injectable,
-	HttpException,
-	BadRequestException
-  } from '@nestjs/common';
-  import { PrismaService } from '../prisma/prisma.service';
-  import { User, Prisma } from '@prisma/client';
-  import { Response } from 'express';
-  import { JwtService } from '@nestjs/jwt';
-  
-  @Injectable()
-  export class AuthService {
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'src/prisma/prisma.service';
+import * as argon from 'argon2'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { authDTO, signinDTO, signupDTO } from './auth.dto';
+
+@Injectable()
+export class AuthService {
 	constructor(
-	  private prisma: PrismaService,
-	  private jwtService: JwtService,
+		private prisma: PrismaService,
+		private jwtService: JwtService,
+		private config: ConfigService,
 	) {}
 
-	async createUser(data: Prisma.UserCreateInput): Promise<User>
-	{
-		return this.prisma.user.create({
-			data: {
-				email: data.email,
-				name: data.name,
-				username: data.username,
-				UserStats: {
-					create: {
-						wins: 0,
-						losses: 0,
-						rank: 'Iron',
-					},
-				},
-				avatar: data.avatar,
-			},
-		});
-	}
-
-	async searchByUsername(username: string): Promise<any>
-	{
-		return this.prisma.user.findUnique({
-			where: { username: username },
-			select: {
-				email: true,
-				name: true,
-				username: true,
-				avatar: true,
-				userStatus: true,
-				confirmed: true,
-				is2FA : true,
-				id: true,
-			},
-		});
-	}
-
-	async getUserById(id: number)
-	{
-		return await this.prisma.user.findUnique({
-			where: { id:id },
-			select: {
-				email: true,
-				name: true,
-				username: true,
-				avatar: true,
-				userStatus: true,
-				confirmed: true,
-				is2FA : true,
-				id: true,
-			},
-		});
-	}
-
-	async searchById(userId: number, lookId: number): Promise<any>
-	{
-		const currUser = await this.prisma.user.findUnique({
-			where: { id: userId },
-		});
-		if (!currUser)
-			throw new HttpException('User not found', 404);
-
-		const lookUser = await this.prisma.user.findUnique({
-			where: { id: lookId },
-		});
-		if (!lookUser)
-			throw new HttpException('User not found', 404);
-
-		if (currUser.id === lookUser.id)
-		{
-			return this.prisma.user.findUnique({
-				where: { id: userId },
-				select: {
-					email: true,
-					name: true,
-					username: true,
-					avatar: true,
-					userStatus: true,
-					confirmed: true,
-					is2FA : true,
-					id: true,
-					friends: true,
+	async signup(dto: authDTO) {
+		const hash = await argon.hash(dto.password);
+		try {
+			await this.prisma.user.create({
+				data: {
+					email: dto.email,
+					username: dto.username,
+					hash: hash,
+					isAuth: false,
 				},
 			});
-		}
-		return this.prisma.user.findUnique({
-			where: { id: lookId },
-			select: {
-				email: true,
-				name: true,
-				username: true,
-				avatar: true,
-				userStatus: true,
-				id: true,
-				friends: {
-					where: {
-						friendId: userId,
-						userId: lookId,
-					},
-					select: {
-						friendId: true,
-						friendshipStatus: true,
-					},
-				},
-			},
-		});
-	}
-
-	async searchByEmail(email: string): Promise<any>
-	{
-		return this.prisma.user.findUnique({
-			where: { email: email },
-			select: {
-				email: true,
-				name: true,
-				username: true,
-				avatar: true,
-				userStatus: true,
-				confirmed: true,
-				is2FA : true,
-				id: true,
-			},
-		});
-	}
-
-	async searchOrCreate(profile: any): Promise<any>
-	{
-		let user = await this.searchByEmail(profile.emails[0].value);
-
-		if (!user)
-		{
-			user = await this.createUser({
-				email: profile.emails[0].value,
-				name: profile.displayName,
-				username: profile.username,
-				oAuthId: '',
-				avatar: profile._jason.image.link,
-			});
-		}
-		return user;
-	}
-
-	async login(user: any, res: Response)
-	{
-		try
-		{
-			const is2F = user.is2FA;
-			const payload = { username: user.username, uid: user.id, is2F: is2F};
-			const token = this.jwtService.sign(payload);
-			res.cookie('jwt', token, { httpOnly: true, path: '/'});
-			// res.redirect(!is2F ? "http://localhost:3000/auth/42" : "http://localhost:3000/auth/2fa-auth");
 		} catch (error) {
-			throw new BadRequestException('Error: ', error.message);
+			if (error instanceof PrismaClientKnownRequestError) {
+				if (error.code === 'P2002') {
+					throw new ForbiddenException(
+						'An Account with the same email or username already exist',
+					);
+				}
+			}
 		}
 	}
 
-	async logout(res: Response)
-	{
-		res.clearCookie('jwt');
-		res.redirect("http://localhost:3000/logout");
+	async signin(dto: signinDTO): Promise<{ accessToken: string }> {
+		const user = await await this.prisma.user.findFirst({
+			where: {
+				username: dto.username,
+			},
+		});
+		if (!user) throw new ForbiddenException('Username or Password incorrect');
+		if (!user.isAuth)
+			throw new ForbiddenException('Unauthenticated User');
+		const pwMatch = await argon.verify(user.hash, dto.password);
+		if (!pwMatch)
+			throw new ForbiddenException('Username or Password incorrect');
+		return this.signToken(user.id, user.username);
 	}
 
-	async updateProfile(user: any, res: Response): Promise<any>
-	{
-		const payload = { username: user.username, uid: user.id };
-		const token = this.jwtService.sign(payload);
-		res.cookie('jwt', token, { httpOnly: false, path: '/'});
-		res.status(200).send({ message: 'Username Updated' });
+	async finish_signup(dto: signupDTO, userToekn: string) {
+		if (!userToekn) throw new UnauthorizedException('Invalid Request');
+		try {
+			await this.jwtService.verifyAsync(userToekn, {
+				secret: this.config.get('JWT_SECRET'),
+			});
+		} catch {
+			throw new UnauthorizedException();
+		}
+		let user = await this.findUser(dto.email);
+		if (!user)
+			throw new ForbiddenException('You need to SignUp first');
+		if (user.isAuth)
+			throw new ForbiddenException('User Already Authenticated');
+		const hash = await argon.hash(dto.password);
+		await this.prisma.user.updateMany({
+			where: {
+				email: dto.email,
+			},
+			data: {
+				username: dto.username,
+				hash: hash,
+				isAuth: true,
+			},
+		});
+		user = await this.findUser(dto.email);
+		return this.signToken(user.id, user.username);
+	}
+
+	async signToken(
+		userID: number,
+		username: string,
+	): Promise<{ accessToken: string}> {
+		const payload = { sub: userID, username };
+		return {
+			accessToken: await this.jwtService.signAsync(payload),
+		};
+	}
+
+	async findUser(email: string) {
+		const user = await this.prisma.user.findFirst({
+			where: {
+				email: email,
+			},
+		});
+		return user;
 	}
 }

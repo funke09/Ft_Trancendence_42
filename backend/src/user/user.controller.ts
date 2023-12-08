@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards, Res, BadRequestException, Req, Param, NotFoundException } from '@nestjs/common';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from 'src/auth/auth.jwt.guard';
+import { AuthGuard } from 'src/auth/auth.jwt.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
 
@@ -11,21 +11,21 @@ export class UserController {
 	private readonly authService: AuthService,) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard)
   async getAllUsers(@Res() res: Response) {
 	res.redirect('/user/profile');
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard)
   @Get('id/:uid')
-  async getUserById(@Req() request: any, @Param('uid') uid: number) {
-	const user = await this.authService.searchById(request.user.id, +uid);
+  async getUserById(@Req() request: any) {
+	const user = await this.authService.findUser(request.user.email);
 	if (!user)
 		throw new NotFoundException('User not Found');
 	return user;
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard)
   @Get('profile')
   async getProfile(@Req() request: any) {
 	if (!request.user.id){

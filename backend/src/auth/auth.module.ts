@@ -1,29 +1,33 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { FTStrategy } from './auth.42.strategy';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { JwtStrategy } from './auth.jwt.strategy';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { APP_GUARD } from '@nestjs/core';
+import { FTStartegy } from './42.strategy';
+import { FTAuthGuard } from './auth.42.guard';
+import { AuthGuard } from './auth.jwt.guard';
 
 @Module({
-  imports: [
-    JwtModule.register({
-      global: true,
-      secret: new ConfigService().get('JWT_SECRET'),
-      signOptions: { expiresIn: '7d' },
-    }),
-    PassportModule.register({ defaultStrategy: '42' }),
-  ],
-  controllers: [AuthController],
-  providers: [
-    AuthService,
-    FTStrategy,
-	PrismaService,
-	JwtStrategy,
-  ],
-  exports: [AuthService],
+	imports: [
+		JwtModule.register({
+			global: true,
+			secret: new ConfigService().get('JWT_SECRET'),
+			signOptions: { expiresIn: '7d' },
+		}),
+		PassportModule.register({ session: false }),
+	],
+	controllers: [AuthController],
+	providers: [
+		AuthService,
+		{
+			provide: APP_GUARD,
+			useClass: AuthGuard,
+		},
+		FTAuthGuard,
+		FTStartegy,
+	],
 })
+
 export class AuthModule {}
