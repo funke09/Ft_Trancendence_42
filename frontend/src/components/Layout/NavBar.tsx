@@ -18,7 +18,7 @@ const NavBarNotLogged = () => {
 		<Link href="/features" className="nav-button hover:bg-primary1 p-2 rounded-xl shadow-sm min-[0px]:hidden md:flex">
 		  FEATURES
 		</Link>
-		<Link href={"/auth/login"}>
+		<Link href={"/login"}>
 			<button className="pink-button">PLAY NOW!</button>
 		</Link>
 	  </div>

@@ -19,7 +19,9 @@ export class FTStartegy extends PassportStrategy(Strategy, '42') {
 	}
 
 	async validate(accessToken: string, refreshToken: string, profile: Profile) {
+		console.log('Received profile:', profile);
 		let user = await this.authService.findUser(profile.email[0].value);
+		console.log('User from database:', user);
 		if (!user) {
 			await this.authService.signup({
 				email: profile.email[0].value,

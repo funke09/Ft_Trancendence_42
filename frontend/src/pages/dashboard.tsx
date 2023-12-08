@@ -1,4 +1,5 @@
 import Navbar from '@/components/Layout/NavBar'
+import store from '@/redux/store'
 import React from 'react'
 
 function Dashboard() {

@@ -2,7 +2,7 @@ import Image from "next/image";
 import router from "next/router";
 import React from "react";
 
-const Navbar: React.FC = () => {
+const Header: React.FC = () => {
 
 	const isAuth: boolean = true;
 	return (
@@ -37,4 +37,4 @@ const Navbar: React.FC = () => {
 	);
   };
 
-export default Navbar;
+export default Header;
