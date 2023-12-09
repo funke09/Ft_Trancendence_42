@@ -1,9 +1,34 @@
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { getTokenRequest } from "@/utils/auth";
+import { setCookie } from "@/utils/cookie";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 import React from 'react'
 
+
 function SignUpForm() {
+	const router = useRouter();
+
+	useEffect(() => {
+		async function loader() {
+		  let oauth_code = router.query.oauth_code as string;
+	
+		  if (oauth_code) {
+			const res = await getTokenRequest(oauth_code);
+	
+			if (res && res.data) {
+			  setCookie('access_token', res.data.access_token);
+			  router.push('/');
+			}
+		  } else {
+			setCookie('access_token', '');
+		  }
+		}
+	
+		loader();
+	  }, []);
+	  
 	return (
 		<div className="container mx-auto">
 			<div className="-mx-4 flex flex-wrap">

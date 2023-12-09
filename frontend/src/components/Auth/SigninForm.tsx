@@ -1,41 +1,61 @@
+import { signinRequest } from "@/utils/auth";
+import { setCookie } from "@/utils/cookie";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-
-async function login(
-  username: string,
-  password: string,
-  router: AppRouterInstance
-) {
-  const response = await fetch("http://localhost:5000/auth/signin", {
-    credentials: "include",
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify({
-      username,
-      password,
-    }),
-  });
-  if (response.ok) {
-    const res = await response.json();
-    router.push("/dashboard");
-  } else {
-    alert("Failed To Signin");
-  }
-}
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export default function SigninForm() {
-	let username: string, passwd: string;
-
-	const router = useRouter();
-
-	function handleClick(e: any) {
-	  e.preventDefault();
-	  login(username, passwd, router);
-	}
+	// const [username, setUsername] = useState('');
+	// const [password, setPassword] = useState('');
+	// const [error, setError] = useState('');
+	// const router = useRouter();
+  
+	// useEffect(() => {
+	//   async function loader() {
+	// 	let validLogin = false;
+	// 	let oauthCode = router.query.oauth_code as string;
+  
+	// 	if (oauthCode) {
+	// 	  const res = await signinRequest(oauthCode, '');
+	// 	  if (res && res.data) {
+	// 		setCookie('access_token', res.data.access_token);
+	// 		validLogin = true;
+	// 	  }
+	// 	} else {
+	// 	  setCookie('access_token', '');
+	// 	}
+  
+	// 	if (validLogin) {
+	// 	  router.push('/');
+	// 	}
+	//   }
+  
+	//   loader();
+	// }, [router]);
+  
+	// const handleResponse = (data) => {
+	//   if (data && data.access_token) {
+	// 	setCookie('access_token', data.access_token);
+	// 	router.push('/');
+	//   } else {
+	// 	setError('Username or password incorrect');
+	//   }
+	// };
+  
+	// const handleSubmit = async () => {
+	//   if (!username.trim() || !password.trim()) {
+	// 	setError('Username or password empty');
+	// 	return;
+	//   }
+  
+	//   const { error, errMessage, res } = await signinRequest(username.trim(), password.trim());
+	//   if (!error) {
+	// 	handleResponse(res.data);
+	//   } else {
+	// 	setError(errMessage);
+	//   }
+	// };
 
 		return (
 		<div className="container mx-auto">
@@ -44,14 +64,13 @@ export default function SigninForm() {
 					<div className="relative mx-auto max-w-[525px] overflow-hidden rounded-lg px-10 py-16 text-center dark:bg-dark-2 sm:px-12 md:px-[60px]">
 					<div className="mb-10 text-center md:mb-16">
 					</div>
-						<form onSubmit={handleClick}>
+						<form>
 							<div className="mb-6">
 								<input
 								type="text"
 								name="username"
 								placeholder="Username"
 								className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
-      							onChange={(e) => {e.target.value}}
 								></input>
 							</div>
 							<div className="mb-6">
@@ -60,7 +79,6 @@ export default function SigninForm() {
 								name="password"
 								placeholder="Password"
 								className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
-								onChange={(e) => {e.target.value}}
 								></input>
 							</div>
 							<div className="mb-10">
