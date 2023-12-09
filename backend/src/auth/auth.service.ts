@@ -21,6 +21,10 @@ export class AuthService {
 		private userGateway: UserGateway
 	) {}
 
+	async signin(username: string, password: string) {
+		const user = await this.prisma.user.findUnique
+	}
+
 	async oAuthLogin(profile: Profile) {
 		let index = 0;
 		let username = profile.username;

@@ -13,6 +13,18 @@ export class TradeDto {
 	otp_code: string;
 }
 
+export class SigninDto {
+	@ApiProperty({description: 'Name of the user is unique'})
+	@IsString()
+	@IsNotEmpty()
+	username: string;
+
+	@ApiProperty({description: 'Password of the user will be hashed'})
+	@IsString()
+	@IsNotEmpty()
+	password: string;
+}
+
 export class JwtPayloadDto {
 	id?: number;
 	username?: string;

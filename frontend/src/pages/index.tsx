@@ -1,17 +1,35 @@
-import Navbar from "@/components/Layout/NavBar";
 import Header from "@/components/Layout/Header";
-import React from "react";
+import Navbar from "@/components/Layout/NavBar";
+import { loader } from "@/utils/loader";
 
-
-function Home() {
+const Home: React.FC = () => {
   return (
-	<div>
-		<Navbar/>
-		<div>
-			<Header/>
-		</div>
-	</div>
+    <div>
+      <Navbar />
+      <div>
+        <Header />
+      </div>
+    </div>
   );
+};
+
+export default Home;
+
+export async function getServerSideProps() {
+  try {
+    const data = await loader();
+
+    return {
+      props: {
+        user: data|| null,
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
 }
-  export default Home;
-  

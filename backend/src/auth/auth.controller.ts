@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, UseGuards, UsePipes, Req, Res, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, UsePipes, Req, Res, ValidationPipe, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { TradeDto } from './dto/auth.dto';
+import { SigninDto, TradeDto } from './dto/auth.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FToAuthGuard } from './guard/ft.guard';
 
@@ -8,6 +8,16 @@ import { FToAuthGuard } from './guard/ft.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @HttpCode(HttpStatus.OK) 
+  @Post('signin')
+  @ApiOperation({ summary: 'Sign In', description: 'Signin Using existing user credentials.'})
+  @ApiBody({ type: SigninDto })
+  @UsePipes(new ValidationPipe())
+  async signin(@Body() body: SigninDto) {
+	let response = await this.authService.signin(body.username, body.password);
+	return { step: response.step, access_token: response.access_token };
+  }
 
   @Get('42')
   @ApiOperation({ summary: 'ftAuth', description: 'Endpoint to redirect to 42 intar oAuth'})
