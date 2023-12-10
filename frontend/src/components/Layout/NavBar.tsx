@@ -2,9 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import store from "@/redux/store";
-import router, { useRouter } from "next/router";
-import {Play} from '@/components/Layout/Play'
+import { useRouter } from "next/router";
+import { loader } from "@/utils/loader";
 
+export const getServerSideProps = async () => {
+	const data = await loader();
+  
+	return {
+	  props: {
+		user: data.user || null,
+		token: data.token || null,
+	  },
+	};
+  };
 
 const NavBarNotLogged = () => {
 	return (
@@ -38,7 +48,6 @@ const NavBarNotLogged = () => {
 		  <Link href="/leaderboard" className="nav-button hover:bg-primary1 p-2 rounded-xl shadow-sm min-[0px]:hidden md:flex">
 			LEADERBOARD
 		  </Link>
-		  {router.pathname != "/game/[gameID]" && <Play/>}
 		  <button>
 			<Image
 			  src={store.getState().profile.user.avatar} // Assuming the avatar URL is available in user.image
@@ -52,10 +61,9 @@ const NavBarNotLogged = () => {
 	  );
 };
   
-  const Navbar: React.FC = () => {
-
-	const isAuth: boolean = false;
-	
+const Navbar: React.FC<{ user: any; token: string | null }> = ({ user, token }) => {
+	const isAuth: boolean = !!user || !!token
+  
 	return (
 	  <div className="flex shadow-xl bg-[#3B2A3DBF] opacity-75 justify-between p-6 m-auto mt-6 mb-6 rounded-[15px] max-w-[1500px]">
 		<div className="items-center place-content-start inline-flex">

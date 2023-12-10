@@ -19,8 +19,7 @@ const Auth: React.FC = () => {
 		let validLogin = false;
 		const { query } = router;
 		let oauth_code = query.oauth_code as string;
-		console.log(`ZABIIIII = ${oauth_code}`);
-  
+		  
 		if (oauth_code) {
 			await getTokenRequest(oauth_code)
 			  .then((res) => {
