@@ -68,7 +68,7 @@ export default function SigninForm() {
 							<input
 								type="submit"
 								value="Login"
-								className="w-full cursor-pointer rounded-md border border-primary bg-primary px-5 py-3 text-base font-medium text-white hover:ease-in duration-300"
+								className="nav-button hover:bg-primary1 w-full cursor-pointer rounded-md border border-primary bg-primary px-5 py-3 text-base font-medium text-white hover:ease-in duration-300"
 							/>
 							</div>
 						</form>
@@ -81,7 +81,7 @@ export default function SigninForm() {
 							<li className="w-[75%] px-2">
 							<a
 								href="http://localhost:5000/auth/42"
-								className="flex h-11 items-center text-semibold text-white text-[18px] justify-center gap-4 rounded-full bg-[#1B1B1B] hover:bg-opacity-90"
+								className=" nav-button hover flex h-11 items-center text-semibold text-white text-[18px] justify-center gap-4 rounded-full bg-[#1B1B1B] hover:bg-opacity-90"
 							>
 								<img
 								src="images/42_Logo.png"

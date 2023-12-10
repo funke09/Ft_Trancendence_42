@@ -59,20 +59,20 @@ const Auth: React.FC = () => {
         <div className="flex w-full h-full flex-col bg-gradient-to-t from-[#f53fa056] to-[#382A39]">
           <div className="flex flex-row justify-around relative my-8">
             <button
-              className={`w-[150px] h-[50px] rounded-3xl ${
+              className={`nav-button w-[7rem] h-[3rem] rounded-3xl hover:bg-primary1  ${
                 activeTab === 'signup'
-                  ? 'bg-[#B1216E] bg-opacity-[69%] shadow-md font-semibold text-white text-[24px]'
-                  : 'bg-white bg-opacity-75 shadow-md font-semibold text-[#342938] text-[24px] transition-all'
+                  ? 'bg-[#B1216E] bg-opacity-[69%] shadow-md font-semibold text-white text-[1rem]'
+                  : 'bg-white bg-opacity-75 shadow-md font-semibold text-[#342938] text-[1rem] transition-all'
               } ease-in`}
               onClick={switchToSignUp}
             >
               SIGN UP
             </button>
             <button
-              className={`w-[150px] h-[50px] rounded-3xl ${
+              className={`nav-button w-[7rem] h-[3rem] rounded-3xl hover:bg-primary1 ${
                 activeTab === 'login'
-                  ? 'bg-[#B1216E] bg-opacity-[69%] shadow-md font-semibold text-white text-[24px]'
-                  : 'bg-white bg-opacity-75 shadow-md font-semibold text-[#342938] text-[24px] transition-all'
+                  ? 'bg-[#B1216E] bg-opacity-[69%] shadow-md font-semibold text-white text-[1rem]'
+                  : 'bg-white bg-opacity-75 shadow-md font-semibold text-[#342938] text-[1rem] transition-all'
               }`}
               onClick={switchToLogin}
             >

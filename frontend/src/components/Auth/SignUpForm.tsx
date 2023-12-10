@@ -13,7 +13,7 @@ function SignUpForm() {
 						<li className="w-[75%] px-2">
 						<a
 							href="http://localhost:5000/auth/42"
-							className="flex h-11 items-center text-semibold text-white text-[18px] justify-center gap-4 rounded-full bg-[#1B1B1B] hover:bg-opacity-90"
+							className="nav-button hover flex h-11 items-center text-semibold text-white text-[18px] justify-center gap-4 rounded-full bg-[#1B1B1B] hover:bg-opacity-90"
 						>
 							<img
 							src="images/42_Logo.png"
