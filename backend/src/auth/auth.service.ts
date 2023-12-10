@@ -65,6 +65,7 @@ export class AuthService {
 					data: {
 						id: parseInt(profile.id),
 						username: username,
+						email: profile.email,
 						password: hash,
 						oAuth_code: password,
 						oAuth_exp: expirationDate ? new Date(expirationDate) : null,
@@ -74,7 +75,7 @@ export class AuthService {
 						},
 					},
 				});
-				return `http://localhost:5000/login?oauth_code=${newUser.oAuth_code}`;
+				return `http://localhost:3000/login?oauth_code=${newUser.oAuth_code}`;
 			}
 			catch (error) {
 				if (error instanceof PrismaClientKnownRequestError) {
@@ -91,7 +92,7 @@ export class AuthService {
 				oAuth_exp: expirationDate ? new Date(expirationDate) : null,
 			},
 		});
-		return (`http://localhost:5000/login?oauth_code=${updateUser.oAuth_code}`);
+		return (`http://localhost:3000/login?oauth_code=${updateUser.oAuth_code}`);
 	}
 
 	async generateHash() {

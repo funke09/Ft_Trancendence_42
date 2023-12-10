@@ -26,7 +26,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			const authToken = token
 			if (!authToken)
 				throw new UnauthorizedException();
-			const decodedToken = await this.jwtService.decode(authToken) as { id: number };
+			const decodedToken = await this.jwtService.decode(authToken);
 			user = await this.userService.findOne(decodedToken.id);
 			if (!user)
 				throw new UnauthorizedException();

@@ -1,6 +1,6 @@
-import Header from "@/components/Layout/Header";
-import Navbar from "@/components/Layout/NavBar";
-import { loader } from "@/utils/loader";
+import Header from '@/components/Layout/Header';
+import Navbar from '@/components/Layout/NavBar';
+import { loader } from '@/utils/loader';
 
 const Home: React.FC = () => {
   return (
@@ -14,22 +14,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-
-export async function getServerSideProps() {
-  try {
-    const data = await loader();
-
-    return {
-      props: {
-        user: data|| null,
-      },
-    };
-  } catch (error) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
-}

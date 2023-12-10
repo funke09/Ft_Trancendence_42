@@ -13,14 +13,14 @@ import { User } from '@prisma/client';
 export const storage = {
 	storage: diskStorage({
 		destination: './uploads/',
-		// filename: (req, file, cb) => {
-		// 	const userJSON = JSON.stringify(req.user);
-		// 	const userOBJ = JSON.parse(userJSON);
+		filename: (req, file, cb) => {
+			// const userJSON = JSON.stringify(req.user);
+			// const userOBJ = JSON.parse(userJSON);
 
-		// 	const filename: string = userOBJ.id;
-		// 	const extension: string = path.parse(file.originalname).ext;
-		// 	cb(null, `${filename}${extension}`)
-		// },
+			// const filename: string = userOBJ.id;
+			// const extension: string = path.parse(file.originalname).ext;
+			// cb(null, `${filename}${extension}`)
+		},
 	}),
 	fileFilter: (req, file, cb) => {
 		const allowedExt = ['.jpg', '.png', '.jpeg'];

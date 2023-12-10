@@ -27,6 +27,7 @@ function reducer(user: User, action: any) {
 
 export const CurrentUserContext: React.Context<any> = createContext(0);
 
+
 export function CurrentUserProvider({ children, ...props}: any) {
 	const [user, userDispatch]: any = useReducer(reducer, props.user);
 	const [socket, setSocket]: any = useState();

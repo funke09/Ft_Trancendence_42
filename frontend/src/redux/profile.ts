@@ -9,7 +9,7 @@ export interface UserType {
 	avatar: string;
 	oAuth_code: string;
 	oAuth_exp: string;
-	userStatus: any[];
+	userStatus: string;
 	createdAt: string;
 	UserStats: any[];
 	Games: any[];
@@ -25,7 +25,7 @@ const initialStateProfile: { user: UserType } = {
 		avatar: "",
 		oAuth_code: "",
 		oAuth_exp: "",
-		userStatus: [],
+		userStatus: "",
 		createdAt: "",
 		UserStats: [],
 		Games: [],
