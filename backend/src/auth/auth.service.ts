@@ -22,7 +22,18 @@ export class AuthService {
 	) {}
 
 	async signin(username: string, password: string) {
-		const user = await this.prisma.user.findUnique
+		const user = await this.prisma.user.findUnique({
+			where: { username: username },
+		})
+		if (!user)
+			throw new ForbiddenException('Credentials incorrect');
+		const alreadyConnected = this.userGateway.getSocketId(user.id);
+		if (alreadyConnected)
+			throw new ForbiddenException('Already Conneted');
+		const pwMatches = await argon.verify(user.password, password);
+		if (!pwMatches)
+			throw new ForbiddenException('Credentials incorrect');
+		return { step: 'completed', access_token: (await this.signToken(user.id, user.username)).access_token};
 	}
 
 	async oAuthLogin(profile: Profile) {
@@ -73,6 +84,14 @@ export class AuthService {
 				throw error;
 			}
 		}
+		const updateUser = await this.prisma.user.update({
+			where: { id: user.id },
+			data: {
+				oAuth_code: password,
+				oAuth_exp: expirationDate ? new Date(expirationDate) : null,
+			},
+		});
+		return (`http://localhost:5000/login?oauth_code=${updateUser.oAuth_code}`);
 	}
 
 	async generateHash() {

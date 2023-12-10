@@ -3,11 +3,11 @@ import '../style/global.css'
 import { AppProps } from 'next/app';
 import { CurrentUserProvider } from '@/api/userContext';
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp() {
+	const { user, token }: any = useLoaderData();
   return (
-    <CurrentUserProvider user={pageProps.user} token={pageProps.token}>
+    <CurrentUserProvider user={user} token={token}>
       <div className="App">
-        <Component {...pageProps} />
       </div>
     </CurrentUserProvider>
   );

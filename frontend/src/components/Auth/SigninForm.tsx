@@ -1,4 +1,4 @@
-import { signinRequest } from "@/utils/auth";
+import { getTokenRequest, signinRequest } from "@/utils/auth";
 import { setCookie } from "@/utils/cookie";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useSearchParams } from "next/navigation";
@@ -6,57 +6,57 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function SigninForm() {
-	// const [username, setUsername] = useState('');
-	// const [password, setPassword] = useState('');
-	// const [error, setError] = useState('');
-	// const router = useRouter();
-  
-	// useEffect(() => {
-	//   async function loader() {
-	// 	let validLogin = false;
-	// 	let oauthCode = router.query.oauth_code as string;
-  
-	// 	if (oauthCode) {
-	// 	  const res = await signinRequest(oauthCode, '');
-	// 	  if (res && res.data) {
-	// 		setCookie('access_token', res.data.access_token);
-	// 		validLogin = true;
-	// 	  }
-	// 	} else {
-	// 	  setCookie('access_token', '');
-	// 	}
-  
-	// 	if (validLogin) {
-	// 	  router.push('/');
-	// 	}
-	//   }
-  
-	//   loader();
-	// }, [router]);
-  
-	// const handleResponse = (data) => {
-	//   if (data && data.access_token) {
-	// 	setCookie('access_token', data.access_token);
-	// 	router.push('/');
-	//   } else {
-	// 	setError('Username or password incorrect');
-	//   }
-	// };
-  
-	// const handleSubmit = async () => {
-	//   if (!username.trim() || !password.trim()) {
-	// 	setError('Username or password empty');
-	// 	return;
-	//   }
-  
-	//   const { error, errMessage, res } = await signinRequest(username.trim(), password.trim());
-	//   if (!error) {
-	// 	handleResponse(res.data);
-	//   } else {
-	// 	setError(errMessage);
-	//   }
-	// };
+	const [username, setUsername] = useState('');
+	const [password, setPassword] = useState('');
+	const [error, setError] = useState('');
 
+	const router = useRouter();
+
+	useEffect(() => {
+		async function loader() {
+		  let oauth_code = router.query.oauth_code as string;
+	
+		  if (oauth_code) {
+			const res = await getTokenRequest(oauth_code);
+	
+			if (res && res.data) {
+			  setCookie('access_token', res.data.access_token);
+			  router.push('/');
+			}
+		  } else {
+			setCookie('access_token', '');
+		  }
+		}
+	
+		loader();
+	}, []);
+
+	async function handleResponse(data: any) {
+		if (data) {
+			if (data.access_token) {
+				setCookie("access_token", data.access_token);
+				router.push("/");
+			}
+		}
+	}
+
+	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+		e.preventDefault(); // Prevent the default form submission behavior
+	
+		if (!username || !username.trim() || !password || !password.trim()) {
+		  return setError("Username or Password empty");
+		}
+	
+		await signinRequest(username.trim(), password.trim())
+		  .then(({ error, errMsg, res }: any) => {
+			if (!error) {
+			  handleResponse(res.data);
+			} else {
+			  setError(errMsg);
+			}
+		  });
+	  }
+  
 		return (
 		<div className="container mx-auto">
 				<div className="-mx-4 flex flex-wrap">
@@ -64,12 +64,14 @@ export default function SigninForm() {
 					<div className="relative mx-auto max-w-[525px] overflow-hidden rounded-lg px-10 py-16 text-center dark:bg-dark-2 sm:px-12 md:px-[60px]">
 					<div className="mb-10 text-center md:mb-16">
 					</div>
-						<form>
+						<form onSubmit={handleSubmit}>
 							<div className="mb-6">
 								<input
 								type="text"
 								name="username"
 								placeholder="Username"
+								value={username}
+								onChange={(e) => setUsername(e.target.value)}
 								className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
 								></input>
 							</div>
@@ -78,6 +80,8 @@ export default function SigninForm() {
 								type="password"
 								name="password"
 								placeholder="Password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
 								className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
 								></input>
 							</div>

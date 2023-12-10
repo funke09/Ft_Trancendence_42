@@ -9,24 +9,30 @@ import React from 'react'
 function SignUpForm() {
 	const router = useRouter();
 
-	useEffect(() => {
-		async function loader() {
-		  let oauth_code = router.query.oauth_code as string;
-	
-		  if (oauth_code) {
-			const res = await getTokenRequest(oauth_code);
-	
-			if (res && res.data) {
-			  setCookie('access_token', res.data.access_token);
-			  router.push('/');
-			}
-		  } else {
-			setCookie('access_token', '');
-		  }
+	async function loader() {
+		let ValidLogin = false;
+		let oauth_code = router.query.oauth_code as string;
+		
+		console.log("oAuth_code => ", oauth_code);
+
+		if (oauth_code) {
+		await getTokenRequest(oauth_code)
+			.then( res => {
+				if (res && res.data) {
+					setCookie("access_token", res.data.access_token);
+					ValidLogin = true;
+				}
+			})
 		}
-	
+		else
+			setCookie("access_token", "")
+		if (ValidLogin) {
+			return (router.push('/'));
+		}
+	}
+	useEffect(() => {
 		loader();
-	  }, []);
+	}, [])
 	  
 	return (
 		<div className="container mx-auto">

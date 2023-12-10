@@ -19,9 +19,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		let user: User;
 		let token = client.handshake.headers.cookie;
 		if (token)
-		{
 			token = token.split('=')[1];
-		}
 
 		try
 		{
