@@ -31,6 +31,6 @@ export class AuthController {
 		if (!req.user.id) {
 			throw new BadRequestException(req.user.id);
 		}
-		return this.authService.findUser(req.user.id);
+		return this.authService.getUserDataById(req.user.id);
 	}
 }

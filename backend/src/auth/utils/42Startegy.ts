@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport"
 import { Strategy, Profile } from 'passport-42';
 import { AuthService } from "../auth.service";
@@ -18,22 +18,10 @@ export class FTStrategy extends PassportStrategy(Strategy) {
 		});
 	}
 
-	async validate(accessToken: string, refreshToken: string, profile: Profile) {
-		console.log(accessToken);
-		console.log(refreshToken);
-		console.log(profile);
-		let user = await this.authService.findUserByEmail(profile.emails[0].value);
-		if (!user) {
-			await this.authService.signUser({
-				email: profile.emails[0].value,
-				username: profile.username,
-				password: 'tmpPass',
-				avatar: profile._json.image.link,
-			});
-			user = await this.authService.findUserByEmail(profile.emails[0].value)
-		}
-		console.log('Validate');
-		console.log(user);
-		return user || null;
+	async validate(accessToken: string, refreshToken: string, profile: Profile, cb: Function) {
+		const user = await this.authService.signUser(profile);
+		if (!user)
+			throw new BadRequestException();
+		cb(null, user);
 	}
 }

@@ -11,6 +11,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         api.get("/auth/status")
             .then((res: any) => {
                 if (res.status == 200) {
+					console.log(res.data);
                     store.dispatch(setProfile(res.data));
                 }
             })
