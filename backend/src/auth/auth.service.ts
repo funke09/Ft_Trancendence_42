@@ -65,7 +65,7 @@ export class AuthService {
 					data: {
 						id: parseInt(profile.id),
 						username: username,
-						email: profile.email,
+						email: profile.emails[0].value,
 						password: hash,
 						oAuth_code: password,
 						oAuth_exp: expirationDate ? new Date(expirationDate) : null,

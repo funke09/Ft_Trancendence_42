@@ -1,5 +1,6 @@
 import { signinRequest } from "@/utils/auth";
 import { setCookie } from "@/utils/cookie";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -79,8 +80,7 @@ export default function SigninForm() {
 						</div>
 						<ul className="-mx-2 mb-12 flex justify-center">
 							<li className="w-[75%] px-2">
-							<a
-								href="http://localhost:5000/auth/42"
+							<Link href="http://localhost:5000/auth/42"
 								className=" nav-button hover flex h-11 items-center text-semibold text-white text-[18px] justify-center gap-4 rounded-full bg-[#1B1B1B] hover:bg-opacity-90"
 							>
 								<img
@@ -88,7 +88,7 @@ export default function SigninForm() {
 								alt="42"
 								className="inline-block max-w-[50px] max-h-[30px] shadow-md">
 								</img>
-								Login with Intra</a>
+								Login with Intra</Link>
 							</li>
 						</ul>
 

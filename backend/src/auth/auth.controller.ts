@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, UsePipes, Req, Res, ValidationPipe, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, UsePipes, Req, Res, ValidationPipe, HttpCode, HttpStatus, SetMetadata } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SigninDto, TradeDto } from './dto/auth.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -10,6 +10,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @HttpCode(HttpStatus.OK) 
+  @SetMetadata('isPublic', true)
   @Post('signin')
   @ApiOperation({ summary: 'Sign In', description: 'Signin Using existing user credentials.'})
   @ApiBody({ type: SigninDto })

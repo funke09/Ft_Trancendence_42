@@ -61,8 +61,8 @@ const NavBarNotLogged = () => {
 	  );
 };
   
-const Navbar: React.FC<{ user: any; token: string | null }> = ({ user, token }) => {
-	const isAuth: boolean = !!user || !!token
+const Navbar: React.FC = () => {
+	const isAuth: boolean = true;
   
 	return (
 	  <div className="flex shadow-xl bg-[#3B2A3DBF] opacity-75 justify-between p-6 m-auto mt-6 mb-6 rounded-[15px] max-w-[1500px]">

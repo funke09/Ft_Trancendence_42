@@ -40,6 +40,10 @@ const Auth: React.FC = () => {
 	  loader();
 	}, [router]);
 
+	useEffect(() => {
+		
+	})
+
 	
 	return (
 		<main className="flex flex-row h-screen">
