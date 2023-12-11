@@ -26,6 +26,8 @@ model User {
   player2Games Game[] @relation("Player2")
   stats		  Stats?
   createdAt   DateTime @default(now())
+
+  @@map("users")
 }
 
 model Stats {

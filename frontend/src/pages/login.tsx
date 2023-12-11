@@ -12,37 +12,37 @@ const Auth: React.FC = () => {
 	const switchToLogin = () => setActiveTab('login');
 	const switchToSignUp = () => setActiveTab('signup');
 
-	const router = useRouter();
+	// const router = useRouter();
 
-	useEffect(() => {
-	  const loader = async () => {
-		let validLogin = false;
-		const { query } = router;
-		let oauth_code = query.oauth_code as string;
+	// useEffect(() => {
+	//   const loader = async () => {
+	// 	let validLogin = false;
+	// 	const { query } = router;
+	// 	let oauth_code = query.oauth_code as string;
 		  
-		if (oauth_code) {
-			await getTokenRequest(oauth_code)
-			  .then((res) => {
-				if (res && res.data) {
-				  setCookie("access_token", res.data.access_token);
-				  validLogin = true;
-				}
-			  });
-		} else {
-		  setCookie("access_token", "");
-		}
+	// 	if (oauth_code) {
+	// 		await getTokenRequest(oauth_code)
+	// 		  .then((res) => {
+	// 			if (res && res.data) {
+	// 			  setCookie("access_token", res.data.access_token);
+	// 			  validLogin = true;
+	// 			}
+	// 		  });
+	// 	} else {
+	// 	  setCookie("access_token", "");
+	// 	}
   
-		if (validLogin) {
-		  return router.push("/", undefined, { shallow: true });
-		}
-	  };
+	// 	if (validLogin) {
+	// 	  return router.push("/", undefined, { shallow: true });
+	// 	}
+	//   };
   
-	  loader();
-	}, [router]);
+	//   loader();
+	// }, [router]);
 
-	useEffect(() => {
-		
-	})
+	// useEffect(() => {
+
+	// })
 
 	
 	return (

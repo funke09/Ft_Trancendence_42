@@ -1,17 +1,22 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { AuthService } from './auth.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { FTStrategy } from './utils/42Startegy';
+import { SessionSerializer } from './utils/Serializer';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { UserModule } from 'src/user/user.module';
-import { ConfigService } from '@nestjs/config';
-import { UserService } from 'src/user/user.service';
-import { FtStrategy, JwtStrategy } from './strategy';
-import { UserGateway } from 'src/user/user.gateway';
 
 @Module({
-  imports: [JwtModule.register({}), PrismaModule, UserModule],
-  controllers: [AuthController],
-  providers: [AuthService, JwtService, JwtStrategy, ConfigService, UserGateway, UserService, FtStrategy],
+	imports: [PrismaModule],
+	controllers: [AuthController],
+	providers: [
+		AuthService,
+		FTStrategy,
+		SessionSerializer,
+		{
+			provide: 'AUTH_SERVICE',
+			useClass: AuthService,
+		}
+	],
 })
 export class AuthModule {}
