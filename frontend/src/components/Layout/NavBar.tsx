@@ -1,20 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
-import store from "@/redux/store";
+import React, { useEffect, useState } from "react";
+import store, { setProfile } from "@/redux/store";
 import { useRouter } from "next/router";
-import { loader } from "@/utils/loader";
-
-export const getServerSideProps = async () => {
-	const data = await loader();
-  
-	return {
-	  props: {
-		user: data.user || null,
-		token: data.token || null,
-	  },
-	};
-  };
+import api from "@/api";
 
 const NavBarNotLogged = () => {
 	return (
@@ -61,9 +50,9 @@ const NavBarNotLogged = () => {
 	  );
 };
   
-const Navbar: React.FC<{ user: any; token: string | null }> = ({ user, token }) => {
-	const isAuth: boolean = !!user || !!token
-  
+const Navbar: React.FC = () => {
+	const isAuth: boolean = store.getState().profile.user.email ? true : false;
+
 	return (
 	  <div className="flex shadow-xl bg-[#3B2A3DBF] opacity-75 justify-between p-6 m-auto mt-6 mb-6 rounded-[15px] max-w-[1500px]">
 		<div className="items-center place-content-start inline-flex">

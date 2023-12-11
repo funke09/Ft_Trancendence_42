@@ -1,40 +1,6 @@
-import { signinRequest } from "@/utils/auth";
-import { setCookie } from "@/utils/cookie";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import Link from "next/link";
 
 export default function SigninForm() {
-	const [username, setUsername] = useState('');
-	const [password, setPassword] = useState('');
-	const [error, setError] = useState('');
-
-	const router = useRouter();
-
-	async function handleResponse(data: any) {
-		if (data) {
-			if (data.access_token) {
-				setCookie("access_token", data.access_token);
-				router.push("/");
-			}
-		}
-	}
-
-	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-		e.preventDefault();
-	
-		if (!username || !username.trim() || !password || !password.trim()) {
-		  return setError("Username or Password empty");
-		}
-	
-		await signinRequest(username.trim(), password.trim())
-		  .then(({ error, errMsg, res }: any) => {
-			if (!error) {
-			  handleResponse(res.data);
-			} else {
-			  setError(errMsg);
-			}
-		  });
-	  }
   
 		return (
 		<div className="container mx-auto">
@@ -43,14 +9,14 @@ export default function SigninForm() {
 					<div className="relative mx-auto max-w-[525px] overflow-hidden rounded-lg px-10 py-16 text-center dark:bg-dark-2 sm:px-12 md:px-[60px]">
 					<div className="mb-10 text-center md:mb-16">
 					</div>
-						<form onSubmit={handleSubmit}>
+						<form >
 							<div className="mb-6">
 								<input
 								type="text"
 								name="username"
 								placeholder="Username"
-								value={username}
-								onChange={(e) => setUsername(e.target.value)}
+								// value={username}
+								// onChange={(e) => setUsername(e.target.value)}
 								className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
 								></input>
 							</div>
@@ -59,8 +25,8 @@ export default function SigninForm() {
 								type="password"
 								name="password"
 								placeholder="Password"
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
+								// value={password}
+								// onChange={(e) => setPassword(e.target.value)}
 								className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
 								></input>
 							</div>
@@ -79,8 +45,7 @@ export default function SigninForm() {
 						</div>
 						<ul className="-mx-2 mb-12 flex justify-center">
 							<li className="w-[75%] px-2">
-							<a
-								href="http://localhost:5000/auth/42"
+							<Link href="http://localhost:5000/auth/42"
 								className=" nav-button hover flex h-11 items-center text-semibold text-white text-[18px] justify-center gap-4 rounded-full bg-[#1B1B1B] hover:bg-opacity-90"
 							>
 								<img
@@ -88,7 +53,7 @@ export default function SigninForm() {
 								alt="42"
 								className="inline-block max-w-[50px] max-h-[30px] shadow-md">
 								</img>
-								Login with Intra</a>
+								Login with Intra</Link>
 							</li>
 						</ul>
 

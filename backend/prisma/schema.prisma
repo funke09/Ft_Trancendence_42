@@ -19,13 +19,13 @@ model User {
   username    String  @unique
   password	  String
   avatar      String?
-  oAuth_code  String? @unique
-  oAuth_exp   DateTime?
   userStatus  Status  @default(OFFLINE) // online | in-game | away ...
   player1Games Game[] @relation("Player1")
   player2Games Game[] @relation("Player2")
   stats		  Stats?
   createdAt   DateTime @default(now())
+
+  @@map("users")
 }
 
 model Stats {
