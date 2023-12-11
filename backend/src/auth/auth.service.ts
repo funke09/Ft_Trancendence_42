@@ -1,13 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserDetails } from 'src/utils/types';
 import * as argon from 'argon2';
-import { User, Prisma, PrismaClient } from '@prisma/client';
+import { User, Prisma } from '@prisma/client';
+import { Response } from 'express';
+import { JwtService } from '@nestjs/jwt'
+import { Status } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
-	constructor(private prisma: PrismaService) {}
+	constructor(
+		private prisma: PrismaService,
+		private JwtService: JwtService) {}
 
 	async signUser(profile: any): Promise<any> {
 		let user = await this.findUserByEmail(profile.emails[0].value);
@@ -23,6 +26,17 @@ export class AuthService {
 		return user;
 	}
 
+	async login(user: any, res: Response) {
+		try {
+			const payload = { username: user.username, uid: user.id };
+			const token = this.JwtService.sign(payload);
+			res.cookie('jwt', token, { httpOnly: false, path: '/'});
+			res.redirect("http://localhost:3000");
+		} catch (error) {
+			throw new BadRequestException('ERROR:', error.message);
+		}
+	}
+
 	async createUser(data: Prisma.UserCreateInput): Promise<User> {
 		const hash = await argon.hash(data.password);
 		return this.prisma.user.create({
@@ -30,7 +44,7 @@ export class AuthService {
 				email: data.email,
 				username: data.username,
 				avatar: data.avatar,
-				password: hash,
+				password: hash,	
 			},
 		});
 	}
@@ -45,16 +59,6 @@ export class AuthService {
 				id: true,
 			}
 		})
-	}
-
-	async getUserDataById(id: number) {
-		const user = await this.prisma.user.findUnique({ 
-			where: { id: id },
-		
-		});
-		if (user)
-			return user;
-		throw new NotFoundException(`User ${user.username} not found`)
 	}
 
 	async getUserById(id: number) {

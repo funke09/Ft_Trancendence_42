@@ -1,41 +1,6 @@
-import { signinRequest } from "@/utils/auth";
-import { setCookie } from "@/utils/cookie";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useState } from "react";
 
 export default function SigninForm() {
-	const [username, setUsername] = useState('');
-	const [password, setPassword] = useState('');
-	const [error, setError] = useState('');
-
-	const router = useRouter();
-
-	async function handleResponse(data: any) {
-		if (data) {
-			if (data.access_token) {
-				setCookie("access_token", data.access_token);
-				router.push("/");
-			}
-		}
-	}
-
-	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-		e.preventDefault();
-	
-		if (!username || !username.trim() || !password || !password.trim()) {
-		  return setError("Username or Password empty");
-		}
-	
-		await signinRequest(username.trim(), password.trim())
-		  .then(({ error, errMsg, res }: any) => {
-			if (!error) {
-			  handleResponse(res.data);
-			} else {
-			  setError(errMsg);
-			}
-		  });
-	  }
   
 		return (
 		<div className="container mx-auto">
@@ -44,14 +9,14 @@ export default function SigninForm() {
 					<div className="relative mx-auto max-w-[525px] overflow-hidden rounded-lg px-10 py-16 text-center dark:bg-dark-2 sm:px-12 md:px-[60px]">
 					<div className="mb-10 text-center md:mb-16">
 					</div>
-						<form onSubmit={handleSubmit}>
+						<form >
 							<div className="mb-6">
 								<input
 								type="text"
 								name="username"
 								placeholder="Username"
-								value={username}
-								onChange={(e) => setUsername(e.target.value)}
+								// value={username}
+								// onChange={(e) => setUsername(e.target.value)}
 								className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
 								></input>
 							</div>
@@ -60,8 +25,8 @@ export default function SigninForm() {
 								type="password"
 								name="password"
 								placeholder="Password"
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
+								// value={password}
+								// onChange={(e) => setPassword(e.target.value)}
 								className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
 								></input>
 							</div>

@@ -1,6 +1,7 @@
 import {
 	HttpException,
 	Injectable,
+	Logger,
 	NestMiddleware,
   } from '@nestjs/common';
   import { NextFunction, Response, Request } from 'express';
@@ -8,7 +9,7 @@ import {
   @Injectable()
   export class AuthorisationHeaderMiddleware implements NestMiddleware {
   
-	use(req: Request, next: NextFunction) {
+	use(req: Request, res: Response, next: NextFunction) {
 	  if (req.headers.authorization === undefined) {
 		const jwt = req.cookies.jwt;
 		if (jwt) {
@@ -20,5 +21,6 @@ import {
 	  }
 	  next();
 	}
+  
   }
   

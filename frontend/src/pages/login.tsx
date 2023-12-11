@@ -2,47 +2,12 @@ import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 import SigninForm from '../components/Auth/SigninForm';
 import SignUpForm from '@/components/Auth/SignUpForm';
-import { setCookie } from '@/utils/cookie';
-import { getTokenRequest } from '@/utils/auth';
-import { useRouter } from 'next/router';
 
 const Auth: React.FC = () => {
 	const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
 
 	const switchToLogin = () => setActiveTab('login');
 	const switchToSignUp = () => setActiveTab('signup');
-
-	// const router = useRouter();
-
-	// useEffect(() => {
-	//   const loader = async () => {
-	// 	let validLogin = false;
-	// 	const { query } = router;
-	// 	let oauth_code = query.oauth_code as string;
-		  
-	// 	if (oauth_code) {
-	// 		await getTokenRequest(oauth_code)
-	// 		  .then((res) => {
-	// 			if (res && res.data) {
-	// 			  setCookie("access_token", res.data.access_token);
-	// 			  validLogin = true;
-	// 			}
-	// 		  });
-	// 	} else {
-	// 	  setCookie("access_token", "");
-	// 	}
-  
-	// 	if (validLogin) {
-	// 	  return router.push("/", undefined, { shallow: true });
-	// 	}
-	//   };
-  
-	//   loader();
-	// }, [router]);
-
-	// useEffect(() => {
-
-	// })
 
 	
 	return (

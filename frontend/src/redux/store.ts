@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { profileSlice } from "./profile";
-import { socketSlice } from "./api";
+import { socketSlice } from "./socket";
 
 const rootReducer = {
 	profile: profileSlice.reducer,

@@ -8,7 +8,7 @@ import { ConfigService } from "@nestjs/config";
 export class FTStrategy extends PassportStrategy(Strategy) {
 	constructor(
 		private readonly config: ConfigService,
-		@Inject('AUTH_SERVICE') private readonly authService: AuthService,
+		private readonly authService: AuthService,
 	) {
 		super({
 			clientID: config.get<string>("CLIENT_ID"),

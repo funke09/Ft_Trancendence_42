@@ -1,7 +1,8 @@
 import { BadRequestException, Controller, Get, Req, Res, SetMetadata, UseGuards } from '@nestjs/common';
-import { Request } from 'express';
-import { FTAuthGuard } from './utils/Guards';
+import { Request, Response } from 'express';
+import { FTAuthGuard, JwtAuthGuard } from './utils/Guards';
 import { AuthService } from './auth.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -9,28 +10,16 @@ export class AuthController {
 		private readonly authService: AuthService,
 	) {}
 
-	@SetMetadata('isPublic', true)
 	@Get('42')
-	@UseGuards(FTAuthGuard)
-	handleLogin() {
-		return { msg: '42 Intra Authenticated'};
-	}
+	@UseGuards(AuthGuard('42'))
+	async ftAuth(@Req() req) {}
 
-	@SetMetadata('isPublic', true)
 	@Get('42/redirect')
-	@UseGuards(FTAuthGuard)
-	async handleRedirect(@Res() res) {
-		// The user is authenticated at this point.
-		// You can customize further actions or simply perform a redirect.
-		res.redirect('http://localhost:3000/');
-	}
-
-	@Get('status')
-	@UseGuards(FTAuthGuard)
-	async getStats(@Req() req: any) {
-		if (!req.user.id) {
-			throw new BadRequestException(req.user.id);
-		}
-		return this.authService.getUserDataById(req.user.id);
+	@UseGuards(AuthGuard('42'))
+	async ftRedirect (
+		@Req() req,
+		@Res({ passthrough: true }) res: Response,
+	) {
+		return this.authService.login(req.user, res);
 	}
 }

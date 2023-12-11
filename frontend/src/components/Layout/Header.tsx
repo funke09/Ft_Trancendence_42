@@ -1,10 +1,11 @@
+import store from "@/redux/store";
 import Image from "next/image";
 import router from "next/router";
 import React from "react";
 
 const Header: React.FC = () => {
 
-	const isAuth: boolean = true;
+	const isAuth: boolean = store.getState().profile.user.email ? true : false;
 	return (
 	  <div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex max-w-[1500px] pb-4">
 		<div className="flex-col justify-center inline-flex items-center">
