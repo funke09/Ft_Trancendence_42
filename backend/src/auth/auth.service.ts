@@ -33,7 +33,7 @@ export class AuthService {
 			res.cookie('jwt', token, { httpOnly: false, path: '/'});
 			res.redirect("http://localhost:3000");
 		} catch (error) {
-			throw new BadRequestException('ERROR:', error.message);
+			throw new BadRequestException('ERROR:' + (error instanceof Error ? error.message : ''));
 		}
 	}
 
