@@ -2,6 +2,7 @@ import api from '@/api';
 import Header from '@/components/Layout/Header';
 import Navbar from '@/components/Layout/NavBar';
 import store, { setProfile } from '@/redux/store';
+import {Nav} from '@/components/Layout/nav';
 import { useEffect, useState } from 'react';
   
 const Home: React.FC = () => {
@@ -27,7 +28,8 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <Navbar />
+		<Nav/>
+      {/* <Navbar /> */}
       <div>
         <Header />
       </div>

@@ -14,6 +14,8 @@
     "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@heroicons/react": "^2.0.18",
+    "@material-tailwind/react": "^2.1.5",
     "@prisma/client": "^5.6.0",
     "@reduxjs/toolkit": "^2.0.1",
     "@types/axios": "^0.14.0",
