@@ -36,7 +36,7 @@
     "frontend/src/components/Game/test.js",
     "frontend/src/pages/index.tsx",
     ".next/types/**/*.ts"
-  ],
+, "src/components/ProfileCard.js"  ],
   "exclude": [
     "node_modules"
   ]

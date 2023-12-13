@@ -13,6 +13,8 @@ RUN npm i -g @nestjs/cli
 RUN npm i -g prisma
 RUN npx prisma generate
 
+# npx prisma migrate dev
+
 # Copy the rest of the application code to the container
 COPY . .
 

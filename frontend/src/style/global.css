@@ -127,6 +127,11 @@ body::before {
 	margin: 4px 2px;
 	cursor: pointer;
 }
+.avatar:hover{
+	background-color:#a43575;
+	
+
+}
 
 /* Your existing styles... */
 

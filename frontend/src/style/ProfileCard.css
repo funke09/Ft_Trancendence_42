@@ -1,0 +1,33 @@
+.profile-card{
+  z-index: 9999;
+  float: right;
+  position: absolute;
+  display: inline;
+  background: #904995;
+  border-radius: 2rem;
+  padding: 8px;
+  right: 0px;
+  box-shadow: 0 1rem 1.5rem #6e375c;
+}
+/* {
+  position:static;
+  top: 5rem; 
+  left: 0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+} */
+    
+
+  .button-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #dd00ff;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+  }
+
+  .button-link:hover {
+    background-color: #0056b3;
+  }

@@ -51,7 +51,7 @@ export default function SigninForm() {
 								<img
 								src="images/42_Logo.png"
 								alt="42"
-								className="inline-block max-w-[50px] max-h-[30px] shadow-md">
+								className="inline-block  max-w-[50px] max-h-[30px] shadow-md">
 								</img>
 								Login with Intra</Link>
 							</li>

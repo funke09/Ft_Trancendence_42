@@ -5,6 +5,9 @@ import { AppProps } from 'next/app';
 import { Provider } from 'react-redux';
 import { AxiosError } from 'axios';
 import './../style/global.css'
+import './../style/ProfileCard.css'
+import './../style/fonts.css'
+
 
 export default function MyApp({ Component, pageProps }: AppProps) {
     useEffect(() => {
