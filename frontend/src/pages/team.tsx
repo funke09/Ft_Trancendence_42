@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Layout/NavBar";
+import store, { setProfile } from "@/redux/store";
+import api from "@/api";
 
 const Team: React.FC = () => {
     const teamMembers = [
@@ -8,6 +10,26 @@ const Team: React.FC = () => {
         { id: 3, name: "0xPacman", githubUsername: "0xPacman", role: "Developer" },
         { id: 4, name: "YOPll", githubUsername: "YOPll", role: "Developer" },
     ];
+
+	const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        api.get("/user/profile")
+            .then((res: any) => {
+                if (res.status == 200) {
+                    store.dispatch(setProfile(res.data));
+                    setLoading(false);
+                } else {
+                    window.location.href = "/";
+                }
+            })
+            .catch((err: any) => {
+                window.location.href = "/login";
+            });
+    }, []);
+
+    if (loading) {
+        return <h1>Loading...</h1>;
+    }
 
     return (
         <div className=" text-white">

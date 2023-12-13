@@ -11,7 +11,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         api.get("/user/profile")
             .then((res: any) => {
                 if (res.status == 200) {
-					console.log(res.data);
                     store.dispatch(setProfile(res.data));
                 }
             })

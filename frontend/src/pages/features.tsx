@@ -1,10 +1,33 @@
 import next from "next";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Layout/NavBar";
+import { UserType } from "@/redux/profile";
+import store, { setProfile } from "@/redux/store";
+import api from "@/api";
 
 const Features: React.FC = () => {
+	const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        api.get("/user/profile")
+            .then((res: any) => {
+                if (res.status == 200) {
+                    store.dispatch(setProfile(res.data));
+                    setLoading(false);
+                } else {
+                    window.location.href = "/";
+                }
+            })
+            .catch((err: any) => {
+                window.location.href = "/login";
+            });
+    }, []);
+
+    if (loading) {
+        return <h1>Loading...</h1>;
+    }
+	
 	return (
 		<div>
 			<Navbar/>
