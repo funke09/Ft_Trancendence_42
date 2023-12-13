@@ -1,14 +1,21 @@
-.profile-card{
+.profile-card {
   z-index: 9999;
-  float: right;
   position: absolute;
-  display: inline;
-  background: #904995;
+  background: #371c39;
   border-radius: 2rem;
-  padding: 8px;
-  right: 0px;
-  box-shadow: 0 1rem 1.5rem #6e375c;
+  padding: 20px;
+  width: 300px; /* Set your desired width */
+  height: 300px; /* Set your desired height */
+  left: 50%;
+  top: 50%;
+  right: 0;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 1rem 1.5rem #361d2e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
 /* {
   position:static;
   top: 5rem; 
@@ -21,8 +28,8 @@
   .button-link {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #dd00ff;
-    color: #fff;
+    background-color: #321d36;
+    color: #030202;
     text-decoration: none;
     border: none;
     border-radius: 5px;
@@ -31,3 +38,18 @@
   .button-link:hover {
     background-color: #0056b3;
   }
+
+  .avatar-container {
+    /* Other styles for the container */
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally */
+  }
+  
+  .avatar-wrapper {
+    /* Other styles for the wrapper */
+    display: flex;
+    align-items: center; /* Center items horizontally */
+    margin-bottom: 10px; /* Adjust spacing */
+  }
+  

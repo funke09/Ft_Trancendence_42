@@ -15,11 +15,11 @@ const Auth: React.FC = () => {
   return (
     <main className="flex flex-row h-screen">
       <section className="flex flex-col bg-[#382A39] w-2/5 relative min-[0px]:hidden sm:hidden md:flex bg-opacity-75">
-        <div className="absolute flex-grow top-4 left-4 m-10 opacity-95">
+        <div className="absolute flex-grow top-3 left-3 m-10 opacity-95">
           <Image src="/images/egypt.png" alt="pyramid" width={200} height={200}></Image>
         </div>
         <div className="flex-grow flex items-center justify-center">
-          <Image src="/images/controller.png" alt="controller" width={500} height={500}></Image>
+          <Image src="/images/controller.png" alt="controller" width={400} height={400}></Image>
         </div>
         <div className="absolute bottom-4 right-4 m-5 opacity-75">
           <Image src="/images/no9at.png" alt="no9at" width={200} height={100}></Image>
@@ -56,8 +56,8 @@ const Auth: React.FC = () => {
                   className="pr-3"
                 ></Image>
                 <div className='p-2'>
-                  <h3 className="text-white text-[0.8rem] font-semibold">- Celebrate every victory, big or small! </h3>
-                  <h3 className="text-white text-[0.8rem] font-semibold">- Achievements for each milestone</h3>
+                  <h3 className="text-white text-[1.0rem] mt-1 font-bold">- Celebrate every victory, big or small! </h3>
+                  <h3 className="text-white text-[1.0rem] mt-1 font-bold">- Achievements for each milestone</h3>
                 </div>
               </div>
               <div className="text-white text-[0.8rem] font-semibold">
@@ -69,8 +69,8 @@ const Auth: React.FC = () => {
                   className="pr-3"
                 ></Image> 
                 <div className="p-2">
-                  <h3 className="text-white text-[0.8rem] font-semibold">- Dive into a world of adventures</h3>
-                  <h3 className="text-white text-[0.8rem] font-semibold">- that keeps you hooked</h3>
+                  <h3 className="text-white text-[1.0rem] mt-1 font-bold">- Dive into a world of adventures</h3>
+                  <h3 className="text-white text-[1.0rem] mt-1 font-bold">- that keeps you hooked</h3>
                 </div>
               </div>
               <div className="text-white Manrope text-[0.8rem] font-semibold mb-4">
@@ -82,8 +82,8 @@ const Auth: React.FC = () => {
                   className="pr-3"
                 ></Image>
                 <div className="p-2">
-                  <h3 className="text-white text-[0.8rem]  font-semibold">- Rise to the top and let the world know</h3>
-                  <h3 className="text-white text-[0.8rem] font-semibold">- who dominates the arena!</h3>
+                  <h3 className="text-white text-[1.0rem] mt-1 font-bold">- Rise to the top and let the world know</h3>
+                  <h3 className="text-white text-[1.0rem] mt-1 font-bold">- who dominates the arena!</h3>
                 </div>
               </div>
               <div className="text-white text-[0.8rem] font-semibold">
@@ -95,8 +95,8 @@ const Auth: React.FC = () => {
                   className="pr-3"
                 ></Image>
                 <div className='p-2'>
-                  <h3 className="text-white text-[0.8rem] font-semibold">- Connect, banter, and cheer on your</h3>
-                  <h3 className="text-white text-[0.8rem] font-semibold">- teammates with our chat system.</h3>
+                  <h3 className="text-white text-[1.0rem] mt-1 font-bold">- Connect, banter, and cheer on your</h3>
+                  <h3 className="text-white text-[1.0rem] mt-1 font-bold">- teammates with our chat system.</h3>
                 </div>
               </div>
             </div>
