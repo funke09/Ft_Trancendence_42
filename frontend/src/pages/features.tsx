@@ -1,13 +1,36 @@
 import next from "next";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Navbar from "@/components/Layout/NavBar";
+import { UserType } from "@/redux/profile";
+import store, { setProfile } from "@/redux/store";
+import api from "@/api";
+import { Nav } from "@/components/Layout/NavBar";
 
 const Features: React.FC = () => {
+	const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        api.get("/user/profile")
+            .then((res: any) => {
+                if (res.status == 200) {
+                    store.dispatch(setProfile(res.data));
+                    setLoading(false);
+                } else {
+                    window.location.href = "/";
+                }
+            })
+            .catch((err: any) => {
+                window.location.href = "/login";
+            });
+    }, []);
+
+    if (loading) {
+        return <h1>Loading...</h1>;
+    }
+	
 	return (
 		<div>
-			<Navbar/>
+			<Nav/>
 			<div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex-col max-w-[1500px] pb-4">
 				<div className="flex justify-center">
 					<div className="bg-[#C73988] flex-wrap shadow-2xl rounded-b-[20px]">

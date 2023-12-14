@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Navbar from "@/components/Layout/NavBar";
+import { Nav } from "@/components/Layout/NavBar";
 
 const Chat: React.FC = () => {
     const [messages, setMessages] = useState<string[]>([]);
@@ -15,7 +15,7 @@ const Chat: React.FC = () => {
 
     return (
         <div>
-            <Navbar />
+			<Nav/>
             <div className="chat-container">
                 <div className="message-container">
                     {messages.map((message, index) => (
