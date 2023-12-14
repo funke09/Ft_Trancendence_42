@@ -15,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import store from "@/redux/store";
 import { UserType } from "@/redux/profile";
+import Play from "../Game/Play";
  
 
 export function Nav() {
@@ -31,8 +32,12 @@ export function Nav() {
       () => window.innerWidth >= 960 && setOpenNav(false),
     );
   }, []);
+
+function handlPlay() {
+	return <Play/>
+}
    
-  function ClockIcon() {
+function ClockIcon() {
 	return (
 	  <svg
 		width="16"
@@ -51,7 +56,7 @@ export function Nav() {
 	);
   }
    
-  const NotificationsMenu = (
+const NotificationsMenu = (
 	  <Menu>
 		<MenuHandler>
 			<svg
@@ -70,7 +75,7 @@ export function Nav() {
 				stroke-linecap="round"
 			  />
 			  <path xmlns="http://www.w3.org/2000/svg" d="M13.87 3.19994C13.56 3.10994 13.24 3.03994 12.91 2.99994C11.95 2.87994 11.03 2.94994 10.17 3.19994C10.46 2.45994 11.18 1.93994 12.02 1.93994C12.86 1.93994 13.58 2.45994 13.87 3.19994Z" stroke="#E4E4E4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-			  <path xmlns="http://www.w3.org/2000/svg" d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 9.90002 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601" stroke="#E4E4E4" stroke-width="1.5" stroke-miterlimit="10"/>
+			  <path xmlns="http://www.w3.org/2000/svg" d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 902 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601" stroke="#E4E4E4" stroke-width="1.5" stroke-miterlimit="10"/>
 			</svg>
 		</MenuHandler>
 		<MenuList className="flex flex-col gap-2 bg-[#382A39] border-none shadow-md text-white">
@@ -86,7 +91,7 @@ export function Nav() {
 			  <Typography variant="small" color="gray" className="font-semibold">
 				Tania send you a message
 			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-blue-gray-500">
+			  <Typography className="flex items-center gap-1 text-sm font-medium text-white-500">
 				<ClockIcon />
 				13 minutes ago
 			  </Typography>
@@ -104,7 +109,7 @@ export function Nav() {
 			  <Typography variant="small" color="gray" className="font-semibold">
 				Natali replied to your email.
 			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-blue-gray-500">
+			  <Typography className="flex items-center gap-1 text-sm font-medium text-white-500">
 				<ClockIcon />1 hour ago
 			  </Typography>
 			</div>
@@ -121,7 +126,7 @@ export function Nav() {
 			  <Typography variant="small" color="gray" className="font-semibold">
 				You&apos;ve received a payment.
 			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-blue-gray-500">
+			  <Typography className="flex items-center gap-1 text-sm font-medium text-white-500">
 				<ClockIcon />5 hours ago
 			  </Typography>
 			</div>
@@ -194,7 +199,7 @@ const navList = (
       <Typography
         as="li"
         variant="small"
-        color="blue-gray"
+		color="white"
         className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
       >
 		<Link href="/chat" className="flex items-center gap-x-2 p-1">
@@ -219,7 +224,7 @@ const navList = (
       <Typography
         as="li"
         variant="small"
-        color="blue-gray"
+		color="white"
         className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
       >
 		<Link href="/leaderboard" className="flex items-center gap-x-2 p-1">
@@ -240,7 +245,7 @@ const navList = (
       <Typography
         as="li"
         variant="small"
-        color="blue-gray"
+        color="white"
 		className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
       >
 		<Link href="/features" className="flex items-center gap-x-2 p-1">
@@ -275,7 +280,7 @@ const navList = (
       <Typography
         as="li"
         variant="small"
-        color="blue-gray"
+        color="white"
         className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
 		>
 		<Link href="/team" className="flex items-center gap-x-2 p-1">
@@ -293,7 +298,7 @@ const navList = (
   
   return (
 	  <Navbar className="bg-[#3B2A3DBF] bg-opacity-70 m-auto mt-6 mb-6 border-0 px-4 py-2 lg:px-8 lg:py-4 max-w-[1500px]">
-      <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
+      <div className="relative mx-auto flex items-center justify-between text-white">
         <Typography
           className="mr-4 cursor-pointer py-1.5 content-start font-medium">
 			<Link href={'/'}>
@@ -311,9 +316,10 @@ const navList = (
           <Button
             variant="gradient"
             size="sm"
-            className="hidden bg-[#F53FA1] opacity-70 lg:inline-block transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300"
+			color="pink"
+            className="hidden opacity-70 lg:inline-block transition s ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300"
 			>
-            <span>PLAY</span>
+            PLAY
           </Button>
 		<div className="hidden lg:flex">{ProfileMenu}</div>
         </div>
