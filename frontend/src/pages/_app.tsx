@@ -5,6 +5,7 @@ import { AppProps } from 'next/app';
 import { Provider } from 'react-redux';
 import { AxiosError } from 'axios';
 import { ThemeProvider } from "@material-tailwind/react";
+import type { ButtonStyleTypes } from "@material-tailwind/react";
 import './../style/global.css'
 
 export default function MyApp({ Component, pageProps }: AppProps) {

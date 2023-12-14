@@ -37,6 +37,11 @@ export class AuthService {
 		}
 	}
 
+	async logout(res: Response) {
+		res.clearCookie('jwt');
+		res.redirect('http://localhost:3000/login')
+	}
+
 	async createUser(data: Prisma.UserCreateInput): Promise<User> {
 		const hash = await argon.hash(data.password);
 		return this.prisma.user.create({
