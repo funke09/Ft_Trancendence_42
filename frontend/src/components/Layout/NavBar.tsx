@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Navbar,
   MobileNav,
@@ -10,27 +10,32 @@ import {
   MenuList,
   MenuItem,
   Avatar,
+  Badge,
+  Dialog,
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
 import store from "@/redux/store";
 import { UserType } from "@/redux/profile";
+import { PlayModal } from "../Game/Play";
  
 
 export function Nav() {
   const [openNav, setOpenNav] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const [open, setOpen] = React.useState(false);
+ 
+  const handleOpen = () => setOpen(!open);
 
   const user: UserType = store.getState().profile.user;
-
-  const closeMenu = () => setIsMenuOpen(false);
  
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener(
       "resize",
       () => window.innerWidth >= 960 && setOpenNav(false),
     );
   }, []);
+
    
 function ClockIcon() {
 	return (
@@ -53,6 +58,7 @@ function ClockIcon() {
    
 const NotificationsMenu = (
 	  <Menu>
+		<Badge color="red" className="opacity-75">
 		<MenuHandler>
 			<svg
 			  xmlns="http://www.w3.org/2000/svg"
@@ -76,6 +82,7 @@ const NotificationsMenu = (
 					stroke-linejoin="round"/>
 			</svg>
 		</MenuHandler>
+		</Badge>
 		<MenuList className="flex flex-col gap-2 bg-[#382A39] border-none shadow-md !text-white">
 		  <MenuItem className="flex items-center gap-4 py-2 pl-2 pr-8">
 			<Image
@@ -318,14 +325,20 @@ const navList = (
         <div className="hidden lg:block ">{navList}</div>
         <div className="flex items-center w-max gap-x-6">
 			<div className="hidden lg:flex">{NotificationsMenu}</div>
-          <Button
-            variant="gradient"
-            size="md"
+			<Button
+			onClick={handleOpen}
+			variant="gradient"
+			size="md"
 			color="pink"
-            className="hidden opacity-70 lg:inline-block transition s ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300"
+			className="hidden opacity-70 lg:inline-block transition s ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300"
 			>
-            PLAY
-          </Button>
+			PLAY
+			</Button>
+			{open &&
+			<Dialog className="bg-[#382A39] rounded-[30px]" open={open} handler={handleOpen}>
+				<PlayModal/>
+			</Dialog>
+			}
 		<div className="hidden lg:flex">{ProfileMenu}</div>
         </div>
         <IconButton
@@ -371,6 +384,7 @@ const navList = (
           {navList}
           <div className="flex place-self-end items-center gap-x-1">
 		  <Button
+			onClick={handleOpen}
             variant="gradient"
             size="md"
 			color="pink"
