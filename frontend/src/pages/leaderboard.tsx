@@ -1,12 +1,10 @@
 import React from "react";
-import Navbar from "@/components/Layout/NavBar";
-import { UserType } from "@/redux/profile";
-import store from "@/redux/store";
+import { Nav } from "@/components/Layout/NavBar";
 
 const Leaderboard: React.FC = () => {
 	return (
 		<div>
-			<Navbar/>
+			<Nav/>
 		</div>
 	)
 }

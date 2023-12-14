@@ -1,9 +1,9 @@
-import Navbar from "@/components/Layout/NavBar";
+import { Nav } from "@/components/Layout/NavBar";
 
 function Profile() {
 	return (
 	  <div>
-		  <Navbar/>
+		  <Nav/>
 		  <div>
 			
 		  </div>

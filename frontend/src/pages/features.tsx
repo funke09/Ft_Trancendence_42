@@ -2,10 +2,10 @@ import next from "next";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Navbar from "@/components/Layout/NavBar";
 import { UserType } from "@/redux/profile";
 import store, { setProfile } from "@/redux/store";
 import api from "@/api";
+import { Nav } from "@/components/Layout/NavBar";
 
 const Features: React.FC = () => {
 	const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ const Features: React.FC = () => {
 	
 	return (
 		<div>
-			<Navbar/>
+			<Nav/>
 			<div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex-col max-w-[1500px] pb-4">
 				<div className="flex justify-center">
 					<div className="bg-[#C73988] flex-wrap shadow-2xl rounded-b-[20px]">

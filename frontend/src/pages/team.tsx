@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "@/components/Layout/NavBar";
 import store, { setProfile } from "@/redux/store";
 import api from "@/api";
+import { Nav } from "@/components/Layout/NavBar";
 
 const Team: React.FC = () => {
     const teamMembers = [
@@ -33,7 +33,7 @@ const Team: React.FC = () => {
 
     return (
         <div className=" text-white">
-            <Navbar />
+			<Nav/>
             <div className="text-center my-8">
                 <h1 className="text-3xl">Our Team</h1>
                 <ul className="mt-4">

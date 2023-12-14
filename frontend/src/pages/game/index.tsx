@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import Navbar from "@/components/Layout/NavBar";
 import { useRouter } from "next/router";
+import { Nav } from "@/components/Layout/NavBar";
 
 const Game: React.FC = () => {
 	const router = useRouter();
@@ -9,7 +9,7 @@ const Game: React.FC = () => {
 
 	return (
 		<div>
-			<Navbar/>
+			<Nav/>
 			<div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex max-w-[1500px] p-3">
 				<div className="flex-col m-auto items-center w-full">
 					<div className="flex flex-row m-auto p-5 gap-6 place-content-between">
