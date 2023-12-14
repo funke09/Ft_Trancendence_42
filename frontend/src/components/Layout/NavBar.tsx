@@ -15,7 +15,6 @@ import Image from "next/image";
 import Link from "next/link";
 import store from "@/redux/store";
 import { UserType } from "@/redux/profile";
-import Play from "../Game/Play";
  
 
 export function Nav() {
@@ -61,20 +60,23 @@ const NotificationsMenu = (
 			  fill="none"
 			  width={24}
 			  height={24}
-			  className="opacity-70 transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300"
+			  className="opacity-70 transition ease-in-out delay-150 hover:scale-110 hover:opacity-100 duration-300"
 			>
-			  <path
-				d="M12.02 2.90991C8.70997 2.90991 6.01997 5.59991 6.01997 8.90991V11.7999C6.01997 12.4099 5.75997 13.3399 5.44997 13.8599L4.29997 15.7699C3.58997 16.9499 4.07997 18.2599 5.37997 18.6999C9.68997 20.1399 14.34 20.1399 18.65 18.6999C19.86 18.2999 20.39 16.8699 19.73 15.7699L18.58 13.8599C18.28 13.3399 18.02 12.4099 18.02 11.7999V8.90991C18.02 5.60991 15.32 2.90991 12.02 2.90991Z"
-				stroke="#E4E4E4"
-				stroke-width="1.5"
-				stroke-miterlimit="10"
-				stroke-linecap="round"
-			  />
-			  <path xmlns="http://www.w3.org/2000/svg" d="M13.87 3.19994C13.56 3.10994 13.24 3.03994 12.91 2.99994C11.95 2.87994 11.03 2.94994 10.17 3.19994C10.46 2.45994 11.18 1.93994 12.02 1.93994C12.86 1.93994 13.58 2.45994 13.87 3.19994Z" stroke="#E4E4E4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-			  <path xmlns="http://www.w3.org/2000/svg" d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 902 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601" stroke="#E4E4E4" stroke-width="1.5" stroke-miterlimit="10"/>
+				<path
+					d="M15 19.25C15 20.0456 14.6839 20.8087 14.1213 21.3713C13.5587 21.9339 12.7956 22.25 12 22.25C11.2044 22.25 10.4413 21.9339 9.87869 21.3713C9.31608 20.8087 9 20.0456 9 19.25"
+					stroke="#f2f2f2"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"/>
+				<path
+					d="M5.58096 18.25C5.09151 18.1461 4.65878 17.8626 4.36813 17.4553C4.07748 17.048 3.95005 16.5466 4.01098 16.05L5.01098 7.93998C5.2663 6.27263 6.11508 4.75352 7.40121 3.66215C8.68734 2.57077 10.3243 1.98054 12.011 1.99998V1.99998C13.6977 1.98054 15.3346 2.57077 16.6207 3.66215C17.9069 4.75352 18.7557 6.27263 19.011 7.93998L20.011 16.05C20.0723 16.5452 19.9462 17.0454 19.6576 17.4525C19.369 17.8595 18.9386 18.144 18.451 18.25C14.2186 19.2445 9.81332 19.2445 5.58096 18.25V18.25Z"
+					stroke="#f2f2f2"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"/>
 			</svg>
 		</MenuHandler>
-		<MenuList className="flex flex-col gap-2 bg-[#382A39] border-none shadow-md text-white">
+		<MenuList className="flex flex-col gap-2 bg-[#382A39] border-none shadow-md !text-white">
 		  <MenuItem className="flex items-center gap-4 py-2 pl-2 pr-8">
 			<Image
 					src={'/images/defaultAvatar.png'}
@@ -83,11 +85,11 @@ const NotificationsMenu = (
 					alt="avatar"
 					className="rounded-full"
 				/>
-			<div className="flex flex-col gap-1">
-			  <Typography variant="small" color="gray" className="font-semibold">
+			<div className="flex flex-col justify-center gap-1">
+			  <Typography variant="small" className="font-semibold">
 				Tania send you a message
 			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-white-500">
+			  <Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
 				<ClockIcon />
 				13 minutes ago
 			  </Typography>
@@ -101,11 +103,11 @@ const NotificationsMenu = (
 				alt="avatar"
 				className="rounded-full"
 			/>
-			<div className="flex flex-col gap-1">
-			  <Typography variant="small" color="gray" className="font-semibold">
+			<div className="flex flex-col justify-center gap-1">
+			  <Typography variant="small" className="font-semibold">
 				Natali replied to your email.
 			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-white-500">
+			  <Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
 				<ClockIcon />1 hour ago
 			  </Typography>
 			</div>
@@ -118,11 +120,11 @@ const NotificationsMenu = (
 					alt="avatar"
 					className="rounded-full"
 				/>
-			<div className="flex flex-col gap-1">
-			  <Typography variant="small" color="gray" className="font-semibold">
+			<div className="flex flex-col justify-center gap-1">
+			  <Typography variant="small" className="font-semibold">
 				You&apos;ve received a payment.
 			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-white-500">
+			  <Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
 				<ClockIcon />5 hours ago
 			  </Typography>
 			</div>
@@ -318,7 +320,7 @@ const navList = (
 			<div className="hidden lg:flex">{NotificationsMenu}</div>
           <Button
             variant="gradient"
-            size="sm"
+            size="md"
 			color="pink"
             className="hidden opacity-70 lg:inline-block transition s ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300"
 			>
@@ -368,9 +370,13 @@ const navList = (
         <div className="container m-auto">
           {navList}
           <div className="flex place-self-end items-center gap-x-1">
-            <Button variant="gradient" size="sm" className="bg-[#F53FA1] opacity-70 lg:inline-block transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300">
-              <span>PLAY</span>
-            </Button>
+		  <Button
+            variant="gradient"
+            size="md"
+			color="pink"
+			>
+            PLAY
+          </Button>
 		  </div>
         </div>
       </MobileNav>
