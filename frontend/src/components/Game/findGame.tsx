@@ -1,4 +1,4 @@
-import { Dialog, Typography, Button } from '@material-tailwind/react';
+import { Typography, Button } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react';
 
 export default function QueueModal({ type, onCancel } : { type: string, onCancel: any }) {

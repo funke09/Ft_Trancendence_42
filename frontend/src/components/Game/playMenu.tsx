@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import {
   Dialog,
   Typography,
-  Card,
   List,
   ListItem,
-  DialogBody,
-  DialogHeader,
   Button,
   Input,
   Alert,
@@ -14,9 +11,9 @@ import {
 import Image from "next/image";
 import QueueModal from "./findGame";
 import api from "@/api";
+import store from "@/redux/store";
  
 export function PlayModal() {
-
 	const [selected, setSelected] = useState(1);
 	const setSelectedItem = (value: number) => setSelected(value);
 
@@ -25,6 +22,7 @@ export function PlayModal() {
 
 	const [isFindGame, setIsFindGame] = useState(false);
 	const [isInvite, setIsInvite] = useState(false);
+	const [isAlert, setIsAlert] = useState(true);
 
 	  const handleCancelMatchmaking = () => {
 		setIsFindGame(false);
@@ -33,17 +31,27 @@ export function PlayModal() {
 	const handleOpen = () => setIsFindGame(!isFindGame);
 	const handleInvOpen = () => setIsInvite(!isInvite);
 
+	const currentUser = store.getState().profile.user;
+
 	function clickFindGame() {
 		setIsFindGame(!isFindGame);
 	}
 
+
 	function clickInvite() {
-		useEffect(() => {
-			api.getUri('/user/findUser')
-		})
-		setIsInvite(!isInvite);
-	}
- 
+		return (
+			api.get(`user/${username}`)
+				.then((res: any) => {
+					if (!res.data || res.data.id == currentUser.id) {
+						setIsInvite(false);
+						setIsAlert(false);
+					} else {
+						setIsInvite(true);
+					}
+				})
+		);
+	};
+
 	return (
 		<div className="flex-col justify-center m-auto p-6">
 			<Typography color="white" className="m-auto text-2xl p-2 font-bold flex justify-center">Chose a Mode</Typography>
@@ -83,7 +91,26 @@ export function PlayModal() {
 			<Typography color="white" className="text-2xl m-auto mt-7 p-2 font-bold flex justify-center">Play</Typography>
 			<hr className="m-auto max-w-[150px] border-1 opacity-70 rounded-full"/>
 			<Typography color="white" className="text-[16px] m-auto opacity-70 pt-6 font-bold flex justify-center">Invite Friend</Typography>
-			<div className="m-auto my-2 relative flex flex-col w-full max-w-[24rem]">
+			{!isAlert &&
+				<Alert onClose={() => setIsAlert(!isAlert)} variant="gradient" className="!max-w-sm flex-row m-auto bg-gradient-to-tr from-red-800 to-red-600">
+					<div className="m-auto flex gap-2 justify-center opacity-85">
+						<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="#EDEDED"
+						className="h-6 w-6"
+						>
+						<path
+							fillRule="evenodd"
+							d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
+							clipRule="evenodd"
+							/>
+						</svg>
+						<Typography variant="h6">Sorry, this username does not exist</Typography>
+					</div>
+				</Alert>
+			}
+			<div className="m-auto my-3 relative flex flex-col w-full max-w-[24rem]">
 				<Input
 					type="text"
 					label="Friend Username"
