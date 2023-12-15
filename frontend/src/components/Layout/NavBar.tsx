@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Navbar,
   MobileNav,
@@ -10,29 +10,34 @@ import {
   MenuList,
   MenuItem,
   Avatar,
+  Badge,
+  Dialog,
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
 import store from "@/redux/store";
 import { UserType } from "@/redux/profile";
+import { PlayModal } from "../Game/playMenu";
  
 
 export function Nav() {
   const [openNav, setOpenNav] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const [open, setOpen] = React.useState(false);
+ 
+  const handleOpen = () => setOpen(!open);
 
   const user: UserType = store.getState().profile.user;
-
-  const closeMenu = () => setIsMenuOpen(false);
  
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener(
       "resize",
       () => window.innerWidth >= 960 && setOpenNav(false),
     );
   }, []);
+
    
-  function ClockIcon() {
+function ClockIcon() {
 	return (
 	  <svg
 		width="16"
@@ -51,8 +56,9 @@ export function Nav() {
 	);
   }
    
-  const NotificationsMenu = (
+const NotificationsMenu = (
 	  <Menu>
+		<Badge color="red" className="opacity-75">
 		<MenuHandler>
 			<svg
 			  xmlns="http://www.w3.org/2000/svg"
@@ -60,20 +66,24 @@ export function Nav() {
 			  fill="none"
 			  width={24}
 			  height={24}
-			  className="opacity-70 transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300"
+			  className="opacity-70 transition ease-in-out delay-150 hover:scale-110 hover:opacity-100 duration-300"
 			>
-			  <path
-				d="M12.02 2.90991C8.70997 2.90991 6.01997 5.59991 6.01997 8.90991V11.7999C6.01997 12.4099 5.75997 13.3399 5.44997 13.8599L4.29997 15.7699C3.58997 16.9499 4.07997 18.2599 5.37997 18.6999C9.68997 20.1399 14.34 20.1399 18.65 18.6999C19.86 18.2999 20.39 16.8699 19.73 15.7699L18.58 13.8599C18.28 13.3399 18.02 12.4099 18.02 11.7999V8.90991C18.02 5.60991 15.32 2.90991 12.02 2.90991Z"
-				stroke="#E4E4E4"
-				stroke-width="1.5"
-				stroke-miterlimit="10"
-				stroke-linecap="round"
-			  />
-			  <path xmlns="http://www.w3.org/2000/svg" d="M13.87 3.19994C13.56 3.10994 13.24 3.03994 12.91 2.99994C11.95 2.87994 11.03 2.94994 10.17 3.19994C10.46 2.45994 11.18 1.93994 12.02 1.93994C12.86 1.93994 13.58 2.45994 13.87 3.19994Z" stroke="#E4E4E4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-			  <path xmlns="http://www.w3.org/2000/svg" d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 9.90002 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601" stroke="#E4E4E4" stroke-width="1.5" stroke-miterlimit="10"/>
+				<path
+					d="M15 19.25C15 20.0456 14.6839 20.8087 14.1213 21.3713C13.5587 21.9339 12.7956 22.25 12 22.25C11.2044 22.25 10.4413 21.9339 9.87869 21.3713C9.31608 20.8087 9 20.0456 9 19.25"
+					stroke="#f2f2f2"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"/>
+				<path
+					d="M5.58096 18.25C5.09151 18.1461 4.65878 17.8626 4.36813 17.4553C4.07748 17.048 3.95005 16.5466 4.01098 16.05L5.01098 7.93998C5.2663 6.27263 6.11508 4.75352 7.40121 3.66215C8.68734 2.57077 10.3243 1.98054 12.011 1.99998V1.99998C13.6977 1.98054 15.3346 2.57077 16.6207 3.66215C17.9069 4.75352 18.7557 6.27263 19.011 7.93998L20.011 16.05C20.0723 16.5452 19.9462 17.0454 19.6576 17.4525C19.369 17.8595 18.9386 18.144 18.451 18.25C14.2186 19.2445 9.81332 19.2445 5.58096 18.25V18.25Z"
+					stroke="#f2f2f2"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"/>
 			</svg>
 		</MenuHandler>
-		<MenuList className="flex flex-col gap-2 bg-[#382A39] border-none shadow-md text-white">
+		</Badge>
+		<MenuList className="flex flex-col gap-2 bg-[#382A39] border-none shadow-md !text-white">
 		  <MenuItem className="flex items-center gap-4 py-2 pl-2 pr-8">
 			<Image
 					src={'/images/defaultAvatar.png'}
@@ -82,11 +92,11 @@ export function Nav() {
 					alt="avatar"
 					className="rounded-full"
 				/>
-			<div className="flex flex-col gap-1">
-			  <Typography variant="small" color="gray" className="font-semibold">
+			<div className="flex flex-col justify-center gap-1">
+			  <Typography variant="small" className="font-semibold">
 				Tania send you a message
 			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-blue-gray-500">
+			  <Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
 				<ClockIcon />
 				13 minutes ago
 			  </Typography>
@@ -100,11 +110,11 @@ export function Nav() {
 				alt="avatar"
 				className="rounded-full"
 			/>
-			<div className="flex flex-col gap-1">
-			  <Typography variant="small" color="gray" className="font-semibold">
+			<div className="flex flex-col justify-center gap-1">
+			  <Typography variant="small" className="font-semibold">
 				Natali replied to your email.
 			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-blue-gray-500">
+			  <Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
 				<ClockIcon />1 hour ago
 			  </Typography>
 			</div>
@@ -117,11 +127,11 @@ export function Nav() {
 					alt="avatar"
 					className="rounded-full"
 				/>
-			<div className="flex flex-col gap-1">
-			  <Typography variant="small" color="gray" className="font-semibold">
+			<div className="flex flex-col justify-center gap-1">
+			  <Typography variant="small" className="font-semibold">
 				You&apos;ve received a payment.
 			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-blue-gray-500">
+			  <Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
 				<ClockIcon />5 hours ago
 			  </Typography>
 			</div>
@@ -140,8 +150,8 @@ const ProfileMenu = (
 			/>
 		</MenuHandler>
 		<MenuList className="bg-[#382A39] border-none focus:outline-none rounded-[15px]" >
-			<div className="min-w-[240px] min-h-[257px] focus:outline-none flex-col justify-center">
-				<MenuItem className=" gap-2 flex justify-center p-2">
+			<div className="min-w-[240px] min-h-[257px] p-4 focus:outline-none flex-col justify-center">
+				<div className=" gap-2 flex justify-center">
 					<Image
 						src={user.avatar}
 						alt="avatar"
@@ -149,31 +159,38 @@ const ProfileMenu = (
 						height={70}
 						className="rounded-full flex"
 					/>
-				</MenuItem>
+				</div>
 				<Typography className="flex justify-center p-1 font-bold text-[18px] text-opacity-90 text-[#EAEAEA]">{user.username}</Typography>
 				<Typography className="flex justify-center p-1 pb-3 font-medium text-[14px] text-opacity-75 text-[#EAEAEA]">{user.email}</Typography>
-				<hr typeof="text" className="border-[#F6F6F6] mx-5 flex justify-center rounded-full border-opacity-75" />
-				<MenuItem className="flex justify-center gap-2 p-4">
-				<svg className="shadow-md"
+				<hr typeof="text" className="border-[#F6F6F6] mx-5 mb-2 flex justify-center rounded-full border-opacity-75" />
+				<Link href={'/profile'}>
+				<MenuItem className="flex justify-center gap-2">
+					<svg
+						width="25"
+						height="25"
+						viewBox="0 0 25 25"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg">
+					<path
+						fill-rule="evenodd"
+						clip-rule="evenodd"
+						d="M12.5 2.5C10.751 2.49968 9.03241 2.95811 7.5159 3.82953C5.99939 4.70096 4.73797 5.95489 3.85753 7.46619C2.97709 8.97748 2.50844 10.6933 2.49834 12.4423C2.48825 14.1913 2.93707 15.9124 3.80001 17.4337C4.38327 16.6757 5.13305 16.062 5.99136 15.64C6.84968 15.218 7.79355 14.999 8.75 15H16.25C17.2064 14.999 18.1503 15.218 19.0086 15.64C19.867 16.062 20.6167 16.6757 21.2 17.4337C22.0629 15.9124 22.5117 14.1913 22.5017 12.4423C22.4916 10.6933 22.0229 8.97748 21.1425 7.46619C20.262 5.95489 19.0006 4.70096 17.4841 3.82953C15.9676 2.95811 14.249 2.49968 12.5 2.5ZM22.4287 20.095C24.1 17.9162 25.004 15.2459 25 12.5C25 5.59625 19.4037 0 12.5 0C5.59626 0 1.40665e-05 5.59625 1.40665e-05 12.5C-0.00411273 15.246 0.899895 17.9162 2.57126 20.095L2.56501 20.1175L3.00876 20.6337C4.18112 22.0044 5.63674 23.1045 7.2753 23.8583C8.91385 24.6121 10.6964 25.0016 12.5 25C15.0342 25.0046 17.5092 24.2349 19.5937 22.7937C20.4824 22.1797 21.2882 21.4538 21.9912 20.6337L22.435 20.1175L22.4287 20.095ZM12.5 5C11.5054 5 10.5516 5.39508 9.84835 6.09834C9.14509 6.80161 8.75 7.75543 8.75 8.74999C8.75 9.74455 9.14509 10.6984 9.84835 11.4016C10.5516 12.1049 11.5054 12.5 12.5 12.5C13.4946 12.5 14.4484 12.1049 15.1516 11.4016C15.8549 10.6984 16.25 9.74455 16.25 8.74999C16.25 7.75543 15.8549 6.80161 15.1516 6.09834C14.4484 5.39508 13.4946 5 12.5 5Z" fill="#E9E9E9"/>
+					</svg>
+					<Typography variant="small" className="font-bold text-[#E4E4E4]">
+						My Profile
+					</Typography >
+				</MenuItem>
+				</Link>
+				<MenuItem onClick={() => {
+                	document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                	window.location.href = "/";
+				}}
+				className="flex justify-center gap-2 ">
+				<svg
 					width="25"
 					height="25"
 					viewBox="0 0 25 25"
 					fill="none"
-					xmlns="http://www.w3.org/2000/svg">
-				<path
-					fill-rule="evenodd"
-					clip-rule="evenodd"
-					d="M12.5 2.5C10.751 2.49968 9.03241 2.95811 7.5159 3.82953C5.99939 4.70096 4.73797 5.95489 3.85753 7.46619C2.97709 8.97748 2.50844 10.6933 2.49834 12.4423C2.48825 14.1913 2.93707 15.9124 3.80001 17.4337C4.38327 16.6757 5.13305 16.062 5.99136 15.64C6.84968 15.218 7.79355 14.999 8.75 15H16.25C17.2064 14.999 18.1503 15.218 19.0086 15.64C19.867 16.062 20.6167 16.6757 21.2 17.4337C22.0629 15.9124 22.5117 14.1913 22.5017 12.4423C22.4916 10.6933 22.0229 8.97748 21.1425 7.46619C20.262 5.95489 19.0006 4.70096 17.4841 3.82953C15.9676 2.95811 14.249 2.49968 12.5 2.5ZM22.4287 20.095C24.1 17.9162 25.004 15.2459 25 12.5C25 5.59625 19.4037 0 12.5 0C5.59626 0 1.40665e-05 5.59625 1.40665e-05 12.5C-0.00411273 15.246 0.899895 17.9162 2.57126 20.095L2.56501 20.1175L3.00876 20.6337C4.18112 22.0044 5.63674 23.1045 7.2753 23.8583C8.91385 24.6121 10.6964 25.0016 12.5 25C15.0342 25.0046 17.5092 24.2349 19.5937 22.7937C20.4824 22.1797 21.2882 21.4538 21.9912 20.6337L22.435 20.1175L22.4287 20.095ZM12.5 5C11.5054 5 10.5516 5.39508 9.84835 6.09834C9.14509 6.80161 8.75 7.75543 8.75 8.74999C8.75 9.74455 9.14509 10.6984 9.84835 11.4016C10.5516 12.1049 11.5054 12.5 12.5 12.5C13.4946 12.5 14.4484 12.1049 15.1516 11.4016C15.8549 10.6984 16.25 9.74455 16.25 8.74999C16.25 7.75543 15.8549 6.80161 15.1516 6.09834C14.4484 5.39508 13.4946 5 12.5 5Z" fill="#E9E9E9"/>
-				</svg>
-				<Typography variant="small" className="font-bold text-[#E4E4E4]">
-					My Profile
-				</Typography >
-				</MenuItem>
-				<MenuItem className="flex justify-center gap-2 ">
-				<svg className="shadow-md"
-					width="20"
-					height="25"
-					viewBox="0 0 20 25" fill="none"
 					xmlns="http://www.w3.org/2000/svg"
 				>
 					<path
@@ -194,7 +211,7 @@ const navList = (
       <Typography
         as="li"
         variant="small"
-        color="blue-gray"
+		color="white"
         className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
       >
 		<Link href="/chat" className="flex items-center gap-x-2 p-1">
@@ -219,7 +236,7 @@ const navList = (
       <Typography
         as="li"
         variant="small"
-        color="blue-gray"
+		color="white"
         className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
       >
 		<Link href="/leaderboard" className="flex items-center gap-x-2 p-1">
@@ -240,7 +257,7 @@ const navList = (
       <Typography
         as="li"
         variant="small"
-        color="blue-gray"
+        color="white"
 		className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
       >
 		<Link href="/features" className="flex items-center gap-x-2 p-1">
@@ -275,7 +292,7 @@ const navList = (
       <Typography
         as="li"
         variant="small"
-        color="blue-gray"
+        color="white"
         className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
 		>
 		<Link href="/team" className="flex items-center gap-x-2 p-1">
@@ -293,7 +310,7 @@ const navList = (
   
   return (
 	  <Navbar className="bg-[#3B2A3DBF] bg-opacity-70 m-auto mt-6 mb-6 border-0 px-4 py-2 lg:px-8 lg:py-4 max-w-[1500px]">
-      <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
+      <div className="relative mx-auto flex items-center justify-between text-white">
         <Typography
           className="mr-4 cursor-pointer py-1.5 content-start font-medium">
 			<Link href={'/'}>
@@ -308,13 +325,20 @@ const navList = (
         <div className="hidden lg:block ">{navList}</div>
         <div className="flex items-center w-max gap-x-6">
 			<div className="hidden lg:flex">{NotificationsMenu}</div>
-          <Button
-            variant="gradient"
-            size="sm"
-            className="hidden bg-[#F53FA1] opacity-70 lg:inline-block transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300"
+			<Button
+			onClick={handleOpen}
+			variant="gradient"
+			size="md"
+			color="pink"
+			className="hidden opacity-70 lg:inline-block transition s ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300"
 			>
-            <span>PLAY</span>
-          </Button>
+			PLAY
+			</Button>
+			{open &&
+			<Dialog className="bg-[#382A39] rounded-[30px]" open={open} handler={handleOpen}>
+				<PlayModal/>
+			</Dialog>
+			}
 		<div className="hidden lg:flex">{ProfileMenu}</div>
         </div>
         <IconButton
@@ -359,9 +383,14 @@ const navList = (
         <div className="container m-auto">
           {navList}
           <div className="flex place-self-end items-center gap-x-1">
-            <Button variant="gradient" size="sm" className="bg-[#F53FA1] opacity-70 lg:inline-block transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300">
-              <span>PLAY</span>
-            </Button>
+		  <Button
+			onClick={handleOpen}
+            variant="gradient"
+            size="md"
+			color="pink"
+			>
+            PLAY
+          </Button>
 		  </div>
         </div>
       </MobileNav>

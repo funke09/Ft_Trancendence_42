@@ -4,7 +4,7 @@ import { socketSlice } from "./socket";
 
 const rootReducer = {
 	profile: profileSlice.reducer,
-	socket: socketSlice.reducer,
+	io: socketSlice.reducer,
 };
 
 const store = configureStore({
