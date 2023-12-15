@@ -12,6 +12,8 @@ import {
   Alert,
 } from "@material-tailwind/react";
 import Image from "next/image";
+import QueueModal from "./findGame";
+import api from "@/api";
  
 export function PlayModal() {
 
@@ -21,12 +23,29 @@ export function PlayModal() {
 	const [username, setUsername] = useState("");
 	const onChange = ({ target }: any) => setUsername(target.value);
 
+	const [isFindGame, setIsFindGame] = useState(false);
+	const [isInvite, setIsInvite] = useState(false);
+
+	  const handleCancelMatchmaking = () => {
+		setIsFindGame(false);
+		setIsInvite(false);
+	  };
+	const handleOpen = () => setIsFindGame(!isFindGame);
+	const handleInvOpen = () => setIsInvite(!isInvite);
+
 	function clickFindGame() {
-		return null;
+		setIsFindGame(!isFindGame);
+	}
+
+	function clickInvite() {
+		useEffect(() => {
+			api.getUri('/user/findUser')
+		})
+		setIsInvite(!isInvite);
 	}
  
 	return (
-		<div className="flex-col justify-center min-h-[656px] m-auto p-6">
+		<div className="flex-col justify-center m-auto p-6">
 			<Typography color="white" className="m-auto text-2xl p-2 font-bold flex justify-center">Chose a Mode</Typography>
 			<hr className="m-auto max-w-[220px] border-1 opacity-70 rounded-full"/>
 			<List className="m-auto pt-8 gap-8 flex-row justify-between">
@@ -80,6 +99,7 @@ export function PlayModal() {
 					color={username ? "gray" : "gray"}
 					disabled={!username}
 					className="!absolute right-1 top-1 rounded"
+					onClick={clickInvite}
 				>
 				Invite
 				</Button>
@@ -91,11 +111,17 @@ export function PlayModal() {
 				onClick={clickFindGame}
 				className="flex justify-center m-auto my-2 hover:scale-110 hover:shadow-md hover:opacity-100 duration-200">
 				FIND GAME
-				</Button>
+			</Button>
+			{ isFindGame && 
+				<Dialog size="sm" className="bg-[#382A39] p-5 rounded-[30px]" open={isFindGame} handler={handleOpen}>
+						{<QueueModal type={"normal"} onCancel={handleCancelMatchmaking}/>}
+				</Dialog>
+			}
+			{ isInvite && 
+				<Dialog size="sm" className="bg-[#382A39] p-5 rounded-[30px]" open={isInvite} handler={handleInvOpen}>
+					{<QueueModal type={"invite"} onCancel={handleCancelMatchmaking}/>}
+				</Dialog>
+			}
 	</div>
   );
 }
-
-{/* <Button variant="gradient" color="green" onClick={handleOpen}>
-  <span>Confirm</span>
-</Button> */}

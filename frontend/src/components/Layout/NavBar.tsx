@@ -17,7 +17,7 @@ import Image from "next/image";
 import Link from "next/link";
 import store from "@/redux/store";
 import { UserType } from "@/redux/profile";
-import { PlayModal } from "../Game/Play";
+import { PlayModal } from "../Game/playMenu";
  
 
 export function Nav() {
