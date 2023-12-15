@@ -4,7 +4,6 @@ import * as argon from 'argon2';
 import { User, Prisma } from '@prisma/client';
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt'
-import { Status } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -61,6 +60,7 @@ export class AuthService {
 				email: true,
 				username: true,
 				avatar: true,
+				userStatus: true,
 				id: true,
 			}
 		})

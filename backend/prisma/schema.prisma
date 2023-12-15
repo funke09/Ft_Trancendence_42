@@ -7,25 +7,17 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Status {
-	ONLINE
-	OFFLINE
-	INGAME
-}
-
 model User {
   id          Int     @default(autoincrement()) @id
   email       String? @unique
   username    String  @unique
   password	  String
   avatar      String?
-  userStatus  Status  @default(OFFLINE) // online | in-game | away ...
-  player1Games Game[] @relation("Player1")
-  player2Games Game[] @relation("Player2")
+  userStatus  String  @default("Offline") // online | in-game | offline
+  Game		  Game[]  @relation("Game")
   stats		  Stats?
   createdAt   DateTime @default(now())
-
-  @@map("users")
+  updatedAt	  DateTime @updatedAt
 }
 
 model Stats {
@@ -56,20 +48,20 @@ enum GameType {
 
 model Game {
 	id		Int @id @default(autoincrement())
+	
+	outcome String? @default("Undefined") // Win | Loss
 
-	player1	User? @relation("Player1", fields: [player1Id], references: [id])
-	player1Id Int?
-	player1Score Int @default(0)
+	p1Score	Int		@default(0)
+	p2Score	Int 	@default(0)
 
-	player2	User? @relation("Player2", fields: [player2Id], references: [id])
-	player2Id Int?
-	player2Score Int @default(0)
+	p2Id	Int
 
-	winner Int?
-
-	status GameStatus
-	gameType GameType @default(CLASSIC)
+	gameType GameType
+	gameStatus GameStatus
 
 	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
 
+	user	User @relation("Game", fields: [userId], references: [id])
+	userId Int
 }
