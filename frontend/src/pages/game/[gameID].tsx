@@ -1,3 +1,4 @@
+import { GameLayout } from "@/components/Game/gameLayout";
 import Loading from "@/components/Layout/Loading";
 import { useRouter } from "next/router";
 
@@ -7,5 +8,5 @@ export default function Game() {
 
 	if (!gameID) return <Loading/>;
 
-	// return <GameLayout gameID={gameID} />
+	return <GameLayout gameID={gameID} />
 }

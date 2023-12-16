@@ -6,7 +6,6 @@ const Height = 400;
 const Width = 800;
 const PaddleWidth = 15;
 const PaddleHieght = 100;
-const BallSize = 8;
 const BallSpeed = 10;
 const PaddleSpeed = 7; 
 
@@ -258,7 +257,7 @@ export class Game {
 			mass: 100,
 			isStatic: true,
 		});
-		this.player1 = Bodies.rectangle(Width, PaddleWidth / 2, Height / 2, PaddleWidth, PaddleHieght, {
+		this.player2 = Bodies.rectangle(Width - PaddleWidth / 2, Height / 2, PaddleWidth, PaddleHieght, {
 			id: 7,
 			mass: 100,
 			isStatic: true,
@@ -366,7 +365,7 @@ export class Game {
 		Events.off(this.engine, "collisionEnd", this.collisionEnd);
 		Events.off(this.engine, "preUpdate", this.updateBall);
 	
-		World.clear(this.world);
+		World.clear(this.world, null);
 		Engine.clear(this.engine);
 		Runner.stop(this.runner);
 		this.engine = null;
