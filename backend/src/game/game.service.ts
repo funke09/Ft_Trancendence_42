@@ -14,7 +14,7 @@ export class GameService {
 	private queue : {client : Socket, username: string}[] = [];
 	private readonly players = new Map<string, Socket>();
 	private invits : InvGameDto[] = [];
-	
+
 	async createGame(client: Socket) {
 		const username = this.getUsernameBySocket(client);
 
@@ -209,11 +209,10 @@ export class GameService {
 
 	getUsernameBySocket(client: Socket): string | null {
 		let username: string | null = null;
-
-  		this.players.forEach((value: any, key: string) => {
-		  if (value.id === client.id) {
-			username = key;
-		  }
+		this.players.forEach((value: any, key: string) => {
+			if (value.id === client.id) {
+				username = key;
+			}
 		});
 		return username;
 	}

@@ -56,7 +56,7 @@ export function PlayModal() {
 				);
 			};
 
-	///////////////////////////
+		///////////////////////////
 	const router = useRouter();
 		
 	useEffect(() => {

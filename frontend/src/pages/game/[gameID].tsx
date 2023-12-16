@@ -1,4 +1,3 @@
-import { GameLayout } from "@/components/Game/gameLayout";
 import Loading from "@/components/Layout/Loading";
 import { Nav } from "@/components/Layout/NavBar";
 import { useRouter } from "next/router";
@@ -12,7 +11,7 @@ export default function Game() {
 	return(
 		<>
 			<Nav/>
-			<GameLayout gameID={gameID} />
+			{/* <GameLayout gameID={gameID} /> */}
 		</>
 	);
 }
