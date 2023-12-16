@@ -3,7 +3,7 @@ import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({cors: {origin: 'http://localhost:3000', credebtials: true}, namespace: 'game'})
+@WebSocketGateway({cors: {origin: 'http://localhost:3000', credentials: true}, namespace: 'game'})
 export class GameGateway {
   constructor(private readonly gameService: GameService) {}
 

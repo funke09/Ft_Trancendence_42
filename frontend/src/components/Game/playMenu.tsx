@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   Typography,
@@ -11,7 +11,9 @@ import {
 import Image from "next/image";
 import QueueModal from "./findGame";
 import api from "@/api";
-import store from "@/redux/store";
+import store, { setOpp } from "@/redux/store";
+import { useRouter } from "next/router";
+import gameSocket from "@/sockets/gameSocket";
  
 export function PlayModal() {
 	const [selected, setSelected] = useState(1);
@@ -24,34 +26,51 @@ export function PlayModal() {
 	const [isInvite, setIsInvite] = useState(false);
 	const [isAlert, setIsAlert] = useState(true);
 
-	  const handleCancelMatchmaking = () => {
+	const handleCancel = () => {
 		setIsFindGame(false);
 		setIsInvite(false);
+		gameSocket.emit("cancelGame", { msg: "cancel" });
 	  };
+	
 	const handleOpen = () => setIsFindGame(!isFindGame);
 	const handleInvOpen = () => setIsInvite(!isInvite);
 
 	const currentUser = store.getState().profile.user;
 
-	function clickFindGame() {
+	const clickFindGame = () => {
 		setIsFindGame(!isFindGame);
+		gameSocket.emit("createGame", { msg: "createGame" });
 	}
-
 
 	function clickInvite() {
 		return (
 			api.get(`user/${username}`)
-				.then((res: any) => {
-					if (!res.data || res.data.id == currentUser.id) {
+			.then((res: any) => {
+				if (!res.data || res.data.id == currentUser.id) {
 						setIsInvite(false);
 						setIsAlert(false);
 					} else {
 						setIsInvite(true);
 					}
 				})
-		);
-	};
+				);
+			};
 
+		///////////////////////////
+	const router = useRouter();
+		
+	useEffect(() => {
+		gameSocket.on("match", (data) => {
+			store.dispatch(setOpp(data));
+			router.push(`/game/${data.roomName}`);
+			});
+
+		gameSocket.on("cancelGame", () => {
+			setIsFindGame(false);
+			setIsInvite(false);
+		});
+	}, []);
+			
 	return (
 		<div className="flex-col justify-center m-auto p-6">
 			<Typography color="white" className="m-auto text-2xl p-2 font-bold flex justify-center">Chose a Mode</Typography>
@@ -141,12 +160,12 @@ export function PlayModal() {
 			</Button>
 			{ isFindGame && 
 				<Dialog size="sm" className="bg-[#382A39] p-5 rounded-[30px]" open={isFindGame} handler={handleOpen}>
-						{<QueueModal type={"normal"} onCancel={handleCancelMatchmaking}/>}
+						{<QueueModal type={"normal"} onCancel={handleCancel}/>}
 				</Dialog>
 			}
 			{ isInvite && 
 				<Dialog size="sm" className="bg-[#382A39] p-5 rounded-[30px]" open={isInvite} handler={handleInvOpen}>
-					{<QueueModal type={"invite"} onCancel={handleCancelMatchmaking}/>}
+					{<QueueModal type={"invite"} onCancel={handleCancel}/>}
 				</Dialog>
 			}
 	</div>

@@ -1,11 +1,11 @@
 import api from '@/api';
 import React, { useEffect } from 'react';
 import store, { setProfile } from '@/redux/store';
+import SocketComp from '@/sockets/socketComp';
 import { AppProps } from 'next/app';
 import { Provider } from 'react-redux';
 import { AxiosError } from 'axios';
 import { ThemeProvider } from "@material-tailwind/react";
-import type { ButtonStyleTypes } from "@material-tailwind/react";
 import './../style/global.css'
 
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -22,6 +22,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 	return (
 		<Provider store={store}>
 			<ThemeProvider>
+			<SocketComp />
 			<main>
 				<Component {...pageProps} />
 			</main>
