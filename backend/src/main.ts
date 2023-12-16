@@ -1,7 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import * as passport from 'passport';
 import * as cookieParser from 'cookie-parser';
 import { AllExceptionFilter } from './exceptions/all.exception.catch';
 import { IoAdapter } from '@nestjs/platform-socket.io';

@@ -4,7 +4,7 @@ import { InvGameDto } from './dto/inv-game.dto';
 import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
 import { genID } from './utils/genID';
-// import { Game } from './game';
+import { Game } from './game';
 
 @Injectable()
 export class GameService {

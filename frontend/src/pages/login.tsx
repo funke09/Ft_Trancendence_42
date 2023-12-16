@@ -2,13 +2,33 @@ import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 import SigninForm from '../components/Auth/SigninForm';
 import SignUpForm from '@/components/Auth/SignUpForm';
+import api from '@/api';
+import Loading from '@/components/Layout/Loading';
 
 const Auth: React.FC = () => {
 	const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
 
 	const switchToLogin = () => setActiveTab('login');
 	const switchToSignUp = () => setActiveTab('signup');
+	
+	const [loading, setLoading] = useState(true);
 
+	useEffect(() => {
+		api.get("user/profile")
+			.then((res: any) => {
+				if (res.status == 200) {
+					window.location.href = "/"
+					setLoading(false);
+				}
+			})
+			.catch((err: any) => {
+				window.location.href = "/login";
+			});
+	}, []);
+
+	if (loading) {
+		return(<Loading/>);
+	} 
 	
 	return (
 		<main className="flex flex-row h-screen">
