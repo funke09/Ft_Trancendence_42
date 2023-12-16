@@ -19,6 +19,7 @@ export class AuthService {
 				email: profile.emails[0].value,
 				username: profile.username,
 				avatar: profile._json.image.link,
+				userStatus: 'Online',
 				password: 'tmpPass',
 			});
 		}
@@ -47,6 +48,7 @@ export class AuthService {
 			data: {
 				email: data.email,
 				username: data.username,
+				userStatus: data.userStatus,
 				avatar: data.avatar,
 				password: hash,	
 			},
