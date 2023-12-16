@@ -3,18 +3,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialStateProfile = {
     game: {
-        ball: {
-            x: 0,
-            y: 0,
-        },
-        player1: {
-            x: 0,
-            y: 0,
-        },
-        player2: {
-            x: 0,
-            y: 0,
-        },
+		ball: { x: 0, y: 0 },
+		player1: { x: 0, y: 0 },
+		player2: { x: 0, y: 0 },
+		score: {player1: 0, player2: 0},
     },
     opp: {
         roomName: "",
@@ -25,7 +17,7 @@ const initialStateProfile = {
 };
 
 const gameSlice = createSlice({
-	name: "game",
+	name: "gameState",
     initialState: initialStateProfile as unknown as { game: Game; opp: oppType },
 	reducers: {
 		setGame: (state, action) => {

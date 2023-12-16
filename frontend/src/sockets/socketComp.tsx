@@ -19,7 +19,7 @@ const SocketComp = () => {
 	useEffect(() => {
 		store.dispatch(setSocket(gameSocket));
 
-		gameSocket.on("game", (game: any) => {
+		gameSocket.on("gameState", (game: any) => {
 			store.dispatch(setGame(game));
 		});
 

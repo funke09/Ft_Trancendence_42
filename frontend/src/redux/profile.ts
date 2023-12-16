@@ -7,11 +7,18 @@ export interface UserType {
 	username: string;
 	password: string;
 	avatar: string;
-	oAuth_code: string;
-	oAuth_exp: string;
 	userStatus: string;
 	createdAt: string;
-	UserStats: any[];
+	updatedAt: string;
+	stats: {
+		userId: number;
+		matchesPlayed: number;
+		wins: number;
+		losses: number;
+		rank: string;
+		createdAt: string;
+		updatedAt: string;
+	};
 	Games: any[];
 }
 
@@ -23,11 +30,18 @@ const initialStateProfile: { user: UserType } = {
 		username: "",
 		password: "",
 		avatar: "",
-		oAuth_code: "",
-		oAuth_exp: "",
 		userStatus: "",
 		createdAt: "",
-		UserStats: [],
+		updatedAt: "",
+		stats: {
+			userId: 0,
+			matchesPlayed: 0,
+			wins: 0,
+			losses: 0,
+			rank: "Iron",
+			createdAt: "",
+			updatedAt: "",
+		},
 		Games: [],
 	},
 }

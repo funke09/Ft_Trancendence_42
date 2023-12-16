@@ -7,12 +7,11 @@ import Loading from '@/components/Layout/Loading';
 
 const Auth: React.FC = () => {
 	const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
+	const [loading, setLoading] = useState(true);
 
 	const switchToLogin = () => setActiveTab('login');
 	const switchToSignUp = () => setActiveTab('signup');
 	
-	const [loading, setLoading] = useState(true);
-
 	useEffect(() => {
 		api.get("user/profile")
 			.then((res: any) => {
@@ -26,11 +25,10 @@ const Auth: React.FC = () => {
 			});
 	}, []);
 
-	if (loading) {
+	if (loading)
 		return(<Loading/>);
-	} 
-	
-	return (
+	else
+		return (
 		<main className="flex flex-row h-screen">
 			<section className="flex flex-col bg-[#382A39] w-2/5 relative min-[0px]:hidden sm:hidden md:flex bg-opacity-75">
 				<div className="absolute flex-grow top-4 left-4 m-10 opacity-95">

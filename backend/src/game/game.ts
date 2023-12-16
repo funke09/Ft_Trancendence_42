@@ -6,7 +6,6 @@ const Height = 400;
 const Width = 800;
 const PaddleWidth = 15;
 const PaddleHieght = 100;
-const BallSize = 8;
 const BallSpeed = 10;
 const PaddleSpeed = 7; 
 
@@ -16,7 +15,6 @@ export class Game {
 	readonly p2Username: string;
 	client1: any;
 	client2: any;
-	// gameType: number;
 	endGameCallback: any;
 
 	private world;
@@ -53,20 +51,6 @@ export class Game {
 		this.createBorders();
 		this.createPaddles();
 		this.createBall();
-		// Set ball speed based on game type
-		// switch (this.gameType) {
-		// case 1: // Classic
-		// 	BallSpeed = 10;
-		// 	break;
-		// case 2: // Medium
-		// 	BallSpeed = 15;
-		// 	break;
-		// case 3: // Hardcore
-		// 	BallSpeed = 20;
-		// default:
-		// 	BallSpeed = 10; // Default to Classic speed
-		// }
-		
 		this.handleInput();
 		this.score = {
 			player1: 0,
@@ -274,7 +258,7 @@ export class Game {
 			mass: 100,
 			isStatic: true,
 		});
-		this.player1 = Bodies.rectangle(Width, PaddleWidth / 2, Height / 2, PaddleWidth, PaddleHieght, {
+		this.player2 = Bodies.rectangle(Width - PaddleWidth / 2, Height / 2, PaddleWidth, PaddleHieght, {
 			id: 7,
 			mass: 100,
 			isStatic: true,
@@ -382,7 +366,7 @@ export class Game {
 		Events.off(this.engine, "collisionEnd", this.collisionEnd);
 		Events.off(this.engine, "preUpdate", this.updateBall);
 	
-		World.clear(this.world);
+		World.clear(this.world, null);
 		Engine.clear(this.engine);
 		Runner.stop(this.runner);
 		this.engine = null;

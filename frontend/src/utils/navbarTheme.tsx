@@ -25,7 +25,7 @@ const theme = {
 			  px: "px-4",
 			},
 		  },
-		  mobileNav: {
+		  Collapse: {
 			display: "block",
 			width: "w-full",
 			basis: "basis-full",
