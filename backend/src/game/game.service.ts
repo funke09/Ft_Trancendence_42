@@ -17,45 +17,44 @@ export class GameService {
 	
 	async createGame(client: Socket) {
 		const username = this.getUsernameBySocket(client);
-		
+
 		if (!username) return;
-
+	  
 		if (this.queue.find((p) => p.username === username)) {
-			client.emit('error', 'Already in Queue Dummy');
-			client.emit('cancelGame', []);
-			return;
+		  client.emit('error', 'Already in Queue Dummy');
+		  client.emit('cancelGame', []);
+		  return;
 		}
-		
+	  
 		if (this.isInGame(username)) {
-			client.emit('error', 'Already in-game Dummy');
-			client.emit('cancelGame', []);
-			return;
+		  client.emit('error', 'Already in-game Dummy');
+		  client.emit('cancelGame', []);
+		  return;
 		}
-
+	  
 		this.queue.push({ username, client });
-
+	  
 		if (this.queue.length >= 2) {
-			let p1 = this.queue.shift();
-			let p2 = this.queue.shift();
-			let id = genID(this.games);
-
-			const game = new Game({
-				id,
-				client1: p1.client,
-				client2: p2.client,
-				p1Username: p1.username,
-				p2Username: p2.username,
-				p1Id: (await this.getUser(p1.client)).uid,
-				p2Id: (await this.getUser(p2.client)).uid,
-			});
-			game.endGameCallback = this.stopGame;
-			this.games.set(
-				id,
-				game,
-			);
-			game.startGame();
+		  let p1 = this.queue.shift();
+		  let p2 = this.queue.shift();
+		  let id = genID(this.games);
+	  
+		  const game = new Game({
+			id,
+			client1: p1.client,
+			client2: p2.client,
+			p1Username: p1.username,
+			p2Username: p2.username,
+			p1Id: (await this.getUser(p1.client)).uid,
+			p2Id: (await this.getUser(p2.client)).uid,
+			// gameType: gameType,
+		  });
+	  
+		  game.endGameCallback = this.stopGame;
+		  this.games.set(id, game);
+		  game.startGame();
 		}
-	}
+	  }	  
 
 	cancelGame(client: Socket): void {
 		const username = this.getUsernameBySocket(client);

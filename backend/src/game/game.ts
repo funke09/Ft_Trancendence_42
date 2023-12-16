@@ -15,6 +15,7 @@ export class Game {
 	readonly p2Username: string;
 	client1: any;
 	client2: any;
+	// gameType: number;
 	endGameCallback: any;
 
 	private world;
@@ -42,6 +43,7 @@ export class Game {
 		this.client2 = ClientData.client2;
 		this.p1Id = ClientData.p1Id;
 		this.p2Id = ClientData.p2Id;
+		// this.gameType = ClientData.gameType;
 		this.emitGame(true, true);
 	}
 
@@ -50,6 +52,20 @@ export class Game {
 		this.createBorders();
 		this.createPaddles();
 		this.createBall();
+		// Set ball speed based on game type
+		// switch (this.gameType) {
+		// case 1: // Classic
+		// 	BallSpeed = 10;
+		// 	break;
+		// case 2: // Medium
+		// 	BallSpeed = 15;
+		// 	break;
+		// case 3: // Hardcore
+		// 	BallSpeed = 20;
+		// default:
+		// 	BallSpeed = 10; // Default to Classic speed
+		// }
+		
 		this.handleInput();
 		this.score = {
 			player1: 0,
