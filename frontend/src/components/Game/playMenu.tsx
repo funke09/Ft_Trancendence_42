@@ -38,8 +38,8 @@ export function PlayModal() {
 	const currentUser = store.getState().profile.user;
 
 	const clickFindGame = () => {
+		gameSocket.emit("createGame", { msg: "createGame", gameType: selected });
 		setIsFindGame(!isFindGame);
-		gameSocket.emit("createGame", { msg: "createGame" });
 	}
 
 	function clickInvite() {
@@ -49,14 +49,13 @@ export function PlayModal() {
 				if (!res.data || res.data.id == currentUser.id) {
 						setIsInvite(false);
 						setIsAlert(false);
-					} else {
+				} else {
 						setIsInvite(true);
-					}
-				})
-				);
-			};
+				}
+			})
+		);
+	};
 
-		///////////////////////////
 	const router = useRouter();
 		
 	useEffect(() => {

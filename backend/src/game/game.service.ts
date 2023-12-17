@@ -15,22 +15,22 @@ export class GameService {
 	private readonly players = new Map<string, Socket>();
 	private invits : InvGameDto[] = [];
 
-	async createGame(client: Socket) {
+	async createGame(client: Socket, gameType: number) {
 		const username = this.getUsernameBySocket(client);
 
 		if (!username) return;
 	  
-		if (this.queue.find((p) => p.username === username)) {
-		  client.emit('error', 'Already in Queue Dummy');
-		  client.emit('cancelGame', []);
-		  return;
-		}
+		// if (this.queue.find((p) => p.username === username)) {
+		//   client.emit('error', 'Already in Queue Dummy');
+		//   client.emit('cancelGame', []);
+		//   return;
+		// }
 	  
-		if (this.isInGame(username)) {
-		  client.emit('error', 'Already in-game Dummy');
-		  client.emit('cancelGame', []);
-		  return;
-		}
+		// if (this.isInGame(username)) {
+		//   client.emit('error', 'Already in-game Dummy');
+		//   client.emit('cancelGame', []);
+		//   return;
+		// }
 	  
 		this.queue.push({ username, client });
 	  
@@ -47,8 +47,7 @@ export class GameService {
 			p2Username: p2.username,
 			p1Id: (await this.getUser(p1.client)).uid,
 			p2Id: (await this.getUser(p2.client)).uid,
-			// gameType: gameType,
-		  });
+		  }, gameType);
 	  
 		  game.endGameCallback = this.stopGame;
 		  this.games.set(id, game);
@@ -61,7 +60,7 @@ export class GameService {
 		this.queue = this.queue.filter((p) => p.username !== username);
 	}
 
-	moveGame(client: Socket, data): void {
+	moveGame(client: Socket, data: any): void {
 		try {
 			let game: Game = this.games.get(data.room);
 			if (!game) return;
@@ -108,7 +107,7 @@ export class GameService {
 		toClient.emit('invite', {username: fromUsername, id: userId});
 	}
 
-	async acceptGame(toClient: Socket, data: { username: string }) {
+	async acceptGame(toClient: Socket, data: { username: string }, gameType: number) {
 		if (!data.username) return;
 		const fromClient = this.players.get(data.username);
 		if (!fromClient) {
@@ -134,7 +133,7 @@ export class GameService {
 			p2Username: toUsername,
 			p1Id: (await this.getUser(fromClient)).uid,
 			p2Id: (await this.getUser(toClient)).uid,
-		});
+		}, gameType);
 
 		game.endGameCallback = this.stopGame;
 

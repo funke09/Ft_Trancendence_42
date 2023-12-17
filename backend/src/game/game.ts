@@ -2,12 +2,12 @@ import { GameStateDto } from "./dto/game-state.dto";
 import { GameData } from "./game.data";
 import { Body, Bodies, World, Events, Engine, Runner } from 'matter-js';
 
-const Height = 400;
-const Width = 800;
+const Height = 300;
+const Width = 700;
 const PaddleWidth = 15;
 const PaddleHieght = 100;
-const BallSpeed = 10;
 const PaddleSpeed = 7; 
+const BallSpeed = 10;
 
 export class Game {
 	private readonly id: string;
@@ -16,6 +16,7 @@ export class Game {
 	client1: any;
 	client2: any;
 	endGameCallback: any;
+	// gameType: number;
 
 	private world;
 	private engine;
@@ -34,7 +35,7 @@ export class Game {
 
 	private readonly gameData = new GameData();
 
-	constructor(ClientData: any) {
+	constructor(ClientData: any, gameType: number) {
 		this.id = ClientData.id;
 		this.p1Username = ClientData.p1Username;
 		this.p2Username = ClientData.p2Username;
@@ -42,7 +43,7 @@ export class Game {
 		this.client2 = ClientData.client2;
 		this.p1Id = ClientData.p1Id;
 		this.p2Id = ClientData.p2Id;
-		// this.gameType = ClientData.gameType;
+		// this.gameType = gameType;
 		this.emitGame(true, true);
 	}
 
@@ -66,6 +67,7 @@ export class Game {
 				down: false,
 			}
 		};
+		// console.log(this.gameType);
 		this.countDown();
 		setTimeout(() => {
 			this.ballDir = {
@@ -125,7 +127,7 @@ export class Game {
 
 	createBall() {
 		const world = this.world;
-		this.ball = Bodies.circle(450, 250, 20, {
+		this.ball = Bodies.circle(350, 150, 15, {
 			id: 5,
 			mass: 0,
 		});
@@ -173,8 +175,8 @@ export class Game {
 	collisionEnd = (event) => {
 		const resetBall = () => {
 			Body.setPosition(this.ball, {
-				x: 400,
-				y: 200,
+				x: 350,
+				y: 150,
 			});
 
 			this.ballDir = {

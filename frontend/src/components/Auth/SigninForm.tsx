@@ -1,22 +1,47 @@
+import api from "@/api";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function SigninForm() {
-  
-		return (
+	const [username, setUsername] = useState('');
+	const [password, setPassword] = useState('');
+
+	const handleLogin = async (e: any) => {
+		e.preventDefault();
+	  
+		try {
+		  const response = await api.post('/auth/signin', {
+			username,
+			password,
+		  });
+	  
+		  const { access_token } = response.data;
+	  
+		  if (access_token) {
+			localStorage.setItem('jwt', access_token);
+			window.location.href = '/';
+		  } else {
+			console.error('Login failed:', response.data.message);
+		  }
+		} catch (error: any) {
+		  console.error('Error during login:', error.message);
+		}
+	  };
+
+	return (
 		<div className="container mx-auto">
 				<div className="-mx-4 flex flex-wrap">
 				<div className="w-full px-4">
 					<div className="relative mx-auto max-w-[525px] overflow-hidden rounded-lg px-10 py-16 text-center dark:bg-dark-2 sm:px-12 md:px-[60px]">
 					<div className="mb-10 text-center md:mb-16">
 					</div>
-						<form >
+						<form onSubmit={handleLogin}>
 							<div className="mb-6">
 								<input
 								type="text"
 								name="username"
 								placeholder="Username"
-								// value={username}
-								// onChange={(e) => setUsername(e.target.value)}
+								onChange={(e) => setUsername(e.target.value)}
 								className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
 								></input>
 							</div>
@@ -25,17 +50,17 @@ export default function SigninForm() {
 								type="password"
 								name="password"
 								placeholder="Password"
-								// value={password}
-								// onChange={(e) => setPassword(e.target.value)}
+								onChange={(e) => setPassword(e.target.value)}
 								className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
 								></input>
 							</div>
 							<div className="mb-10">
-							<input
+							<button
 								type="submit"
-								value="Login"
 								className="nav-button hover:bg-primary1 w-full cursor-pointer rounded-md border border-primary bg-primary px-5 py-3 text-base font-medium text-white hover:ease-in duration-300"
-							/>
+							>
+							Login
+							</button>
 							</div>
 						</form>
 						<div className="flex flex-row justify-between items-baseline">

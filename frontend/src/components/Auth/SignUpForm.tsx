@@ -1,14 +1,84 @@
+import api from '@/api';
 import Link from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/router';
+import React, { useState } from 'react'
 
 function SignUpForm() {
+	const [email, setEmail] = useState('');
+	const [username, setUsername] = useState('');
+	const [password, setPassword] = useState('');
+    
+
+	const handleSignup = async (e: any) => {
+		e.preventDefault();
+	  
+		try {
+		  const response = await api.post('/auth/signup', {
+			username,
+			email,
+			password,
+		  });
+	  
+		  const { access_token } = response.data;
+	  
+		  if (access_token) {
+			window.location.href = '/';
+		  } else {
+			console.error('Signup failed:', response.data.message);
+		  }
+		} catch (error: any) {
+		  console.error('Error during signup:', error.message);
+		}
+	  };
+	  
 
 	return (
 		<div className="container mx-auto">
 			<div className="-mx-4 flex flex-wrap">
 			<div className="w-full px-4">
 				<div className="relative mx-auto max-w-[525px] overflow-hidden rounded-lg px-10 py-16 text-center dark:bg-dark-2 sm:px-12 md:px-[60px]">
-				<div className="mb-10 text-center md:mb-16">
+				<div className="mb-10 text-center md:mb-16"/>
+				<form onSubmit={handleSignup}>
+					<div className="mb-6">
+					<div className="mb-6">
+						<input
+						type="text"
+						name="username"
+						placeholder="Username"
+						onChange={(e) => setUsername(e.target.value)}
+						className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
+						></input>
+					</div>
+						<input
+						type="text"
+						name="email"
+						placeholder="Email"
+						onChange={(e) => setEmail(e.target.value)}
+						className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
+						></input>
+					</div>
+					<div className="mb-6">
+						<input
+						type="password"
+						name="password"
+						placeholder="Password"
+						onChange={(e) => setPassword(e.target.value)}
+						className="w-full rounded-md border border-stroke bg-[#D9D9D9] px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none"
+						></input>
+					</div>
+					<div className="mb-10">
+					<button
+						type="submit"
+						className="nav-button hover:bg-primary1 w-full cursor-pointer rounded-md border border-primary bg-primary px-5 py-3 text-base font-medium text-white hover:ease-in duration-300"
+					>
+					Sign Up
+					</button>
+					</div>
+				</form>
+				<div className="flex flex-row justify-between items-baseline">
+					<hr className="border-[1px] rounded-full border-white w-[40%]"></hr>
+					<p className="mb-6 text-base text-white">OR</p>
+					<hr className="border-[1px] rounded-full border-white w-[40%]"></hr>
 				</div>
 					<ul className="-mx-2 mb-12 flex justify-center">
 						<li className="w-[75%] px-2">

@@ -15,7 +15,7 @@ import {
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
-import store from "@/redux/store";
+import store, { setProfile } from "@/redux/store";
 import { UserType } from "@/redux/profile";
 import { PlayModal } from "../Game/playMenu";
  
@@ -318,7 +318,7 @@ const navList = (
 				width={170}
 				height={50}
 				alt="logo"
-				src={"images/logo.svg"}
+				src="/images/logo.svg"
 			></Image>
 			</Link>
         </Typography>

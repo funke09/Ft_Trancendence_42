@@ -10,8 +10,8 @@ export class GameGateway {
   @WebSocketServer() server: Server;
   
   @SubscribeMessage('createGame')
-  createGame(client: Socket, data: CreateGameDto): void {
-    this.gameService.createGame(client);
+  createGame(client: Socket, gameType: number): void {
+    this.gameService.createGame(client, gameType);
   }
 
   @SubscribeMessage('cancelGame')
@@ -20,7 +20,7 @@ export class GameGateway {
   }
 
   @SubscribeMessage('moveGame')
-  moveGame(client: Socket, data): void {
+  moveGame(client: Socket, data: any): void {
     this.gameService.moveGame(client, data);
   }
 
@@ -35,8 +35,8 @@ export class GameGateway {
   }
 
   @SubscribeMessage('acceptGame')
-  acceptGame(client: Socket, data: {username: string}): void {
-	this.gameService.acceptGame(client, data);
+  acceptGame(client: Socket, data: {username: string}, gameType: number): void {
+	this.gameService.acceptGame(client, data, gameType);
   }
 
   @SubscribeMessage('cancelInvGame')
