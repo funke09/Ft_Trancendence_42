@@ -8,7 +8,7 @@
 
     -> <strike>Once the user is signed in, retrieve their profile information from the backend.</strike> (use redux store)
   
-    -> Design and implement the frontend component to display the user's profile.
+    -> Design and implement the frontend component to display the user's profile. => W.I.P
 
 - Build the chat frontend & backend:
 
