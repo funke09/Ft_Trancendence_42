@@ -236,27 +236,6 @@ const navList = (
       <Typography
         as="li"
         variant="small"
-		color="white"
-        className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
-      >
-		<Link href="/leaderboard" className="flex items-center gap-x-2 p-1">
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="#90A4AE"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M22,7H16.333V4a1,1,0,0,0-1-1H8.667a1,1,0,0,0-1,1v7H2a1,1,0,0,0-1,1v8a1,1,0,0,0,1,1H22a1,1,0,0,0,1-1V8A1,1,0,0,0,22,7ZM7.667,19H3V13H7.667Zm6.666,0H9.667V5h4.666ZM21,19H16.333V9H21Z"
-          />
-        </svg>
-          Leaderboard
-        </Link>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
         color="white"
 		className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
       >
@@ -330,7 +309,7 @@ const navList = (
 			variant="gradient"
 			size="md"
 			color="pink"
-			className="hidden opacity-70 lg:inline-block transition s ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300"
+			className="hidden opacity-70 lg:inline-block transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300"
 			>
 			PLAY
 			</Button>
