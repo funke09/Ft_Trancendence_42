@@ -1,3 +1,4 @@
+import { PrismaService } from "src/prisma/prisma.service";
 import { GameStateDto } from "./dto/game-state.dto";
 import { GameData } from "./game.data";
 import { Body, Bodies, World, Events, Engine, Runner } from 'matter-js';
@@ -10,6 +11,7 @@ const PaddleSpeed = 12;
 
 export class Game {
 	private readonly id: string;
+	private readonly gameData = new GameData();
 	readonly p1Username: string;
 	readonly p2Username: string;
 	client1: any;
@@ -32,8 +34,6 @@ export class Game {
 	};
 	p1Id: number;
 	p2Id: number;
-
-	private readonly gameData = new GameData();
 
 	constructor(ClientData: any, gameType: number) {
 		this.id = ClientData.id;
@@ -59,7 +59,20 @@ export class Game {
 		  default:
 			return 12;
 		}
-	  }
+	}
+
+	getGameMode(gameType: number): string {
+		switch (gameType) {
+			case 1:
+			  return "Classic";
+			case 2:
+			  return "Medium";
+			case 3:
+			  return "Hardcore";
+			default:
+			  return "Classic";
+		  }
+	}
 
 	startGame() {
 		this.createWorld();
@@ -393,19 +406,19 @@ export class Game {
 		this.world = null;
 		this.runner = null;
 
-		// if (backup) {
-		// 	this.gameData.saveGame({
-		// 		winner: this.score.player1 > this.score.player2 ? this.p1Username : this.p2Username,
-		// 		loser: this.score.player1 < this.score.player2 ? this.p1Username : this.p2Username,
-		// 		score: {
-		// 			winner: this.score.player1 > this.score.player2 ? this.score.player1 : this.score.player2,
-		// 			loser: this.score.player1 < this.score.player2 ? this.score.player1 : this.score.player2,
-		// 		},
-		// 		mode: 'pvp',
-		// 		winnerClient: this.score.player1 > this.score.player2 ? this.client1 : this.client2,
-		// 		loserClient: this.score.player1 < this.score.player2 ? this.client1 : this.client2,
-		// 	});
-		// }
+		if (backup) { 
+			this.gameData.saveGame({
+				winner: this.score.player1 > this.score.player2 ? this.p1Username : this.p2Username,
+				loser: this.score.player1 < this.score.player2 ? this.p1Username : this.p2Username,
+				score: {
+					winner: this.score.player1 > this.score.player2 ? this.score.player1 : this.score.player2,
+					loser: this.score.player1 < this.score.player2 ? this.score.player1 : this.score.player2,
+				},
+				mode: this.getGameMode(this.gameType),
+				wClient: this.score.player1 > this.score.player2 ? this.client1 : this.client2,
+				lClient: this.score.player1 < this.score.player2 ? this.client1 : this.client2,
+			});
+		}
 		this.client1 = null;
 		this.client2 = null;
 	}

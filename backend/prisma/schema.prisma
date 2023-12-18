@@ -13,37 +13,43 @@ model User {
   username    String  @unique
   password	  String
   avatar      String?
-  userStatus  String  @default("Offline") // online | in-game | offline
-  Game		  Game[]  @relation("Game")
-  stats		  Stats?
+
+  userStatus  String  // online | in-game | offline
+  Games		  Game[]  @relation("Game")
+  userStats	  Stats?
+
   createdAt   DateTime @default(now())
   updatedAt	  DateTime @updatedAt
 }
 
 model Stats {
-	User	User @relation(fields: [userId], references: [id])
-	userId 	Int
-	matchesPlayed Int @default(0)
+	id		Int @id @default(autoincrement())
+	
+	achievements Achievements[]
+
 	wins	Int @default(0)
 	losses	Int @default(0)
-	rank 	String @default("Iron") // Bronze, Silver, Gold, Emerald, Diamond, Master, Challenger
+	rank 	String	// Unranked, Bronze, Silver, Gold, Platinum, Diamond
+	
 	createdAt DateTime @default(now())
 	updatedAt DateTime @updatedAt
 
-	@@id([userId])
+  	user   User @relation(fields: [userId], references: [id])
+ 	userId Int  @unique
 }
 
-enum GameStatus {
-	MATCHMAKING
-	INVITE
-	ONGOING
-	FINISHED
-}
+model Achievements {
+	id		Int @id @default(autoincrement())
 
-enum GameType {
-	CLASSIC
-	MEDIUM
-	HARDCORE
+	user	Stats @relation(fields: [userId], references: [id])
+	userId	Int
+
+	name	String
+	desc	String
+	icon	String
+
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
 }
 
 model Game {
@@ -56,8 +62,7 @@ model Game {
 
 	p2Id	Int
 
-	gameType GameType
-	gameStatus GameStatus
+	gameType String? @default("Undefined")
 
 	createdAt DateTime @default(now())
 	updatedAt DateTime @updatedAt

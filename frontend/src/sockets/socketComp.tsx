@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react"
 import gameSocket from "./gameSocket";
 import store, { setGame, setSocket } from "@/redux/store";
+import { AchievDto } from "./types";
 
 const SocketComp = () => {
 	const [connectedGame, setConnectedGame] = useState(false);
@@ -24,8 +25,11 @@ const SocketComp = () => {
 		});
 
 		gameSocket.on("error", (err: string) => {
-			console.error("error")
+			console.error("error", err)
 		});
+
+		gameSocket.on("achievement", (data: AchievDto) => {
+        });
 		
 		gameSocket.on("endGame", () => {
 			setTimeout(() => {
