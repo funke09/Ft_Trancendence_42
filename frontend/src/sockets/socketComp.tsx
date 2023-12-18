@@ -33,8 +33,12 @@ const SocketComp = () => {
 			}, 2000);
 		});
 		
-		gameSocket.on ("connect", () => {
+		gameSocket.on("connect", () => {
 		console.log("/game: Connected to server");
+		})
+
+		gameSocket.on("disconnect", () => {
+			console.log("/game: Disconnected from server");
 		})
 
 		return () => {

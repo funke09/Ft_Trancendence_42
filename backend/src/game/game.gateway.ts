@@ -1,6 +1,5 @@
 import { WebSocketGateway, SubscribeMessage, WebSocketServer, ConnectedSocket } from '@nestjs/websockets';
 import { GameService } from './game.service';
-import { CreateGameDto } from './dto/create-game.dto';
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({cors: {origin: 'http://localhost:3000', credentials: true}, namespace: 'game'})
@@ -10,8 +9,8 @@ export class GameGateway {
   @WebSocketServer() server: Server;
   
   @SubscribeMessage('createGame')
-  createGame(client: Socket, gameType: number): void {
-    this.gameService.createGame(client, gameType);
+  createGame(client: Socket, data: { gameType: number }): void {
+    this.gameService.createGame(client, data);
   }
 
   @SubscribeMessage('cancelGame')

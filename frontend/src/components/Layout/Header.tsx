@@ -7,7 +7,7 @@ const Header: React.FC = () => {
 
 	const isAuth: boolean = store.getState().profile.user.email ? true : false;
 	return (
-	  <div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex max-w-[1500px] pb-4">
+	  <div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex max-w-[1200px] pb-4">
 		<div className="flex-col justify-center inline-flex items-center">
 		  <div className="bg-[#A4357580] shadow-md rounded-[15px] p-6 m-8">
 			<h1 className="text-white text-3xl font-bold Manrope tracking-wider mb-4 text-center">

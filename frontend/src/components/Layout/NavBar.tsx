@@ -309,7 +309,7 @@ const navList = (
   );
   
   return (
-	  <Navbar className="bg-[#3B2A3DBF] bg-opacity-70 m-auto mt-6 mb-6 border-0 px-4 py-2 lg:px-8 lg:py-4 max-w-[1500px]">
+	  <Navbar className="bg-[#3B2A3DBF] bg-opacity-70 m-auto mt-6 mb-6 border-0 px-4 py-2 lg:px-8 lg:py-4 max-w-[1200px]">
       <div className="relative mx-auto flex items-center justify-between text-white">
         <Typography
           className="mr-4 cursor-pointer py-1.5 content-start font-medium">

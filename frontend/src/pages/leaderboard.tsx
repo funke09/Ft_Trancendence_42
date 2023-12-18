@@ -58,7 +58,7 @@ const Leaderboard: React.FC = () => {
 	return (
 		<>
 		<Nav/>
-		<Card className="h-full max-w-[1500px] m-auto overflow-scroll rounded-md">
+		<Card className="h-full max-w-[1200px] m-auto overflow-scroll rounded-md">
 		  <table className="w-full min-w-max table-auto text-left">
 			<thead>
 			  <tr>

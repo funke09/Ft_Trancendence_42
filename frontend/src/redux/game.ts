@@ -11,8 +11,8 @@ const initialStateProfile = {
     opp: {
         roomName: "",
         player: 0,
-        opponentName: "",
-        opponentId: 0,
+        oppName: "",
+        oppId: 0,
     },
 };
 

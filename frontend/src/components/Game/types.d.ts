@@ -15,6 +15,7 @@ export type Game = {
         player1: number;
         player2: number;
     };
+	gameType: number;
 };
 
 export type oppType = {

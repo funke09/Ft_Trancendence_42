@@ -18,7 +18,6 @@ export default function SigninForm() {
 		  const { access_token } = response.data;
 	  
 		  if (access_token) {
-			localStorage.setItem('jwt', access_token);
 			window.location.href = '/';
 		  } else {
 			console.error('Login failed:', response.data.message);

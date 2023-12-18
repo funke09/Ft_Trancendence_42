@@ -38,7 +38,7 @@ export function PlayModal() {
 	const currentUser = store.getState().profile.user;
 
 	const clickFindGame = () => {
-		gameSocket.emit("createGame", { msg: "createGame", gameType: selected });
+		gameSocket.emit("createGame", { gameType: selected });
 		setIsFindGame(!isFindGame);
 	}
 

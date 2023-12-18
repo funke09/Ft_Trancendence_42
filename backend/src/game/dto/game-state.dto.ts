@@ -15,4 +15,5 @@ export class GameStateDto {
 		player1: number,
 		player2: number,
 	};
+	gameType: number;
 };

@@ -10,7 +10,6 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthController {
 	constructor(
 		private readonly authService: AuthService,
-		private jwtService: JwtService,
 	) {}
 
 	@Get('42')
@@ -32,8 +31,10 @@ export class AuthController {
 	) {
 	  try {
 		const token = await this.authService.signup(username, email, password);
-		res.cookie('jwt', token, { httpOnly: false, path: '/'});
-		return { access_token: token };
+		if (token) {
+			res.cookie('jwt', token, { httpOnly: false, path: '/'});
+			return { access_token: token };
+		}
 	  } catch (error) {
 		throw error;
 	  }
@@ -43,11 +44,15 @@ export class AuthController {
 	@Post('signin')
 	async signin(
 		@Body('username') username: string,
-		@Body('password') password: string
+		@Body('password') password: string,
+		@Res({ passthrough: true }) res: Response
 	) {
 	  try {
 		const token = await this.authService.signin(username, password);
-		return { access_token: token };
+		if (token) {
+			res.cookie('jwt', token, { httpOnly: false, path: '/'});
+			return { access_token: token };
+		}
 	  } catch (error) {
 		throw error;
 	  }

@@ -5,13 +5,14 @@ import store from '@/redux/store';
 import { GameInfo } from './gameInfo';
 import { oppType, Game } from './types';
 
-const screen: { width: number; height: number } = { width: 700, height: 300 };
+const screen: { width: number; height: number } = { width: 1200, height: 600 };
 
 let game: Game = {
   ball: { x: 0, y: 0 },
   player1: { x: 0, y: 0 },
   player2: { x: 0, y: 0 },
   score: { player1: 0, player2: 0 },
+  gameType: 1,
 };
 
 let gameMsg: string = '';
@@ -27,7 +28,7 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
   const runnerRef = useRef<Matter.Runner>();
   const [oppInfo, setOppInfo] = useState<oppType>({ roomName: '', player: 0, oppId: 0, oppName: '' });
   const [score, setScore] = useState<{ player1: number; player2: number }>({ player1: 0, player2: 0 });
-  const [gameMode, setGameMode] = useState<{ bg: string }>({ bg: '#443346' });
+  const [gameMode, setGameMode] = useState<{ bg: string }>({ bg: "#443346" });
 
   const cvsRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null | undefined>(null);
@@ -52,15 +53,19 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
 
   useEffect(() => {
     const handleGameState = (data: any) => {
-      game = data;
-      setScore(game.score);
+		game = data;
+		setScore(game.score);
     };
 
     const handleGameMsg = (data: any) => {
       gameMsg = data;
     };
 
-    gameSocket.on('gameState', handleGameState);
+    if (gameSocket.connected) {
+		gameSocket.on('gameState', handleGameState);
+	  } else {
+		console.error('Socket not connected');
+	  }
     gameSocket.on('gameMsg', handleGameMsg);
 
     setOppInfo(store.getState().game.opp);
@@ -79,6 +84,7 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
         y: screen.height / 2,
       },
       score: { player1: 0, player2: 0 },
+	  gameType: 1,
     };
 
     return () => {
@@ -127,6 +133,24 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
       },
     });
 
+	const netWidth = 5;
+	const netHeight = screen.height;
+	const dashWidth = 10; // Adjust the width of each dash
+	const gapWidth = 10; // Adjust the width of the gap between dashes
+	const numDashes = Math.floor(netHeight / (dashWidth + gapWidth));
+  
+	const netDashes = Array.from({ length: numDashes }, (_, index) => {
+	  const y = index * (dashWidth + gapWidth) + dashWidth / 2;
+	  return Bodies.rectangle(screen.width / 2, y, netWidth, dashWidth, {
+		isSensor: true,
+		render: {
+		  fillStyle: '#DADADA',
+		},
+	  });
+	});
+  
+	World.add(world, netDashes);
+
     Render.run(render);
     Runner.run(runner, engine);
 
@@ -137,7 +161,7 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
 
   function createBall() {
     const { world }: any = { world: worldRef.current };
-    const ball = Bodies.circle(350, 150, 15, {
+    const ball = Bodies.circle(600, 300, 15, {
       render: {
         fillStyle: '#DADADA',
       },
@@ -153,33 +177,48 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
   }
 
   function createPlayerEntities() {
-    Player(10, screen.height / 2, 15, 100, playerRef);
-    Player(screen.width - 10, screen.height / 2, 15, 100, oppRef);
+	Player(10, screen.height / 2, 15, 110, playerRef);
+	Player(screen.width - 10, screen.height / 2, 15, 110, oppRef);
   }
-
+  
   function Player(x: number, y: number, width: number, height: number, ref: any) {
-    const { world }: any = { world: worldRef.current };
-    const player = Bodies.rectangle(x, y, width, height, {
-      render: {
-        fillStyle: '#DADADA',
-      },
-      id: 10,
-      mass: 0,
-      isStatic: true,
-    });
-
-    ref.current = {
-      body: player,
-      width,
+	const { world }: any = { world: worldRef.current };
+	const player = Bodies.rectangle(x, y, width, height, {
+	  render: {
+		fillStyle: '#DADADA',
+	  },
+	  id: 10,
+	  mass: 0,
+	  isStatic: true,
+	});
+  
+	ref.current = {
+	  body: player,
+	  width,
       height,
-    };
-
-    World.add(world, [player]);
+	};
+  
+	World.add(world, [player]);
   }
 
   function updateGame() {
     updateEntitiesPosition();
     renderGameMessages();
+	setGameMode(getGameModeColor(game.gameType));
+  }
+
+  // Add this function to determine the background color based on gameType
+  function getGameModeColor(gameType: number) {
+	switch (gameType) {
+	  case 1:
+		return { bg: '#443346' };
+	  case 2:
+		return { bg: '#367175' };
+	  case 3:
+		return { bg: '#121212' };
+	  default:
+		return { bg: '#443346' };
+	}
   }
 
   function updateEntitiesPosition() {
@@ -206,12 +245,34 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
   }
 
   function renderGameMessages() {
-    if (ctxRef.current && game.score) {
-      let text = gameMsg;
-      ctxRef.current.font = 'bold 50px arial';
-      ctxRef.current.fillStyle = '#DADADA';
-      ctxRef.current.fillText(text, screen.width / 2 - text.length * 18, screen.height / 2 + 30);
-    }
+	if (ctxRef.current && game.score) {
+		if (gameMsg && gameMsg.trim() !== '') {
+			// Get text dimensions for positioning the rectangle
+			const textWidth = ctxRef.current.measureText(gameMsg).width;
+			const textHeight = 40; // Assuming the text height is 50px, adjust as needed
+		  
+			// Draw the rectangle with the same background color behind the text
+			ctxRef.current.fillStyle = gameMode.bg;
+			ctxRef.current.fillRect(
+			  screen.width / 2 - textWidth / 2 - 10, // Adjust as needed for padding
+			  screen.height / 2 - textHeight / 2 - 10,
+			  textWidth + 20, // Adjust as needed for padding
+			  textHeight + 20,
+			);
+		}
+		let text = gameMsg;
+		ctxRef.current.font = 'bold 50px arial';
+		ctxRef.current.fillStyle = '#DADADA';
+		ctxRef.current.fillText(text, screen.width / 2 - text.length * 15, screen.height / 2 + 20);
+	
+		// Render player scores
+		const player1ScoreText = `${game.score.player1}`;
+		const player2ScoreText = `${game.score.player2}`;
+
+		ctxRef.current.font = 'bold 50px arial';
+		ctxRef.current.fillText(player1ScoreText, screen.width / 4, 50);
+		ctxRef.current.fillText(player2ScoreText, screen.width - screen.width / 4, 50);
+	}
   }
 
   let input: moveType = {
@@ -228,7 +289,7 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
     } else if (e.key === 'ArrowDown') {
       input.move.down = true;
     }
-    gameSocket.emit('move', input);
+    gameSocket.emit('moveGame', input);
   };
 
   const handleKeyUp = (e: KeyboardEvent) => {
@@ -237,11 +298,11 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
     } else if (e.key === 'ArrowDown') {
       input.move.down = false;
     }
-    gameSocket.emit('move', input);
+    gameSocket.emit('moveGame', input);
   };
 
   function registerEventListeners() {
-    Events.on(engineRef.current, 'preUpdate', updateGame);
+    Events.on(engineRef.current, 'beforeUpdate', updateGame);
 
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
@@ -258,7 +319,7 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
 
   return (
     <div>
-      <GameInfo score={score} player1={game.player1} player2={game.player2} oppInfo={oppInfo} result={'0 - 0'}>
+      <GameInfo oppInfo={oppInfo}>
         <canvas style={{ borderRadius: '15px', width: '100%', background: gameMode.bg }} ref={cvsRef}></canvas>
       </GameInfo>
     </div>
