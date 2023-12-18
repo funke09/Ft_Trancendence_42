@@ -18,9 +18,9 @@ export class GameService {
 	async createGame(client: Socket, data: { gameType: number }) {
 		const { gameType } = data;
 		const username = this.getUsernameBySocket(client);
-	  
+		
 		if (!username) return;
-	  
+
 		// Check if the player is already in the queue for the same game type
 		if (this.queue.find((p) => p.username === username && p.gameType === gameType)) {
 		  client.emit('error', 'Already in Queue Dummy');
@@ -42,18 +42,10 @@ export class GameService {
 		  let p1 = this.queue.find((p) => p.gameType === gameType);
 		  let p2 = this.queue.find((p) => p.username !== p1?.username && p.gameType === gameType);
 	  
-		  if (!p1 || !p2) {
-			// No match found for the current gameType
-			return;
-		  }
-	  
-		  // Remove matched players from the queue
+		  if (!p1 || !p2) return;
 		  this.queue = this.queue.filter((p) => p.username !== p1.username && p.username !== p2.username);
-	  
-		  // Generate a unique game ID
 		  let id = genID(this.games);
-	  
-		  // Create a new game instance with gameType
+
 		  const game = new Game({
 			id,
 			client1: p1.client,

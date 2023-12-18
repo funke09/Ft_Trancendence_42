@@ -346,8 +346,8 @@ export class Game {
 		  }, 3000);
 	  
 		  setTimeout(() => {
-			this.client1 && this.client1.emit('gameMsg', 'START GAME');
-			this.client2 && this.client2.emit('gameMsg', 'START GAME');
+			this.client1 && this.client1.emit('gameMsg', 'START');
+			this.client2 && this.client2.emit('gameMsg', 'START');
 		  }, 4000);
 	  
 		  setTimeout(() => {
@@ -367,12 +367,12 @@ export class Game {
 
 	afkGame(username: string) {
 		if (username === this.p1Username) {
-			this.client2 && this.client2.emit('gameMsg', 'Opponent Left');
+			this.client2 && this.client2.emit('gameMsg', `${this.p1Username} Left`);
 			this.client2 && this.client2.emit('endGame', { winner: 2 });
 			this.score.player2 = 5;
 			this.score.player1 = 0;
 		} else if (username === this.p2Username) {
-			this.client1 && this.client1.emit('gameMsg', 'Opponent Left');
+			this.client1 && this.client1.emit('gameMsg', `${this.p2Username} Left`);
 			this.client1 && this.client1.emit('endGame', { winner: 1 });
 			this.score.player1 = 5;
 			this.score.player2 = 0;

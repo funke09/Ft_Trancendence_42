@@ -102,13 +102,21 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
 	  gameType: game.gameType,
     };
 
+	window.addEventListener('beforeunload', handleBeforeUnload);
+
     return () => {
       gameMsg = '';
-      gameSocket.emit('leftGame', { room: gameID });
+	  window.removeEventListener('beforeunload', handleBeforeUnload);
+      gameSocket.emit('leaveGame', { room: gameID });
       gameSocket.off('gameState', handleGameState);
       gameSocket.off('gameMsg', handleGameMsg);
     };
   }, [gameID]);
+
+  function handleBeforeUnload() {
+    // Notify the server that the user is leaving the game
+    gameSocket.emit('leaveGame', { room: gameID });
+  }
 
   useEffect(() => {
     if (cvsRef.current) {
@@ -120,6 +128,7 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
 		registerEventListeners();
     }
     ctxRef.current = cvsRef.current?.getContext('2d');
+	ctxRef.current!.font = 'bold 50px Sarpanch, Arial, sans-serif';
 
     return () => {
       removeEventListeners();
@@ -259,7 +268,7 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
 			);
 		}
 		let text = gameMsg;
-		ctxRef.current.font = 'bold 50px arial';
+		ctxRef.current.font = 'bold 50px Sarpanch, Arial, sans-serif';
 		ctxRef.current.fillStyle = '#DADADA';
 		ctxRef.current.fillText(text, screen.width / 2 - text.length * 15, screen.height / 2 + 20);
 	
@@ -267,7 +276,7 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
 		const player1ScoreText = `${game.score.player1}`;
 		const player2ScoreText = `${game.score.player2}`;
 
-		ctxRef.current.font = 'bold 50px arial';
+		ctxRef.current.font = 'bold 50px Sarpanch, Arial, sans-serif';
 		ctxRef.current.fillText(player1ScoreText, screen.width / 4, 50);
 		ctxRef.current.fillText(player2ScoreText, screen.width - screen.width / 4, 50);
 	}
