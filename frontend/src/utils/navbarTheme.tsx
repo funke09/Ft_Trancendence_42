@@ -6,7 +6,7 @@ const theme = {
 			initial: {
 			  display: "block",
 			  width: "w-full",
-			  maxWidth: "max-w-[1500px]",
+			  maxWidth: "max-w-[1200px]",
 			  borderRadius: "rounded-xl",
 			  py: "py-4",
 			  px: "px-8",
@@ -25,7 +25,7 @@ const theme = {
 			  px: "px-4",
 			},
 		  },
-		  mobileNav: {
+		  Collapse: {
 			display: "block",
 			width: "w-full",
 			basis: "basis-full",

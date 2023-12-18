@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as argon from 'argon2';
 import { User, Prisma } from '@prisma/client';
@@ -19,6 +19,7 @@ export class AuthService {
 				email: profile.emails[0].value,
 				username: profile.username,
 				avatar: profile._json.image.link,
+				userStatus: 'Online',
 				password: 'tmpPass',
 			});
 		}
@@ -36,7 +37,63 @@ export class AuthService {
 		}
 	}
 
-	async logout(res: Response) {
+	async signup(username: string, email: string, password: string) {
+		  const existingUser = await this.prisma.user.findFirst({
+			where: {
+			  OR: [
+				{ username: username },
+				{ email: email },
+			  ],
+			},
+		  });
+	
+		  if (existingUser) {
+			throw new BadRequestException('Username or email is already taken.');
+		  }
+	
+		  const hashedPassword = await argon.hash(password);
+	
+		  const user = await this.prisma.user.create({
+			data: {
+			  username: username,
+			  email: email,
+			  password: hashedPassword,
+			  avatar: "https://cdn-icons-png.flaticon.com/512/8566/8566908.png"
+			},
+		  });
+	
+		  const token = this.JwtService.sign({
+			username: user.username,
+			uid: user.id,
+		  });
+
+		  return token;
+	  }
+
+	async signin(username: string, password: string): Promise<string> {
+		const user = await this.prisma.user.findUnique({
+		  where: { username: username },
+		});
+	  
+		if (!user) {
+		  throw new ForbiddenException('Credentials incorrect');
+		}
+	  
+		const pwMatches = await argon.verify(user.password, password);
+	  
+		if (!pwMatches) {
+		  throw new ForbiddenException('Credentials incorrect');
+		}
+	  
+		const token = this.JwtService.sign({
+		  username: user.username,
+		  uid: user.id,
+		});
+	  
+		return token;
+	  }
+
+	async logout(user: any, res: Response) {
 		res.clearCookie('jwt');
 		res.redirect('http://localhost:3000/login')
 	}
@@ -47,6 +104,7 @@ export class AuthService {
 			data: {
 				email: data.email,
 				username: data.username,
+				userStatus: data.userStatus,
 				avatar: data.avatar,
 				password: hash,	
 			},

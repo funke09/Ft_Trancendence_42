@@ -20,4 +20,13 @@ export class UserService {
 		});
 		return user;
 	}
+
+	async getAvataById(id: number) {
+		const user = await this.prisma.user.findUnique({
+			where : {id: id},
+			select: {avatar: true, username: true},
+		});
+		if (!user) throw new NotFoundException(`User ${user.username} not found`);
+		return user.avatar;
+	}
 }

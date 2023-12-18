@@ -34,7 +34,11 @@ export default function QueueModal({ type, onCancel } : { type: string, onCancel
         </div>
       </div>
       <div className="flex justify-center mt-4">
-        <Button color="red" className='bg-opacity-75 hover:scale-110 hover:shadow-md hover:bg-opacity-100 duration-200' onClick={onCancel}>
+        <Button
+			color="red"
+			className='bg-opacity-75 hover:scale-110 hover:shadow-md hover:bg-opacity-100 duration-200'
+			onClick={onCancel}
+		>
           Cancel Matchmaking
         </Button>
       </div>
