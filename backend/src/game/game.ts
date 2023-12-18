@@ -81,6 +81,8 @@ export class Game {
 				down: false,
 			}
 		};
+		this.client1 && this.client1.emit('gameType', this.gameType);
+		this.client2 && this.client2.emit('gameType', this.gameType);
 		this.countDown();
 		setTimeout(() => {
 			this.ballDir = {
@@ -271,12 +273,12 @@ export class Game {
 	}
 
 	createPaddles() {
-		this.player1 = Bodies.rectangle(PaddleWidth / 2, Height / 2, PaddleWidth, PaddleHieght, {
+		this.player1 = Bodies.rectangle(PaddleWidth / 2 + 5, Height / 2, PaddleWidth, PaddleHieght, {
 		  id: 6,
 		  mass: 100,
 		  isStatic: true,
 		});
-	  this.player2 = Bodies.rectangle(Width - PaddleWidth / 2, Height / 2, PaddleWidth, PaddleHieght, {
+	  this.player2 = Bodies.rectangle(Width - PaddleWidth / 2 - 5, Height / 2, PaddleWidth, PaddleHieght, {
 		  id: 7,
 		  mass: 100,
 		  isStatic: true,
@@ -351,7 +353,7 @@ export class Game {
 		  setTimeout(() => {
 			this.client1 && this.client1.emit('gameMsg', '');
 			this.client2 && this.client2.emit('gameMsg', '');
-		  }, 5500);
+		  }, 5000);
 	}
 
 	reconnectPlayer(username: string, client: any): void {

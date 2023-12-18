@@ -51,11 +51,26 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
 
   const { World, Engine, Events, Bodies, Runner, Render } = Matter;
 
+  function getGameModeColor(gameType: number) {
+	  switch (gameType) {
+		case 1:
+		  return { bg: '#443346' };
+		case 2:
+		  return { bg: '#367175' };
+		case 3:
+		  return { bg: '#121212' };
+		default:
+		  return { bg: '#443346' };
+	  }
+  }
+
   useEffect(() => {
     const handleGameState = (data: any) => {
 		game = data;
 		setScore(game.score);
+		setGameMode(getGameModeColor(game.gameType));
     };
+
 
     const handleGameMsg = (data: any) => {
       gameMsg = data;
@@ -84,7 +99,7 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
         y: screen.height / 2,
       },
       score: { player1: 0, player2: 0 },
-	  gameType: 1,
+	  gameType: game.gameType,
     };
 
     return () => {
@@ -141,7 +156,7 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
   
 	const netDashes = Array.from({ length: numDashes }, (_, index) => {
 	  const y = index * (dashWidth + gapWidth) + dashWidth / 2;
-	  return Bodies.rectangle(screen.width / 2, y, netWidth, dashWidth, {
+	  return Bodies.rectangle(screen.width / 2, y + 5, netWidth, dashWidth, {
 		isSensor: true,
 		render: {
 		  fillStyle: '#DADADA',
@@ -204,21 +219,6 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
   function updateGame() {
     updateEntitiesPosition();
     renderGameMessages();
-	setGameMode(getGameModeColor(game.gameType));
-  }
-
-  // Add this function to determine the background color based on gameType
-  function getGameModeColor(gameType: number) {
-	switch (gameType) {
-	  case 1:
-		return { bg: '#443346' };
-	  case 2:
-		return { bg: '#367175' };
-	  case 3:
-		return { bg: '#121212' };
-	  default:
-		return { bg: '#443346' };
-	}
   }
 
   function updateEntitiesPosition() {
@@ -247,16 +247,14 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
   function renderGameMessages() {
 	if (ctxRef.current && game.score) {
 		if (gameMsg && gameMsg.trim() !== '') {
-			// Get text dimensions for positioning the rectangle
 			const textWidth = ctxRef.current.measureText(gameMsg).width;
-			const textHeight = 40; // Assuming the text height is 50px, adjust as needed
+			const textHeight = 40;
 		  
-			// Draw the rectangle with the same background color behind the text
-			ctxRef.current.fillStyle = gameMode.bg;
+			ctxRef.current.fillStyle = getGameModeColor(game.gameType).bg;
 			ctxRef.current.fillRect(
-			  screen.width / 2 - textWidth / 2 - 10, // Adjust as needed for padding
+			  screen.width / 2 - textWidth / 2 - 10,
 			  screen.height / 2 - textHeight / 2 - 10,
-			  textWidth + 20, // Adjust as needed for padding
+			  textWidth + 20,
 			  textHeight + 20,
 			);
 		}
