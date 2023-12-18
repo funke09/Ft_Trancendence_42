@@ -299,3 +299,4 @@ export class GameService {
 		game.afkGame(username);
 	}
 }
+

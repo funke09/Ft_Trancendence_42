@@ -66,3 +66,4 @@ export class GameGateway {
 	this.gameService.initGame(client, user.username);
   }
 }
+
