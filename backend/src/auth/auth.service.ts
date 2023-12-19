@@ -58,7 +58,7 @@ export class AuthService {
 			  username: username,
 			  email: email,
 			  password: hashedPassword,
-			  avatar: "https://cdn-icons-png.flaticon.com/512/8566/8566908.png"
+			  avatar: "http://localhost:3000/images/defaultAvatar.png"
 			},
 		  });
 	

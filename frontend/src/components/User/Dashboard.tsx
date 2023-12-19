@@ -6,6 +6,7 @@ import { Avatar, Card, IconButton, List, ListItem, ListItemPrefix, Tooltip, Typo
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AxiosError, AxiosResponse } from "axios";
+import Achiev from "./Achievements";
 
 interface Game {
 	id: number;
@@ -42,30 +43,6 @@ function getAvatarBorder(rank: string | undefined): string | undefined {
 	else
 		return "flex justify-center border border-[#D9D9D9] shadow-xl shadow-[#D9D9D9]/40 ring-4 ring-[#D9D9D9]"
 
-}
-
-function Achiev({ stats }: any) {
-	return (
-		<Card className="container rounded-[15px] bg-[#472C45] max-h-[320px] mt-2 overflow-y-auto">
-			<List>
-				{stats?.stats?.achievements?.map(
-					(achiev: {id: number; name: string; desc: string; icon: string; userId: number}) => {
-						console.log(api.getUri() + achiev.icon);
-						return (
-							<Tooltip className="bg-gray-700 bg-opacity-80" content={achiev.desc} placement="top" animate={{mount: { scale: 1, x: 0 }, unmount: { scale: 0, x: -25 },}}>
-								<ListItem key={achiev.id} className="p-1 text-white hover:text-[#472C45]">
-									<ListItemPrefix>
-										<Image src={achiev.icon} width={50} height={50} alt={achiev.name} className="rounded-full"/>
-									</ListItemPrefix>
-									<Typography variant="h6">{achiev.name}</Typography>
-								</ListItem>
-							</Tooltip>
-						)
-					}
-				)}
-			</List>
-		</Card>
-	)
 }
 
 function Dashboard({ id }: {id: string}) {
@@ -107,18 +84,18 @@ function Dashboard({ id }: {id: string}) {
 				</IconButton>
 				}
 			  	<div className="flex-col flex items-center justify-start gap-3 pb-4">
-				  <Tooltip className="bg-[#472C45] bg-opacity-70" content={stats?.stats.rank} placement="top" offset={10} animate={{mount: { scale: 1, y: 0 }, unmount: { scale: 0, y: 25 },}}>
-						<Avatar src={profile.avatar} variant="rounded" size="xxl" className={getAvatarBorder(stats?.stats.rank)}/>
+				  <Tooltip className="bg-[#472C45] bg-opacity-70" content={stats?.stats?.rank} placement="top" offset={10} animate={{mount: { scale: 1, y: 0 }, unmount: { scale: 0, y: 25 },}}>
+						<Avatar src={profile.avatar} variant="rounded" size="xxl" className={getAvatarBorder(stats?.stats?.rank)}/>
 				  </Tooltip>
 					<Typography variant="h3" className="flex justify-center text-white font-bold">{profile.username}</Typography>
 					<Typography className="flex justify-center text-[18px] text-gray-400">{profile.email}</Typography>
 				</div>
 				<hr className="mx-5 rounded-full opacity-75 border-[1px] mb-3"/>
 				<Typography className="flex justify-center text-[24px] text-white font-normal">Achievements</Typography>
-				{stats && stats?.stats && <Achiev stats={stats}/>}
+				<Achiev stats={stats}/>
 		  	</section>
 			<section>
-					
+				{/*MATCH HISTORY*/}
 			</section>
 		  </main>
 	  </div>
