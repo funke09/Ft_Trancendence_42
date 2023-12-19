@@ -24,6 +24,19 @@ body::before {
 	/* Ensure that the overlay doesn't interfere with interactions */
 }
 
+.container::-webkit-scrollbar {
+	width: 10px;
+  }
+  
+  .container::-webkit-scrollbar-thumb {
+	background-color: #6b7280;
+	border-radius: 6px;
+  }
+  
+  .container::-webkit-scrollbar-track {
+	background-color: #1f2937;
+	border-radius: 6px;
+  }
 
 .text-container {
 	width: 100%;
@@ -152,3 +165,9 @@ body::before {
         /* Add other necessary styles for the icon */
     }
 }
+
+@media (min-width: 960px) {
+	.smool\:w-1\/4 {
+	  width: 25%; /* 1/4 */
+	}
+  }
