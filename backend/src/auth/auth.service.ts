@@ -55,12 +55,13 @@ export class AuthService {
 	
 		  const user = await this.prisma.user.create({
 			data: {
-			  username: username,
-			  email: email,
-			  password: hashedPassword,
-			  avatar: "https://cdn-icons-png.flaticon.com/512/8566/8566908.png"
+				username: username,
+				email: email,
+				password: hashedPassword,
+				avatar: "https://cdn-icons-png.flaticon.com/512/8566/8566908.png",
+				userStatus: "active" // Assuming 'userStatus' is a required field and 'active' is an example status
 			},
-		  });
+		});
 	
 		  const token = this.JwtService.sign({
 			username: user.username,

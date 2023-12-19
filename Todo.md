@@ -10,8 +10,14 @@
   
     -> Design and implement the frontend component to display the user's profile. => W.I.P
 
-- Build the chat frontend & backend:
+- Build the chat frontend & backend: 
 
-    -> Create the necessary components and UI elements for the chat feature.
+    -> Create the necessary components and UI elements for the chat feature. | loading...
   
-    -> Implement the functionality to send and receive messages.
+    -> Implement the functionality to send and receive messages. | needed!!!
+
+- Game:
+    -> send/accept invite
+    -> MatchMaking not working yet?!
+- Notification
+    -> use real data | backend
