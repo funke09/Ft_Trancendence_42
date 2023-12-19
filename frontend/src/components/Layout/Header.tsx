@@ -1,6 +1,5 @@
 import store from "@/redux/store";
 import Image from "next/image";
-import router from "next/router";
 import React from "react";
 
 const Header: React.FC = () => {
@@ -21,7 +20,7 @@ const Header: React.FC = () => {
 			</div>
 		  </div>
 		  {isAuth ? <button className=" nav-button hover bg-[#F53FA1] bg-opacity-[75%] rounded-full m-4 w-fit p-4 text-white text-[2rem] font-bold Manrope text-opacity-[100%] hover:bg-opacity-100">
-			GET STARTED</button> : <button onClick={handleOpen} className="bg-[#F53FA1] bg-opacity-[75%] rounded-full m-4 w-fit p-4 text-white text-[2rem] font-bold Manrope text-opacity-[100%] hover:bg-opacity-100">
+			GET STARTED</button> : <button className="bg-[#F53FA1] bg-opacity-[75%] rounded-full m-4 w-fit p-4 text-white text-[2rem] font-bold Manrope text-opacity-[100%] hover:bg-opacity-100">
 			GET STARTED</button>
 			}
 		</div>

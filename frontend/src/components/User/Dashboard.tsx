@@ -73,7 +73,7 @@ function Dashboard({ id }: {id: string}) {
 	return (
 	  <div>
 		  <main className="min-h-[720px] max-w-[1200px] rounded-[15px] flex m-auto bg-[#472C45] opacity-80">
-		  	<section className="w-full smool:w-1/4 bg-[#643461] p-3 flex-col justify-center rounded-[15px]">
+		  	<section className="w-full samwil:w-1/4 bg-[#643461] p-3 flex-col justify-center rounded-[15px]">
 				{profile && profile.username == user.username ?
 				<IconButton size="sm" className="m-2 rounded-full shadow-md bg-[#351633] hover:scale-110 border-none">
 					<i className="fa-solid fa-gear fa-xl" style={{ color: "#E1E1E1" }} />
@@ -94,8 +94,13 @@ function Dashboard({ id }: {id: string}) {
 				<Typography className="flex justify-center text-[24px] text-white font-normal">Achievements</Typography>
 				<Achiev stats={stats}/>
 		  	</section>
-			<section>
-				{/*MATCH HISTORY*/}
+			<section className="hidden samwil:flex flex-col w-3/4 p-3 justify-center">
+				<Typography variant="h3" className="text-gray-200 p-4">Match History
+				<hr className="rounded-full border-2 border-gray-200 w-[25%]"/>
+				</Typography>
+				<div className="container flex justify-start m-auto">
+					<div className="w-full h-[500px] bg-[#643461]"></div>
+				</div>
 			</section>
 		  </main>
 	  </div>

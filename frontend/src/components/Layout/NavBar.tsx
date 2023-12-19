@@ -18,6 +18,7 @@ import Link from "next/link";
 import store, { setProfile } from "@/redux/store";
 import { UserType } from "@/redux/profile";
 import { PlayModal } from "../Game/playMenu";
+import { useRouter } from "next/router";
  
 
 export function Nav() {
@@ -28,15 +29,16 @@ export function Nav() {
   const handleOpen = () => setOpen(!open);
 
   const user: UserType = store.getState().profile.user;
+
+  const router = useRouter();
  
   useEffect(() => {
     window.addEventListener(
       "resize",
       () => window.innerWidth >= 960 && setOpenNav(false),
     );
-  }, []);
+  }, []); 
 
-   
 function ClockIcon() {
 	return (
 	  <svg
@@ -361,7 +363,7 @@ const navList = (
       <Collapse open={openNav}>
         <div className="container m-auto">
           {navList}
-          <div className="flex place-self-end items-center gap-x-1">
+          <div className="flex place-self-end justify-around p-2">
 		  <Button
 			onClick={handleOpen}
             variant="gradient"
@@ -370,6 +372,11 @@ const navList = (
 			>
             PLAY
           </Button>
+		  <Link href={'/profile/' + user.id}>
+			<Button variant="gradient" size="md" color="indigo">
+				Profile
+			</Button>
+			</Link>
 		  </div>
         </div>
       </Collapse>

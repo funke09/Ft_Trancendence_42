@@ -180,8 +180,6 @@ export class GameService {
 
 		if (this.handleInGame(username, client))
 			console.log(`Player ${username} reconnected to previous game`);
-		else
-			console.log(`Player ${username} connected`);
 	}
 
 	leftGame(client: Socket): void {
