@@ -163,7 +163,7 @@ const ProfileMenu = (
 				<Typography className="flex justify-center p-1 font-bold text-[18px] text-opacity-90 text-[#EAEAEA]">{user.username}</Typography>
 				<Typography className="flex justify-center p-1 pb-3 font-medium text-[14px] text-opacity-75 text-[#EAEAEA]">{user.email}</Typography>
 				<hr typeof="text" className="border-[#F6F6F6] mx-5 mb-2 flex justify-center rounded-full border-opacity-75" />
-				<Link href={'/profile'}>
+				<Link href={'/profile/' + user.id}>
 				<MenuItem className="flex justify-center gap-2">
 					<svg
 						width="25"

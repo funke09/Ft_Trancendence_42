@@ -1,12 +1,14 @@
-import { BadRequestException, Controller, Get, Param, ParseIntPipe, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, Get, HttpException, NotFoundException, Param, ParseIntPipe, Req, Res, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/utils/Guards';
+import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
 
 @Controller('user')
 export class UserController {
 	constructor(
 		private readonly userService: UserService,
+		private readonly authService: AuthService,
 	) {}
 
 	@Get()
@@ -24,6 +26,15 @@ export class UserController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@Get('/id/:userId')
+	async getUserById(@Req() req: any, @Param('userId') userId: number) {
+		const user = await this.userService.getUserById(req.user.id, +userId)
+		if (!user) throw new NotFoundException("User not Found");
+		return user;
+
+	}
+
+	@UseGuards(JwtAuthGuard)
 	@Get('/:username')
 	async getUserByUsername(@Param('username') username: string) {
 		if (!username)
@@ -36,7 +47,14 @@ export class UserController {
 	async getAvatar(
 		@Param('id', ParseIntPipe) id: number,
 		@Res() res: Response,
-		) {
+	) {
 			return await this.userService.getAvataById(id);
-		}
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get('/getStats/:id')
+	async getStats(@Req() req: any, @Param('id', ParseIntPipe) id: number) {
+		if (!req.user.id) throw new BadRequestException('Missing username');
+		return this.userService.getStatsById(id);
+	}
 }
