@@ -21,6 +21,7 @@
     "@types/axios": "^0.14.0",
     "axios": "^1.6.2",
     "cookie": "^0.6.0",
+    "date-fns": "^3.0.1",
     "framer-motion": "^10.16.15",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",

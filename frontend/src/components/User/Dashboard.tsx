@@ -1,12 +1,10 @@
 import api from "@/api";
-import Loading from "@/components/Layout/Loading";
-import { Nav } from "@/components/Layout/NavBar";
-import store, { setProfile } from "@/redux/store";
-import { Avatar, Card, IconButton, List, ListItem, ListItemPrefix, Tooltip, Typography } from "@material-tailwind/react";
+import store from "@/redux/store";
+import { Avatar,IconButton, Tooltip, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { AxiosError, AxiosResponse } from "axios";
 import Achiev from "./Achievements";
+import MatchHistory from "./MatchHistory";
 
 interface Game {
 	id: number;
@@ -16,6 +14,7 @@ interface Game {
 	p2Id: number;
 	gameType: string;
 	userId: number;
+	createdAt: number;
 }
 
 interface Stats {
@@ -28,6 +27,7 @@ interface GameData {
 	stats: Stats;
 	games: Game[];
 }
+
 
 function getAvatarBorder(rank: string | undefined): string | undefined {
 	if (rank === "Bronze")
@@ -68,7 +68,7 @@ function Dashboard({ id }: {id: string}) {
             .catch((err: AxiosError<{ message: string }>) => {});
     }, []);
 
-	if (!profile) return <></>
+	if (!profile) return <Typography variant="h1" className="m-auto flex justify-center p-10 text-white">User Not Found</Typography>
 
 	return (
 	  <div>
@@ -94,13 +94,11 @@ function Dashboard({ id }: {id: string}) {
 				<Typography className="flex justify-center text-[24px] text-white font-normal">Achievements</Typography>
 				<Achiev stats={stats}/>
 		  	</section>
-			<section className="hidden samwil:flex flex-col w-3/4 p-3 justify-center">
+			<section className="container hidden samwil:flex flex-col w-3/4 p-3 max-h-[720px] overflow-auto">
 				<Typography variant="h3" className="text-gray-200 p-4">Match History
 				<hr className="rounded-full border-2 border-gray-200 w-[25%]"/>
 				</Typography>
-				<div className="container flex justify-start m-auto">
-					<div className="w-full h-[500px] bg-[#643461]"></div>
-				</div>
+				<MatchHistory games={stats?.games} p1={profile}/>
 			</section>
 		  </main>
 	  </div>

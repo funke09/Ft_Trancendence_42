@@ -42,7 +42,7 @@ const ACHIEV: { [key: string]: AchievDto } = {
 
 	"elite": {
 		name: 'Elite',
-		desc: 'Attaining elite status after 10 games!',
+		desc: 'Attaining elite status after winning 10 games!',
 		icon: '/stats/elite.jpg',
 	},
 
@@ -134,10 +134,8 @@ export class GameData {
 			await this.saveAcheiv(res.loser, res.lClient, 'rookie')
 		}
 
-		if (stats.wins + stats.losses === 10) {
+		if (stats.wins + stats.losses === 10)
 			await this.saveAcheiv(res.winner, res.wClient, 'elite')
-			await this.saveAcheiv(res.loser, res.lClient, 'elite')
-		}
 
 		try {
 			const id = (await this.getUserByUsername(res.winner)).id;

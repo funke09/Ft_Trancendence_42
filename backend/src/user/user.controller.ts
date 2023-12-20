@@ -31,7 +31,6 @@ export class UserController {
 		const user = await this.userService.getUserById(req.user.id, +userId)
 		if (!user) throw new NotFoundException("User not Found");
 		return user;
-
 	}
 
 	@UseGuards(JwtAuthGuard)
@@ -44,11 +43,8 @@ export class UserController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get('/avatar/:id')
-	async getAvatar(
-		@Param('id', ParseIntPipe) id: number,
-		@Res() res: Response,
-	) {
-			return await this.userService.getAvataById(id);
+	async getAvatar(@Param('id', ParseIntPipe) id: number) {
+		return await this.userService.getAvataById(id);
 	}
 
 	@UseGuards(JwtAuthGuard)
