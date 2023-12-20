@@ -1,10 +1,9 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, Res, SetMetadata, UseGuards } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { FTAuthGuard, JwtAuthGuard } from './utils/Guards';
+import { Body, Controller, Get, Post, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Response } from 'express';
+import { JwtAuthGuard } from './utils/Guards';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { SigninDto } from './utils/Signin.dto';
-import { JwtService } from '@nestjs/jwt';
+import { SetEmailDto, setPasswordDto, setUsernameDto } from 'src/user/user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -24,13 +23,13 @@ export class AuthController {
 
 	@Post('signup')
 	async signup(
-	  @Body('username') username: string,
-	  @Body('email') email: string,
-	  @Body('password') password: string,
+	  @Body() username: setUsernameDto,
+	  @Body() email: SetEmailDto,
+	  @Body() password: setPasswordDto,
 	  @Res({ passthrough: true }) res: Response,
 	) {
 	  try {
-		const token = await this.authService.signup(username, email, password);
+		const token = await this.authService.signup(username.username, email.email, password.password);
 		if (token) {
 			res.cookie('jwt', token, { httpOnly: false, path: '/'});
 			return { access_token: token };
@@ -40,7 +39,6 @@ export class AuthController {
 	  }
 	}
 	
-
 	@Post('signin')
 	async signin(
 		@Body('username') username: string,
@@ -56,5 +54,11 @@ export class AuthController {
 	  } catch (error) {
 		throw error;
 	  }
+	}
+
+	@Post('logout')
+	async logout(@Body('user', new ValidationPipe()) user: any, @Res({ passthrough: true }) res: Response) {
+		await this.authService.logout(user.id);
+		res.clearCookie('jwt');
 	}
 }

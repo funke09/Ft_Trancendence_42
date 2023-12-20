@@ -5,6 +5,7 @@ import {
 	Input,
 	Button,
   } from "@material-tailwind/react";
+import { toast } from 'react-toastify';
    
 function SigninForm() {
 	const [username, setUsername] = useState('');
@@ -29,7 +30,7 @@ function SigninForm() {
 			console.error('Signup failed:', response.data.message);
 		  }
 		} catch (error: any) {
-		  console.error('Error during signup:', error.message);
+			toast.error(error?.response.data.messages.toString(), {theme: 'dark'});
 		}
 	  };
 	

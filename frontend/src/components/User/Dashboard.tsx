@@ -7,6 +7,7 @@ import Achiev from "./Achievements";
 import MatchHistory from "./MatchHistory";
 import Loading from "../Layout/Loading";
 import EditProfile from "./EditProfile";
+import { toast } from "react-toastify";
 
 interface Game {
 	id: number;
@@ -60,11 +61,12 @@ function Dashboard({ id }: {id: string}) {
             .then((res: any) => {
                 if (res.status == 200) {
                     setProfile(res.data);
-					setLoading(false);
+					setLoading(!loading);
                 }
             })
             .catch((err: any) => {
-                setError(true);
+				setLoading(!loading);
+				toast.error(err?.response?.data?.messages?.toString(), {theme: 'dark'});
             });
         api.get("/user/getStats/" + id)
             .then((res: AxiosResponse<GameData>) => {
@@ -77,7 +79,7 @@ function Dashboard({ id }: {id: string}) {
 
 	if (loading) return (<Loading/>);
 	
-	if (!profile) return <Typography variant="h1" className="m-auto flex justify-center p-10 text-white">User Not Found</Typography>
+	if (!profile) return <Typography variant="h1" className="m-auto flex justify-center p-10 text-white">No Content</Typography>
 
 	return (
 	  <div>
@@ -93,7 +95,7 @@ function Dashboard({ id }: {id: string}) {
 				</IconButton>
 				}
 			  	<div className="flex-col flex items-center justify-start gap-3 pb-4">
-				  <Tooltip className="bg-[#472C45] bg-opacity-70" content={stats?.stats?.rank} placement="top" offset={10} animate={{mount: { scale: 1, y: 0 }, unmount: { scale: 0, y: 25 },}}>
+				  <Tooltip className="bg-[#472C45] bg-opacity-70" content={stats ? stats?.stats?.rank : "Unranked"} placement="top" offset={10} animate={{mount: { scale: 1, y: 0 }, unmount: { scale: 0, y: 25 },}}>
 						<Avatar src={profile.avatar} variant="rounded" size="xxl" className={getAvatarBorder(stats?.stats?.rank)}/>
 				  </Tooltip>
 					<Typography variant="h3" className="flex justify-center text-white font-bold">{profile.username}</Typography>

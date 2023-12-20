@@ -29,7 +29,7 @@ model Stats {
 
 	wins	Int @default(0)
 	losses	Int @default(0)
-	rank 	String	// Unranked, Bronze, Silver, Gold, Platinum, Diamond
+	rank 	String? @default("Unranked")	// Unranked, Bronze, Silver, Gold, Platinum, Diamond
 	
 	createdAt DateTime @default(now())
 	updatedAt DateTime @updatedAt
@@ -53,20 +53,18 @@ model Achievements {
 }
 
 model Game {
-	id		Int @id @default(autoincrement())
-	
-	outcome String? @default("Undefined") // Win | Loss
-
-	p1Score	Int		@default(0)
-	p2Score	Int 	@default(0)
-
-	p2Id	Int
-
-	gameType String? @default("Undefined")
-
-	createdAt DateTime @default(now())
-	updatedAt DateTime @updatedAt
-
-	user	User @relation("Game", fields: [userId], references: [id])
-	userId Int
+  id        Int      @id @default(autoincrement())
+  
+  outcome   String?  @default("Undefined") // Win | Loss
+  p1Score   Int      @default(0)
+  p2Score   Int      @default(0)
+  p2Id      Int
+  
+  gameType  String?  @default("Undefined")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      User     @relation("Game", fields: [userId], references: [id])
+  userId    Int
 }

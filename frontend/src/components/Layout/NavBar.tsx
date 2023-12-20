@@ -18,6 +18,8 @@ import Link from "next/link";
 import store from "@/redux/store";
 import { UserType } from "@/redux/profile";
 import { PlayModal } from "../Game/playMenu";
+import api from "@/api";
+import { toast } from "react-toastify";
  
 
 export function Nav() {
@@ -28,6 +30,14 @@ export function Nav() {
   const handleOpen = () => setOpen(!open);
 
   const user: UserType = store.getState().profile.user;
+
+  function clickLogout() {
+	api.post('/auth/logout', {user})
+		.then((res: any) => {
+			if (res.status == 201)
+				window.location.href = '/';
+		})
+  }
  
   useEffect(() => {
     window.addEventListener(
@@ -180,10 +190,7 @@ const ProfileMenu = (
 						</Typography >
 					</MenuItem>
 					</Link>
-					<MenuItem onClick={() => {
-						document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-						window.location.href = "/";
-					}}
+					<MenuItem onClick={clickLogout}
 					className="flex justify-center gap-2 ">
 					<svg
 						width="25"

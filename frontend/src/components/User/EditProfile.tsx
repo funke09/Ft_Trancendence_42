@@ -1,12 +1,78 @@
-import { Button, Card, Input } from "@material-tailwind/react";
+import { Alert, Button, Card, Input } from "@material-tailwind/react";
 import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import Image from "next/image";
+import api from "@/api";
+
+function refreshPage() {
+	setTimeout(() => {
+		location.reload();
+	}, 1000);
+}
+
+function saveUsername(username: string) {
+	api.post('/user/setUsername', {username})
+		.then((res: any) => {
+			if (res.status == 201) {
+				toast.success('Successfully changed Username', {
+					position: "top-right",
+					autoClose: 1000,
+					theme: "dark",})
+				refreshPage();
+			}
+		})
+		.catch((error: any) => {
+			toast.error(error?.response.data.messages[0].toString(), {
+				position: "top-right",
+				autoClose: 3000,
+				theme: "dark",});
+		})
+}
+
+function saveEmail(email: string) {
+	api.post('/user/setEmail', {email})
+		.then((res: any) => {
+			if (res.status == 201) {
+				toast.success('Successfully changed Email', {
+					position: "top-right",
+					autoClose: 1000,
+					theme: "dark",})
+				refreshPage();
+			}
+		})
+		.catch((error: any) => {
+			toast.error(error?.response.data.messages[0].toString(), {
+				position: "top-right",
+				autoClose: 3000,
+				theme: "dark",
+			});
+		})
+}
+
+function savePassword(password: string) {
+	api.post('/user/setPassword', {password})
+		.then((res: any) => {
+			if (res.status == 201) {
+				toast.success('Successfully changed Password', {
+					position: "top-right",
+					autoClose: 1000,
+					theme: "dark",})
+				refreshPage();
+			}
+		})
+		.catch((error) => {
+			toast.error(error?.response.data.messages[0].toString(), {
+				position: "top-right",
+				autoClose: 3000,
+				theme: "dark",});
+		})
+}
 
 function EditProfile({ user } : {user: any}) {
 	const [username, setUsername] = useState(user.username);
 	const [email, setEmail] = useState(user.email);
 	const [password, setPassword] = useState("*********");
-
+ 
 	const changeUsername = ({ target } : {target: any}) => setUsername(target.value);
 	const changeEmail = ({ target } : {target: any}) => setEmail(target.value);
 	const changePassword = ({ target } : {target: any}) => setPassword(target.value);
@@ -34,6 +100,7 @@ function EditProfile({ user } : {user: any}) {
 							/>
 							<Button
 								size="sm"
+								onClick={() => saveUsername(username)}
 								color={username !== user.username ? "green" : "blue-gray"}
 								disabled={!username || username == user.username}
 								className="!absolute right-1 top-1 rounded"
@@ -56,6 +123,7 @@ function EditProfile({ user } : {user: any}) {
 							/>
 							<Button
 								size="sm"
+								onClick={() => saveEmail(email)}
 								color={email !== user.email ? "green" : "blue-gray"}
 								disabled={!email || email == user.email}
 								className="!absolute right-1 top-1 rounded"
@@ -78,6 +146,7 @@ function EditProfile({ user } : {user: any}) {
 							/>
 							<Button
 								size="sm"
+								onClick={() => savePassword(password)}
 								color={password !== "*********" ? "green" : "blue-gray"}
 								disabled={!password || password == "*********"}
 								className="!absolute right-1 top-1 rounded"
@@ -88,6 +157,7 @@ function EditProfile({ user } : {user: any}) {
 					</div>
 				</form>
 			</Card>
+			<ToastContainer/>
 		</div>
 	);
 }

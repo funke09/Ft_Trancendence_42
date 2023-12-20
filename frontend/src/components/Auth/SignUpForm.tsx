@@ -5,6 +5,7 @@ import {
 	Input,
 	Button,
   } from "@material-tailwind/react";
+import { toast } from 'react-toastify';
    
 function SignUpForm() {
 	const [email, setEmail] = useState('');
@@ -28,10 +29,10 @@ function SignUpForm() {
 		  if (access_token) {
 			window.location.href = '/';
 		  } else {
-			console.error('Signup failed:', response.data.message);
+			toast.error('Signup failed:' + response.data.message, {theme: 'dark'});
 		  }
 		} catch (error: any) {
-		  console.error('Error during signup:', error.message);
+			toast.error(error?.response?.data?.messages?.toString(), {theme: 'dark'});
 		}
 	  };
 	

@@ -1,8 +1,9 @@
-import { BadRequestException, Controller, Get, HttpException, NotFoundException, Param, ParseIntPipe, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpException, NotFoundException, Param, ParseIntPipe, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/utils/Guards';
 import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
+import { SetEmailDto, setPasswordDto, setUsernameDto } from './user.dto';
 
 @Controller('user')
 export class UserController {
@@ -53,4 +54,27 @@ export class UserController {
 		if (!req.user.id) throw new BadRequestException('Missing username');
 		return this.userService.getStatsById(id);
 	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('/setUsername')
+	async setUsername(@Req() req: any, @Body() username: setUsernameDto) {
+		if (!username) throw new BadRequestException("Invalid Username");
+		await this.userService.setUsername(req.user.id, username.username);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('/setEmail')
+	async setEmail(@Req() req: any, @Body() emailDto: SetEmailDto) {
+		if (!emailDto) throw new BadRequestException("Invalid Email");
+		await this.userService.setEmail(req.user.id, emailDto.email);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('/setPassword')
+	async setPassword(@Req() req: any, @Body() password: setPasswordDto) {
+		if (!password.password) throw new BadRequestException();
+		await this.userService.setPassword(req.user.id, password.password);
+	}
+
+
 }
