@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { format } from 'date-fns';
 import Link from "next/link";
+import Loading from "../Layout/Loading";
 
 interface Game {
 	id: number;
@@ -28,17 +29,21 @@ function MatchHistory({ games, p1 }: MatchHistoryProps) {
 	  <div className="container flex flex-col items-center justify-center p-3">
 		{games.map((game) => {
 		  const chipColor = game.outcome === "WIN" ? "green" : "red";
-		  const [opp, setOpp] = useState<any>(null);
+		  const [opp, setOpp] = useState<any>();
+		  const [loading, setLoading] = useState(true);
   
 		  useEffect(() => {
 			api.get("user/id/" + game.p2Id)
 			  .then((res: any) => {
 				setOpp(res.data);
+				setLoading(false);
 			  })
 			  .catch((error) => {
 				console.error('Error fetching user:', error.response?.data || error.message);
 			  });
 		  }, [game.p2Id]);
+			
+		  if (loading) return (<Loading/>);
   
 		  let score = game.p1Score.toString() + " : " + game.p2Score.toString();
   

@@ -1,10 +1,12 @@
 import api from "@/api";
 import store from "@/redux/store";
-import { Avatar,IconButton, Tooltip, Typography } from "@material-tailwind/react";
+import { Avatar, Dialog,IconButton, Tooltip, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { AxiosError, AxiosResponse } from "axios";
 import Achiev from "./Achievements";
 import MatchHistory from "./MatchHistory";
+import Loading from "../Layout/Loading";
+import EditProfile from "./EditProfile";
 
 interface Game {
 	id: number;
@@ -49,13 +51,16 @@ function Dashboard({ id }: {id: string}) {
 	const user = store.getState().profile.user;
 	const [profile, setProfile] = useState<any>(null);
 	const [stats, setStats] = useState<any>(null);
+	const [edit, setEdit] = useState(false);
 	const [error, setError] = useState(false);
+	const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         api.get("/user/id/" + id)
             .then((res: any) => {
                 if (res.status == 200) {
                     setProfile(res.data);
+					setLoading(false);
                 }
             })
             .catch((err: any) => {
@@ -68,6 +73,10 @@ function Dashboard({ id }: {id: string}) {
             .catch((err: AxiosError<{ message: string }>) => {});
     }, []);
 
+	const clickEdit = () => setEdit(!edit);
+
+	if (loading) return (<Loading/>);
+	
 	if (!profile) return <Typography variant="h1" className="m-auto flex justify-center p-10 text-white">User Not Found</Typography>
 
 	return (
@@ -75,7 +84,7 @@ function Dashboard({ id }: {id: string}) {
 		  <main className="min-h-[720px] max-w-[1200px] rounded-[15px] flex m-auto bg-[#472C45] opacity-80">
 		  	<section className="w-full samwil:w-1/4 bg-[#643461] p-3 flex-col justify-center rounded-[15px]">
 				{profile && profile.username == user.username ?
-				<IconButton size="sm" className="m-2 rounded-full shadow-md bg-[#351633] hover:scale-110 border-none">
+				<IconButton onClick={clickEdit} size="sm" className="m-2 rounded-full shadow-md bg-[#351633] hover:scale-110 border-none">
 					<i className="fa-solid fa-gear fa-xl" style={{ color: "#E1E1E1" }} />
 				</IconButton>
 				:
@@ -101,6 +110,10 @@ function Dashboard({ id }: {id: string}) {
 				<MatchHistory games={stats?.games} p1={profile}/>
 			</section>
 		  </main>
+		  {edit && 
+			  <Dialog className="bg-[#382A39] rounded-[30px]" open={edit} handler={clickEdit}>
+				  <EditProfile user={user}/>
+			  </Dialog>}
 	  </div>
 	);
 }
