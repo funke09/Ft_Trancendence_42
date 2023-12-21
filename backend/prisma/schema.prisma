@@ -15,11 +15,14 @@ model User {
   avatar      String?
 
   userStatus  String  // online | in-game | offline
-  Games		  Game[]  @relation("Game")
+  Games		  Games[]  @relation("Games")
   userStats	  Stats?
 
   createdAt   DateTime @default(now())
   updatedAt	  DateTime @updatedAt
+
+  fromFriendship Friends[] @relation("fromFriendship")
+  toFriendships  Friends[] @relation("toFriendships")
 }
 
 model Stats {
@@ -52,21 +55,32 @@ model Achievements {
 	updatedAt DateTime @updatedAt
 }
 
-model Game {
-	id		Int @id @default(autoincrement())
-	
-	outcome String? @default("Undefined") // Win | Loss
+model Friends {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt	DateTime @updatedAt
 
-	p1Score	Int		@default(0)
-	p2Score	Int 	@default(0)
+  fromId	Int
+  toId      Int
+  status	String   @default("Pending") // Pending, Accepted, Declined, Blocked
 
-	p2Id	Int
+  from		User     @relation("fromFriendship", fields: [fromId], references: [id])
+  to		User     @relation("toFriendships", fields: [toId], references: [id])
+}
 
-	gameType String? @default("Undefined")
-
-	createdAt DateTime @default(now())
-	updatedAt DateTime @updatedAt
-
-	user	User @relation("Game", fields: [userId], references: [id])
-	userId Int
+model Games {
+  id        Int      @id @default(autoincrement())
+  
+  outcome   String?  @default("Undefined") // Win | Loss
+  p1Score   Int      @default(0)
+  p2Score   Int      @default(0)
+  p2Id      Int
+  
+  gameType  String?  @default("Undefined")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      User     @relation("Games", fields: [userId], references: [id])
+  userId    Int
 }

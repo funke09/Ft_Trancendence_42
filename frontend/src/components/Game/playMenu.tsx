@@ -14,6 +14,7 @@ import api from "@/api";
 import store, { setOpp } from "@/redux/store";
 import { useRouter } from "next/router";
 import gameSocket from "@/sockets/gameSocket";
+import { ToastContainer, toast } from "react-toastify";
  
 export function PlayModal() {
 	const [selected, setSelected] = useState(1);
@@ -24,7 +25,6 @@ export function PlayModal() {
 
 	const [isFindGame, setIsFindGame] = useState(false);
 	const [isInvite, setIsInvite] = useState(false);
-	const [isAlert, setIsAlert] = useState(true);
 
 	const handleCancel = () => {
 		setIsFindGame(false);
@@ -43,17 +43,15 @@ export function PlayModal() {
 	}
 
 	function clickInvite() {
-		return (
-			api.get(`user/${username}`)
-			.then((res: any) => {
-				if (!res.data || res.data.id == currentUser.id) {
-						setIsInvite(false);
-						setIsAlert(false);
-				} else {
-						setIsInvite(true);
-				}
-			})
-		);
+		api.get(`user/${username}`)
+		.then((res: any) => {
+			if (!res.data || res.data.id == currentUser.id || res.data.userStatus != "Online") {
+				setIsInvite(false);
+				toast.error(`${username} is Unavailable`, {theme: 'dark'});		
+			}
+			else
+				setIsInvite(true);		
+		})
 	};
 
 	const router = useRouter();
@@ -62,16 +60,17 @@ export function PlayModal() {
 		gameSocket.on("match", (data) => {
 			store.dispatch(setOpp(data));
 			router.push(`/game/${data.roomName}`);
-			});
-
+		});
+		
 		gameSocket.on("cancelGame", () => {
 			setIsFindGame(false);
 			setIsInvite(false);
 		});
 	}, []);
-			
+	
 	return (
 		<div className="flex-col justify-center m-auto p-6">
+			<ToastContainer/>
 			<Typography color="white" className="m-auto text-2xl p-2 font-bold flex justify-center">Chose a Mode</Typography>
 			<hr className="m-auto max-w-[220px] border-1 opacity-70 rounded-full"/>
 			<List className="m-auto pt-8 gap-8 flex-row justify-between">
@@ -109,25 +108,6 @@ export function PlayModal() {
 			<Typography color="white" className="text-2xl m-auto mt-7 p-2 font-bold flex justify-center">Play</Typography>
 			<hr className="m-auto max-w-[150px] border-1 opacity-70 rounded-full"/>
 			<Typography color="white" className="text-[16px] m-auto opacity-70 pt-6 font-bold flex justify-center">Invite Friend</Typography>
-			{!isAlert &&
-				<Alert onClose={() => setIsAlert(!isAlert)} variant="gradient" className="!max-w-sm flex-row m-auto bg-gradient-to-tr from-red-800 to-red-600">
-					<div className="m-auto flex gap-2 justify-center opacity-85">
-						<svg
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 24 24"
-						fill="#EDEDED"
-						className="h-6 w-6"
-						>
-						<path
-							fillRule="evenodd"
-							d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
-							clipRule="evenodd"
-							/>
-						</svg>
-						<Typography variant="h6">Sorry, this username does not exist</Typography>
-					</div>
-				</Alert>
-			}
 			<div className="m-auto my-3 relative flex flex-col w-full max-w-[24rem]">
 				<Input
 					type="text"
@@ -142,7 +122,7 @@ export function PlayModal() {
 				<Button
 					size="sm"
 					color={username ? "gray" : "gray"}
-					disabled={!username}
+					disabled={!username || username === currentUser.username}
 					className="!absolute right-1 top-1 rounded"
 					onClick={clickInvite}
 				>
@@ -164,7 +144,7 @@ export function PlayModal() {
 			}
 			{ isInvite && 
 				<Dialog size="sm" className="bg-[#382A39] p-5 rounded-[30px]" open={isInvite} handler={handleInvOpen}>
-					{<QueueModal type={"invite"} onCancel={handleCancel}/>}
+					<QueueModal type={"invite"} onCancel={handleCancel}/>
 				</Dialog>
 			}
 	</div>

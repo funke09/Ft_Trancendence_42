@@ -1,11 +1,9 @@
-import next from "next";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { UserType } from "@/redux/profile";
 import store, { setProfile } from "@/redux/store";
 import api from "@/api";
 import { Nav } from "@/components/Layout/NavBar";
+import Loading from "@/components/Layout/Loading";
 
 const Features: React.FC = () => {
 	const [loading, setLoading] = useState(true);
@@ -25,7 +23,7 @@ const Features: React.FC = () => {
     }, []);
 
     if (loading) {
-        return <h1>Loading...</h1>;
+        return <Loading/>;
     }
 	
 	return (

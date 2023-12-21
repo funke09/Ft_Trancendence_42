@@ -102,7 +102,7 @@ export class Game {
 				x: Math.cos(1) * this.BallSpeed,
 				y: Math.sin(0.75) * this.BallSpeed,
 			}
-		}, 5000);
+		}, 5500);
 	}
 
 	updateGame() {
@@ -391,7 +391,7 @@ export class Game {
 			this.score.player2 = 0;
 		}
 		this.endGameCallback(this.id);
-		this.stopGame();
+		this.stopGame(false);
 	}
 
 	stopGame(backup: boolean = true) {

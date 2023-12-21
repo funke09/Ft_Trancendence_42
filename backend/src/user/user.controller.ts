@@ -1,12 +1,17 @@
-import { BadRequestException, Controller, Get, Param, ParseIntPipe, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpException, NotFoundException, Param, ParseIntPipe, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/utils/Guards';
+import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
+import { SetEmailDto, setPasswordDto, setUsernameDto } from './user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterService } from './multer.service';
 
 @Controller('user')
 export class UserController {
 	constructor(
 		private readonly userService: UserService,
+		private readonly multerService: MulterService,
 	) {}
 
 	@Get()
@@ -24,6 +29,14 @@ export class UserController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@Get('/id/:userId')
+	async getUserById(@Req() req: any, @Param('userId') userId: number) {
+		const user = await this.userService.getUserById(req.user.id, +userId)
+		if (!user) throw new NotFoundException("User not Found");
+		return user;
+	}
+
+	@UseGuards(JwtAuthGuard)
 	@Get('/:username')
 	async getUserByUsername(@Param('username') username: string) {
 		if (!username)
@@ -33,10 +46,49 @@ export class UserController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get('/avatar/:id')
-	async getAvatar(
-		@Param('id', ParseIntPipe) id: number,
-		@Res() res: Response,
-		) {
-			return await this.userService.getAvataById(id);
-		}
+	async getAvatar(@Param('id', ParseIntPipe) id: number) {
+		return await this.userService.getAvataById(id);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get('/getStats/:id')
+	async getStats(@Req() req: any, @Param('id', ParseIntPipe) id: number) {
+		if (!req.user.id) throw new BadRequestException('Missing username');
+		return this.userService.getStatsById(id);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('/setUsername')
+	async setUsername(@Req() req: any, @Body() username: setUsernameDto) {
+		if (!username) throw new BadRequestException("Invalid Username");
+		await this.userService.setUsername(req.user.id, username.username);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('/setEmail')
+	async setEmail(@Req() req: any, @Body() emailDto: SetEmailDto) {
+		if (!emailDto) throw new BadRequestException("Invalid Email");
+		await this.userService.setEmail(req.user.id, emailDto.email);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('/setPassword')
+	async setPassword(@Req() req: any, @Body() password: setPasswordDto) {
+		if (!password.password) throw new BadRequestException();
+		await this.userService.setPassword(req.user.id, password.password);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('/saveAvatar')
+	@UseInterceptors(FileInterceptor('file'))
+	async uploadAvatar(@UploadedFile() file: Express.Multer.File, @Req() req: any) {
+	  const userId = req.user.id;
+	  if (!userId) throw new NotFoundException("User not found");
+	  if (!file.mimetype.includes('image')) throw new BadRequestException("File is not an Image");
+
+	  const filePath = await this.multerService.uploadAvatar(file);
+	  await this.multerService.saveAvatar(userId, filePath);
+
+	  return filePath;
+	}
 }

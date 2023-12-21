@@ -6,6 +6,8 @@ import { AppProps } from 'next/app';
 import { Provider } from 'react-redux';
 import { AxiosError } from 'axios';
 import { ThemeProvider } from "@material-tailwind/react";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './../style/global.css'
 
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -21,6 +23,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
 	return (
 		<Provider store={store}>
+			<ToastContainer/>
 			<ThemeProvider>
 			<SocketComp />
 			<main>

@@ -1,5 +1,6 @@
 import { Typography, Button } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react';
+import { ToastContainer } from 'react-toastify';
 
 export default function QueueModal({ type, onCancel } : { type: string, onCancel: any }) {
   const [seconds, setSeconds] = useState(0);

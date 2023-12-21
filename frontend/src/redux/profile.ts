@@ -20,6 +20,7 @@ export interface UserType {
 		updatedAt: string;
 	};
 	Games: any[];
+	Friends: any[];
 }
 
 const initialStateProfile: { user: UserType } = {
@@ -38,11 +39,12 @@ const initialStateProfile: { user: UserType } = {
 			matchesPlayed: 0,
 			wins: 0,
 			losses: 0,
-			rank: "Iron",
+			rank: "Unranked",
 			createdAt: "",
 			updatedAt: "",
 		},
 		Games: [],
+		Friends: [],
 	},
 }
 

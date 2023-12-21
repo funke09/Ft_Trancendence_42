@@ -5,6 +5,7 @@ import { AuthorisationHeaderMiddleware } from './middleware/header.middleware';
 import { AccessControlMiddleware } from './middleware/access.middleware';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
+
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),

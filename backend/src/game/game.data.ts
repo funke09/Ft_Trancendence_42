@@ -42,7 +42,7 @@ const ACHIEV: { [key: string]: AchievDto } = {
 
 	"elite": {
 		name: 'Elite',
-		desc: 'Attaining elite status after 10 games!',
+		desc: 'Attaining elite status after winning 10 games!',
 		icon: '/stats/elite.jpg',
 	},
 
@@ -134,10 +134,8 @@ export class GameData {
 			await this.saveAcheiv(res.loser, res.lClient, 'rookie')
 		}
 
-		if (stats.wins + stats.losses === 10) {
+		if (stats.wins + stats.losses === 10)
 			await this.saveAcheiv(res.winner, res.wClient, 'elite')
-			await this.saveAcheiv(res.loser, res.lClient, 'elite')
-		}
 
 		try {
 			const id = (await this.getUserByUsername(res.winner)).id;
@@ -228,13 +226,13 @@ export class GameData {
 		try {
 			const wUser = await this.getUserByUsername(res.winner);
 			const lUser = await this.getUserByUsername(res.loser);
-
+			
 			if (wUser.userStats === null) this.createStats(res.winner);
 			if (lUser.userStats === null) this.createStats(res.loser);
-
+			
 			await this.handleAchiev(res);
-
-			await this.prisma.game.create({
+			
+			await this.prisma.games.create({
 				data: {
 					outcome: "WIN",
 					p1Score: res.score.winner,
@@ -249,7 +247,7 @@ export class GameData {
 				},
 			});
 
-			await this.prisma.game.create({
+			await this.prisma.games.create({
 				data: {
 					outcome: 'LOSE',
 					p1Score: res.score.loser,

@@ -24,6 +24,19 @@ body::before {
 	/* Ensure that the overlay doesn't interfere with interactions */
 }
 
+.container::-webkit-scrollbar {
+	width: 10px;
+  }
+  
+  .container::-webkit-scrollbar-thumb {
+	background-color: #6b7280;
+	border-radius: 6px;
+  }
+  
+  .container::-webkit-scrollbar-track {
+	background-color: #1f2937;
+	border-radius: 6px;
+  }
 
 .text-container {
 	width: 100%;
@@ -198,6 +211,50 @@ body::before {
 .points{
 	width: 3px;
 	height: 5px;
+	flex-shrink: 0;
+}
+
+@media (min-width: 960px) {
+	.smool\:w-1\/4 {
+	  width: 25%; /* 1/4 */
+	}
+  }
+.challenge-button-style{
+	width: 113.344px;
+	height: 31.969px;
+	flex-shrink: 0;
+	color: #7c2e65;
+	font-family: Manrope;
+	font-size: 23px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: normal; 
+}
+
+.challenge-button{
+	width: 145.313px;
+	height: 42.739px;
+	flex-shrink: 0;
+	border-radius: 50px;
+	background: rgba(177, 33, 110, 0.69);
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25); 
+}
+
+.usernames{
+	width: 404.938px;
+	height: 47.469px;
+	flex-shrink: 0;
+	color: #FFF;
+	font-family: Manrope;
+	font-size: 2rem;
+	font-style: normal;
+	font-weight: 600;
+	line-height: normal;
+}
+
+.profile-chat-pic{
+	width: 67.813px;
+	height: 67.813px;
 	flex-shrink: 0;
 }
 

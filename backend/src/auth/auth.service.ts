@@ -19,7 +19,7 @@ export class AuthService {
 				email: profile.emails[0].value,
 				username: profile.username,
 				avatar: profile._json.image.link,
-				userStatus: 'Online',
+				userStatus: 'Offline',
 				password: 'tmpPass',
 			});
 		}
@@ -30,6 +30,10 @@ export class AuthService {
 		try {
 			const payload = { username: user.username, uid: user.id };
 			const token = this.JwtService.sign(payload);
+			await this.prisma.user.update({
+				where: {id: user.id},
+				data: {userStatus: 'Online'},
+			});
 			res.cookie('jwt', token, { httpOnly: false, path: '/'});
 			res.redirect("http://localhost:3000");
 		} catch (error) {
@@ -55,11 +59,11 @@ export class AuthService {
 	
 		  const user = await this.prisma.user.create({
 			data: {
-				username: username,
-				email: email,
-				password: hashedPassword,
-				avatar: "https://cdn-icons-png.flaticon.com/512/8566/8566908.png",
-				userStatus: "active" // Assuming 'userStatus' is a required field and 'active' is an example status
+			  username: username,
+			  email: email,
+			  password: hashedPassword,
+			  userStatus: 'Online',
+			  avatar: "http://localhost:3000/images/defaultAvatar.png"
 			},
 		});
 	
@@ -90,13 +94,20 @@ export class AuthService {
 		  username: user.username,
 		  uid: user.id,
 		});
+
+		await this.prisma.user.update({
+			where: {id: user.id},
+			data: {userStatus: 'Online'},
+		});
 	  
 		return token;
 	  }
 
-	async logout(user: any, res: Response) {
-		res.clearCookie('jwt');
-		res.redirect('http://localhost:3000/login')
+	async logout(id: number) {
+		await this.prisma.user.update({
+		  where: { id: id },
+		  data: { userStatus: "Offline" },
+		});
 	}
 
 	async createUser(data: Prisma.UserCreateInput): Promise<User> {
