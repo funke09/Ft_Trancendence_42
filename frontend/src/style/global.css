@@ -164,6 +164,54 @@ body::before {
         /* background-image: url('menu-icon.png'); */
         /* Add other necessary styles for the icon */
     }
+	.custom-slid-style {
+        width: 90%; /* Adjust the width for smaller screens */
+        height: auto; /* Allow height to adjust based on content */
+        border-radius: 1.25rem; /* Rounded corners for smaller screens */
+    }
+	.custom-chat-style {
+        width: 90%; /* Adjust the width for smaller screens */
+        height: auto; /* Allow height to adjust based on content */
+        border-radius: 1.25rem; /* Rounded corners for smaller screens */
+    }
+}
+
+
+.custom-chat-style {
+    height: 60rem; /* 697.5px / 16px = 43.59375rem */
+    flex-shrink: 0;
+	display: flex;
+    border-radius:1rem 1rem; /* Assuming 20px = 1.25rem, 10px = 0.625rem */
+    background: linear-gradient(180deg, rgba(19, 120, 130, 0.44) 0%, #146871 100%);
+    box-shadow: 0px 0.25rem 0.25rem 0px rgba(0, 0, 0, 0.25); /* Assuming 4px = 0.25rem */
+	justify-content: end;
+}
+.custom-slid-style {
+    height: 60rem; /* 697.5px / 16px = 43.59375rem */
+    flex-shrink: 0;
+	display: flex;
+    border-radius: 1rem 1rem; /* Assuming 20px = 1.25rem */
+    background: linear-gradient(
+        180deg,
+        rgba(56, 42, 57, 0.55) 0%,
+        rgba(56, 42, 57, 0.55) 0.01%,
+        rgba(56, 42, 57, 0.45) 100%
+    );
+    box-shadow: 0px 0.25rem 0.25rem 0px rgba(0, 0, 0, 0.25); /* Assuming 4px = 0.25rem */
+}
+.nav-chat-style {
+    height: 7.5rem; /* 120.125px / 16px = 7.508rem */
+    flex-shrink: 0;
+    border-radius: 1rem 1rem;
+    /* background: #175262f2; */
+	
+	background: linear-gradient(180deg, rgba(19, 120, 130, 0.44) 0%, #146871 100%);
+}
+
+.points{
+	width: 3px;
+	height: 5px;
+	flex-shrink: 0;
 }
 
 @media (min-width: 960px) {
@@ -171,3 +219,41 @@ body::before {
 	  width: 25%; /* 1/4 */
 	}
   }
+.challenge-button-style{
+	width: 113.344px;
+	height: 31.969px;
+	flex-shrink: 0;
+	color: #7c2e65;
+	font-family: Manrope;
+	font-size: 23px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: normal; 
+}
+
+.challenge-button{
+	width: 145.313px;
+	height: 42.739px;
+	flex-shrink: 0;
+	border-radius: 50px;
+	background: rgba(177, 33, 110, 0.69);
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25); 
+}
+
+.usernames{
+	width: 404.938px;
+	height: 47.469px;
+	flex-shrink: 0;
+	color: #FFF;
+	font-family: Manrope;
+	font-size: 2rem;
+	font-style: normal;
+	font-weight: 600;
+	line-height: normal;
+}
+
+.profile-chat-pic{
+	width: 67.813px;
+	height: 67.813px;
+	flex-shrink: 0;
+}

@@ -65,7 +65,7 @@ export class AuthService {
 			  userStatus: 'Online',
 			  avatar: "http://localhost:3000/images/defaultAvatar.png"
 			},
-		  });
+		});
 	
 		  const token = this.JwtService.sign({
 			username: user.username,
