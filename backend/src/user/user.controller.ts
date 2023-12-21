@@ -1,15 +1,17 @@
-import { BadRequestException, Body, Controller, Get, HttpException, NotFoundException, Param, ParseIntPipe, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpException, NotFoundException, Param, ParseIntPipe, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/utils/Guards';
 import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
 import { SetEmailDto, setPasswordDto, setUsernameDto } from './user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterService } from './multer.service';
 
 @Controller('user')
 export class UserController {
 	constructor(
 		private readonly userService: UserService,
-		private readonly authService: AuthService,
+		private readonly multerService: MulterService,
 	) {}
 
 	@Get()
@@ -76,5 +78,17 @@ export class UserController {
 		await this.userService.setPassword(req.user.id, password.password);
 	}
 
+	@UseGuards(JwtAuthGuard)
+	@Post('/saveAvatar')
+	@UseInterceptors(FileInterceptor('file'))
+	async uploadAvatar(@UploadedFile() file: Express.Multer.File, @Req() req: any) {
+	  const userId = req.user.id;
+	  if (!userId) throw new NotFoundException("User not found");
+	  if (!file.mimetype.includes('image')) throw new BadRequestException("File is not an Image");
 
+	  const filePath = await this.multerService.uploadAvatar(file);
+	  await this.multerService.saveAvatar(userId, filePath);
+
+	  return filePath;
+	}
 }

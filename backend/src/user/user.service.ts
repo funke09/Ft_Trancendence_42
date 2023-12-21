@@ -131,4 +131,19 @@ export class UserService {
 			data: {password: hash},
 		});
 	}
+
+	async saveAvatar(userId: number, filename: string): Promise<void> {
+		const user = await this.prisma.user.findUnique({
+		  where: { id: userId },
+		});
+	
+		if (!user) {
+		  throw new NotFoundException(`User with ID ${userId} not found`);
+		}
+	
+		await this.prisma.user.update({
+		  where: { id: userId },
+		  data: { avatar: filename },
+		});
+	}
 }

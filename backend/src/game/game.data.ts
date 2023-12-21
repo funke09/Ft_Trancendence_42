@@ -226,12 +226,13 @@ export class GameData {
 		try {
 			const wUser = await this.getUserByUsername(res.winner);
 			const lUser = await this.getUserByUsername(res.loser);
-
+			
 			if (wUser.userStats === null) this.createStats(res.winner);
 			if (lUser.userStats === null) this.createStats(res.loser);
-
+			
 			await this.handleAchiev(res);
-
+			console.log("ZABIIIII");
+			
 			await this.prisma.game.create({
 				data: {
 					outcome: "WIN",

@@ -1,8 +1,9 @@
-import { Alert, Button, Card, Input } from "@material-tailwind/react";
-import { useState } from "react";
+import { Alert, Button, Card, Input, Spinner } from "@material-tailwind/react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import Image from "next/image";
 import api from "@/api";
+import store, { setProfile } from "@/redux/store";
 
 function refreshPage() {
 	setTimeout(() => {
@@ -72,17 +73,56 @@ function EditProfile({ user } : {user: any}) {
 	const [username, setUsername] = useState(user.username);
 	const [email, setEmail] = useState(user.email);
 	const [password, setPassword] = useState("*********");
+	const [avatar, setAvatar] = useState<any>(user.avatar);
+	const [file, setFile] = useState<File | null>(null);
  
 	const changeUsername = ({ target } : {target: any}) => setUsername(target.value);
 	const changeEmail = ({ target } : {target: any}) => setEmail(target.value);
 	const changePassword = ({ target } : {target: any}) => setPassword(target.value);
 
+	useEffect(() => {
+		if (file) 
+			setAvatar(URL.createObjectURL(file));
+		else 
+			setAvatar(user.avatar);
+	}, [file]);
+
+	const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files)
+		  setFile(e.target.files[0]);
+	  };
+
+	function saveAvatar() {
+        if (!file) return;
+		const formData = new FormData();
+		formData.append('file', file as File);
+
+		api.post('/user/saveAvatar', formData)
+			.then((res: any) => {
+				if (res.status == 201){
+					toast.success("Successfully changed Avatar", {theme: 'dark'});
+					refreshPage();
+				}
+			})
+			.catch((error: any) => {
+				toast.error(error?.response?.data?.messages?.toString(), {theme: 'dark'});
+			})
+	}
+
 	return (
 		<div className="flex-col items-center justify-center p-6 focus:outline">
-			<Image className="gap-2 flex m-auto justify-center rounded-full shadow-md mb-4" alt="a" width={200} height={200} src={user.avatar}/>
-			<Button size="sm" className="flex justify-center m-auto shadow-md">
-				<i className="fa-solid fa-camera flex justify-center"/>
-			</Button>
+			<Image className="gap-2 flex m-auto justify-center rounded-full shadow-md mb-4" alt="a" width={200} height={200} src={avatar}/>
+			{file ? <Button variant="gradient" size="sm" color="green" className="flex justify-center m-auto shadow-md" onClick={saveAvatar}>Upload</Button> :
+			<Button size="sm" onClick={() => document.getElementById("avatar-input")?.click()} className="flex justify-center m-auto shadow-md">
+				<i className="fa-solid fa-camera flex justify-center" />
+			</Button>}
+			<input
+				type="file"
+				accept="image/*"
+				onChange={handleFileChange}
+				className="hidden"
+				id="avatar-input"
+			/>
 			<Card color="transparent" className="flex items-center ml-[40px]" shadow={false}>
 				<form className="max-w-screen-lg sm:w-96">
 					<div className="flex flex-col p-4 gap-[50px]">
