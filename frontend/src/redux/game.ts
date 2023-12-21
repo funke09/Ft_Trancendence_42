@@ -7,6 +7,7 @@ const initialStateProfile = {
 		player1: { x: 0, y: 0 },
 		player2: { x: 0, y: 0 },
 		score: {player1: 0, player2: 0},
+		gameType: 0,
     },
     opp: {
         roomName: "",

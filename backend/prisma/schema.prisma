@@ -15,7 +15,7 @@ model User {
   avatar      String?
 
   userStatus  String  // online | in-game | offline
-  Games		  Game[]  @relation("Game")
+  Games		  Games[]  @relation("Games")
   userStats	  Stats?
 
   createdAt   DateTime @default(now())
@@ -52,7 +52,7 @@ model Achievements {
 	updatedAt DateTime @updatedAt
 }
 
-model Game {
+model Games {
   id        Int      @id @default(autoincrement())
   
   outcome   String?  @default("Undefined") // Win | Loss
@@ -65,6 +65,6 @@ model Game {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  user      User     @relation("Game", fields: [userId], references: [id])
+  user      User     @relation("Games", fields: [userId], references: [id])
   userId    Int
 }

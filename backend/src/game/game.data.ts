@@ -231,9 +231,8 @@ export class GameData {
 			if (lUser.userStats === null) this.createStats(res.loser);
 			
 			await this.handleAchiev(res);
-			console.log("ZABIIIII");
 			
-			await this.prisma.game.create({
+			await this.prisma.games.create({
 				data: {
 					outcome: "WIN",
 					p1Score: res.score.winner,
@@ -248,7 +247,7 @@ export class GameData {
 				},
 			});
 
-			await this.prisma.game.create({
+			await this.prisma.games.create({
 				data: {
 					outcome: 'LOSE',
 					p1Score: res.score.loser,

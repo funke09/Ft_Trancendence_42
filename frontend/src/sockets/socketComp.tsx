@@ -33,7 +33,7 @@ const SocketComp = () => {
 		
 		gameSocket.on("endGame", () => {
 			setTimeout(() => {
-				router.push('/');
+				router.push('/profile/' + store.getState().profile.user.id);
 			}, 2000);
 		});
 		
