@@ -20,6 +20,7 @@ export interface UserType {
 		updatedAt: string;
 	};
 	Games: any[];
+	Friends: any[];
 }
 
 const initialStateProfile: { user: UserType } = {
@@ -43,6 +44,7 @@ const initialStateProfile: { user: UserType } = {
 			updatedAt: "",
 		},
 		Games: [],
+		Friends: [],
 	},
 }
 

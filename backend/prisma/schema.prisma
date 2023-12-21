@@ -20,6 +20,9 @@ model User {
 
   createdAt   DateTime @default(now())
   updatedAt	  DateTime @updatedAt
+
+  fromFriendship Friends[] @relation("fromFriendship")
+  toFriendships  Friends[] @relation("toFriendships")
 }
 
 model Stats {
@@ -50,6 +53,19 @@ model Achievements {
 
 	createdAt DateTime @default(now())
 	updatedAt DateTime @updatedAt
+}
+
+model Friends {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt	DateTime @updatedAt
+
+  fromId	Int
+  toId      Int
+  status	String   @default("Pending") // Pending, Accepted, Declined, Blocked
+
+  from		User     @relation("fromFriendship", fields: [fromId], references: [id])
+  to		User     @relation("toFriendships", fields: [toId], references: [id])
 }
 
 model Games {
