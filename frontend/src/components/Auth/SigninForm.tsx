@@ -6,10 +6,12 @@ import {
 	Button,
   } from "@material-tailwind/react";
 import { toast } from 'react-toastify';
+import PinInput from './PinInput';
    
 function SigninForm() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const [isTwoFA, setIsTwoFA] = useState(false);
     
 
 	const handleSignup = async (e: any) => {
@@ -22,10 +24,13 @@ function SigninForm() {
 			password,
 		  });
 	  
-		  const { access_token } = response.data;
-	  
-		  if (access_token) {
-			window.location.href = '/';
+		  const { access_token, isTwoFA } = response.data;
+		  
+		  if (access_token && isTwoFA) {
+			setIsTwoFA(true);
+		  }
+		  else if (access_token) {
+			window.location.href = '/profile';
 		  } else {
 			console.error('Signup failed:', response.data.message);
 		  }
@@ -63,6 +68,7 @@ function SigninForm() {
 		  </Button>
 		</form>
 	  </Card>
+	  {isTwoFA && <PinInput/>}
 	</>
 	);
   }

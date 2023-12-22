@@ -376,7 +376,7 @@ const navList = (
 			>
             PLAY
           </Button>
-		  <Link href={'/profile/' + user.id}>
+		  <Link href={'/profile'}>
 			<Button variant="gradient" size="md" color="indigo">
 				Profile
 			</Button>

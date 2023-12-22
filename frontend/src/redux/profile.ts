@@ -7,6 +7,8 @@ export interface UserType {
 	username: string;
 	password: string;
 	avatar: string;
+	isTwoFA: boolean;
+	otpTwoFA: string;
 	userStatus: string;
 	createdAt: string;
 	updatedAt: string;
@@ -31,6 +33,8 @@ const initialStateProfile: { user: UserType } = {
 		username: "",
 		password: "",
 		avatar: "",
+		isTwoFA: false,
+		otpTwoFA: "",
 		userStatus: "",
 		createdAt: "",
 		updatedAt: "",
@@ -39,7 +43,7 @@ const initialStateProfile: { user: UserType } = {
 			matchesPlayed: 0,
 			wins: 0,
 			losses: 0,
-			rank: "Unranked",
+			rank: "",
 			createdAt: "",
 			updatedAt: "",
 		},

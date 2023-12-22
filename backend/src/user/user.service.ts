@@ -1,6 +1,6 @@
-import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import * as argon from 'argon2';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import * as argon from 'argon2';
 
 @Injectable()
 export class UserService {

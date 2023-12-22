@@ -253,7 +253,7 @@ const Auth: React.FC = () => {
 		api.get('/user/profile')
 		  .then((res: any) => {
 			if (res.status === 200) {
-			  window.location.href = '/';
+			  window.location.href = '/profile';
 			  setLoading(false);
 			}
 		  })

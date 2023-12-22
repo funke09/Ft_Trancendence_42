@@ -53,27 +53,32 @@ function Dashboard({ id }: {id: string}) {
 	const [profile, setProfile] = useState<any>(null);
 	const [stats, setStats] = useState<any>(null);
 	const [edit, setEdit] = useState(false);
-	const [error, setError] = useState(false);
 	const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         api.get("/user/id/" + id)
             .then((res: any) => {
                 if (res.status == 200) {
-                    setProfile(res.data);
 					setLoading(!loading);
+                    setProfile(res.data);
                 }
             })
             .catch((err: any) => {
 				setLoading(!loading);
 				toast.error(err?.response?.data?.messages?.toString(), {theme: 'dark'});
             });
-        api.get("/user/getStats/" + id)
+		
+        setTimeout(() => {
+			api.get("/user/getStats/" + id)
             .then((res: AxiosResponse<GameData>) => {
-                setStats(res.data);
-            })
-            .catch((err: AxiosError<{ message: string }>) => {});
-    }, []);
+				if (res.status == 200)
+				setStats(res.data);
+			})
+			.catch((err: AxiosError<{ message: string }>) => {
+				toast.error(err?.response?.data?.message?.toString(), {theme: 'dark'});
+			});
+		}, 200);
+    }, [id]);
 
 	const clickEdit = () => setEdit(!edit);
 
@@ -95,7 +100,7 @@ function Dashboard({ id }: {id: string}) {
 				</IconButton>
 				}
 			  	<div className="flex-col flex items-center justify-start gap-3 pb-4">
-				  <Tooltip className="bg-[#472C45] bg-opacity-70" content={stats ? stats?.stats?.rank : "Unranked"} placement="top" offset={10} animate={{mount: { scale: 1, y: 0 }, unmount: { scale: 0, y: 25 },}}>
+				  <Tooltip className="bg-[#472C45] bg-opacity-70" content={stats?.stats?.rank ? stats?.stats?.rank : "Unranked"} placement="top" offset={10} animate={{mount: { scale: 1, y: 0 }, unmount: { scale: 0, y: 25 },}}>
 						<Avatar src={profile.avatar} variant="rounded" size="xxl" className={getAvatarBorder(stats?.stats?.rank)}/>
 				  </Tooltip>
 					<Typography variant="h3" className="flex justify-center text-white font-bold">{profile.username}</Typography>
@@ -109,13 +114,10 @@ function Dashboard({ id }: {id: string}) {
 				<Typography variant="h3" className="text-gray-200 p-4">Match History
 				<hr className="rounded-full border-2 border-gray-200 w-[25%]"/>
 				</Typography>
-				<MatchHistory games={stats?.games} p1={profile}/>
+				{stats?.games && <MatchHistory games={stats?.games} p1={profile}/>}
 			</section>
 		  </main>
-		  {edit && 
-			  <Dialog className="bg-[#382A39] rounded-[30px]" open={edit} handler={clickEdit}>
-				  <EditProfile user={user}/>
-			  </Dialog>}
+		  {edit && <EditProfile user={user}/>}
 	  </div>
 	);
 }

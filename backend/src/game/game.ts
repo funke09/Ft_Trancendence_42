@@ -248,8 +248,10 @@ export class Game {
 			this.client2 && this.client2.emit('gameMsg', `${p2 > p1 ? 'WINNER' : 'GAME OVER'}`);
 			this.client1 && this.client1.emit('endGame', { winner: p1 < p2 ? 1 : 2});
 			this.client2 && this.client2.emit('endGame', { winner: p2 < p1 ? 1 : 2});
-			this.endGameCallback(this.id);
-			this.stopGame();
+			setTimeout(() => {
+				this.endGameCallback(this.id);
+				this.stopGame();
+			}, 200);
 		}
 	}
 

@@ -23,7 +23,6 @@ interface MatchHistoryProps {
   }
   
 function MatchHistory({ games, p1 }: MatchHistoryProps) {
-	console.log(games);
 	if (!games) return <></>;
   
 	return (

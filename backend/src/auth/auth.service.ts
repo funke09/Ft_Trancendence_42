@@ -1,9 +1,11 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as argon from 'argon2';
 import { User, Prisma } from '@prisma/client';
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt'
+import * as speakeasy from 'speakeasy';
+import * as qrcode from 'qrcode';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +37,7 @@ export class AuthService {
 				data: {userStatus: 'Online'},
 			});
 			res.cookie('jwt', token, { httpOnly: false, path: '/'});
-			res.redirect("http://localhost:3000");
+			res.redirect("http://localhost:3000/profile");
 		} catch (error) {
 			throw new BadRequestException('ERROR:', error.message);
 		}
@@ -75,20 +77,25 @@ export class AuthService {
 		  return token;
 	  }
 
-	async signin(username: string, password: string): Promise<string> {
+	async signin(username: string, password: string): Promise<any> {
 		const user = await this.prisma.user.findUnique({
 		  where: { username: username },
 		});
 	  
 		if (!user) {
-		  throw new ForbiddenException('Credentials incorrect');
+		  throw new ForbiddenException('Username incorrect');
 		}
 	  
 		const pwMatches = await argon.verify(user.password, password);
 	  
 		if (!pwMatches) {
-		  throw new ForbiddenException('Credentials incorrect');
+		  throw new ForbiddenException('Password incorrect');
 		}
+
+		let twoFA: boolean = false;
+
+		if (user.isTwoFA)
+			twoFA = true;
 	  
 		const token = this.JwtService.sign({
 		  username: user.username,
@@ -100,7 +107,7 @@ export class AuthService {
 			data: {userStatus: 'Online'},
 		});
 	  
-		return token;
+		return {token, twoFA};
 	  }
 
 	async logout(id: number) {
@@ -148,4 +155,80 @@ export class AuthService {
             },
         });
     }
+
+
+	async enableTwoFA(id: number) {
+		try {
+		  const user = await this.prisma.user.findUnique({ where: { id: id } });
+		  if (!user) {
+			throw new NotFoundException("User not found");
+		  }
+	  
+		  const otpTwoFA = speakeasy.generateSecret({
+			name: 'ft_transcendence',
+		  });
+	  
+		  if (otpTwoFA.base32) {
+			await this.prisma.user.update({
+			  where: { id: id },
+			  data: { otpTwoFA: otpTwoFA.ascii },
+			});
+		  } else {
+			throw new Error("Failed to generate OTP secret");
+		  }
+	  
+		  const qrCode = qrcode.toDataURL(otpTwoFA.otpauth_url);
+		  return qrCode;
+		} catch (error) {
+		  console.error(error);
+		  throw new InternalServerErrorException("Failed to enable Two-Factor Authentication");
+		}
+	  }
+	  
+	 
+	async verifyTwoFA(pin: number, id: number) {
+		try {
+			const user = await this.prisma.user.findUnique({
+				where: { id: id },
+				select: { otpTwoFA: true },
+			});
+	
+			if (!user) throw new NotFoundException("User not found");
+	
+			const verified = speakeasy.totp.verify({
+				secret: user.otpTwoFA,
+				encoding: 'ascii',
+				token: pin.toString(),
+			});
+	
+			if (!verified) throw new BadRequestException("Invalid PIN");
+	
+			await this.prisma.user.update({ where: { id: id }, data: { isTwoFA: true } });
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async disableTwoFA(id: number) {
+		try {
+			const user = await this.prisma.user.findUnique({
+				where: { id: id},
+				select: {
+					otpTwoFA: true,
+					isTwoFA: true,
+				},
+			});
+			if (!user) throw new NotFoundException("Two-Factor Auth is not enabled");
+
+			await this.prisma.user.update({
+				where: {id:id},
+				data: {
+					otpTwoFA: null,
+					isTwoFA: false,
+				},
+			});
+		} catch (error) {
+			console.error(error);
+		}
+	}
 }

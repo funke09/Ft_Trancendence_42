@@ -128,7 +128,6 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
 		registerEventListeners();
     }
     ctxRef.current = cvsRef.current?.getContext('2d');
-	ctxRef.current!.font = 'bold 50px Sarpanch, Arial, sans-serif';
 
     return () => {
       removeEventListeners();

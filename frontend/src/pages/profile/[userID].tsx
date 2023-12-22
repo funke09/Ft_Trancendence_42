@@ -28,10 +28,6 @@ export default function Profile() {
 			});
 	}, []);
 
-
-	if (id == '')
-		return <Loading/>
-
 	return (
 		<>
 			<Nav/>

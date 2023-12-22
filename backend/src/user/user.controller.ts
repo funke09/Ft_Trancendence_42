@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/utils/Guards';
 import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
-import { SetEmailDto, setPasswordDto, setUsernameDto } from './user.dto';
+import { SetEmailDto, pinDto, setPasswordDto, setUsernameDto, userIdDto } from './user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterService } from './multer.service';
 
@@ -11,14 +11,9 @@ import { MulterService } from './multer.service';
 export class UserController {
 	constructor(
 		private readonly userService: UserService,
+		private readonly authService: AuthService,
 		private readonly multerService: MulterService,
 	) {}
-
-	@Get()
-	@UseGuards(JwtAuthGuard)
-	async getAllUser(@Res() res: Response) {
-		res.redirect('user/profile');
-	}
 
 	@UseGuards(JwtAuthGuard)
 	@Get('profile')
@@ -90,5 +85,26 @@ export class UserController {
 	  await this.multerService.saveAvatar(userId, filePath);
 
 	  return filePath;
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('/enableTwoFA')
+	async enableTwoFA(@Body() userId: userIdDto) {
+		if (!userId) throw new NotFoundException("User not found");
+		return await this.authService.enableTwoFA(userId.userId);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('/verifyTwoFA')
+	async verifyTwoFA(@Body() pin: pinDto, @Req() req: any) {
+		const userId = req.user.id;
+		await this.authService.verifyTwoFA(pin.pin, userId);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('/disableTwoFA')
+	async disableTwoFA(@Body() userId: userIdDto) {
+		if (!userId) throw new NotFoundException("User not found");
+		await this.authService.disableTwoFA(userId.userId);
 	}
 }

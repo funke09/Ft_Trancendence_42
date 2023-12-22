@@ -46,10 +46,10 @@ export class AuthController {
 		@Res({ passthrough: true }) res: Response
 	) {
 	  try {
-		const token = await this.authService.signin(username, password);
+		const {token, twoFA} = await this.authService.signin(username, password);
 		if (token) {
 			res.cookie('jwt', token, { httpOnly: false, path: '/'});
-			return { access_token: token };
+			return { access_token: token, isTwoFA: twoFA };
 		}
 	  } catch (error) {
 		throw error;

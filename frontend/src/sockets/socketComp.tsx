@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react"
 import gameSocket from "./gameSocket";
 import store, { setGame, setSocket } from "@/redux/store";
-import { AchievDto } from "./types";
+import { AchievDto, RankDto } from "./types";
 
 const SocketComp = () => {
 	const [connectedGame, setConnectedGame] = useState(false);
@@ -29,11 +29,16 @@ const SocketComp = () => {
 		});
 
 		gameSocket.on("achievement", (data: AchievDto) => {
+			console.log(data);
         });
+
+		gameSocket.on("rank", (data: RankDto) => {
+			console.log(data);
+		})
 		
 		gameSocket.on("endGame", () => {
 			setTimeout(() => {
-				router.push('/profile/' + store.getState().profile.user.id);
+				router.push('/profile');
 			}, 2000);
 		});
 		

@@ -3,3 +3,7 @@ export class AchievDto {
 	desc: string;
 	icon: string;
 };
+
+export class RankDto {
+	name: string;
+}

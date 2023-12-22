@@ -177,9 +177,6 @@ export class GameService {
 
 	initGame(client: Socket, username: string): void {
 		this.players.set(username, client);
-
-		if (this.handleInGame(username, client))
-			console.log(`Player ${username} reconnected to previous game`);
 	}
 
 	leftGame(client: Socket): void {
@@ -187,9 +184,6 @@ export class GameService {
 		if (!username) {
 			client.emit('error', 'Something wrong');
 		}
-
-		if (this.handleInGame(username, client))
-			console.log(`Player ${username} reconnected to previous game`);
 	}
 
 	disconnectGame(client: Socket): void {
@@ -248,19 +242,6 @@ export class GameService {
 		} catch {
 			return null;
 		}
-	}
-
-	handleInGame(username: string, client: Socket): boolean {
-		let game: Game | undefined;
-		this.games.forEach((value: Game, key: string) => {
-			if (value.p1Username === username || value.p2Username === username)
-				game = value; 
-		});
-		if (game) {
-			game.reconnectPlayer(username, client);
-			return true;
-		}
-		return false;
 	}
 
 	public stopGame = (id: string) => {

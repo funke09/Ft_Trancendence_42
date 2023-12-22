@@ -27,7 +27,7 @@ function SignUpForm() {
 		  const { access_token } = response.data;
 	  
 		  if (access_token) {
-			window.location.href = '/';
+			window.location.href = '/profile';
 		  } else {
 			toast.error('Signup failed:' + response.data.message, {theme: 'dark'});
 		  }
