@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { JwtAuthGuard } from './utils/Guards';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { SetEmailDto, pinDto, setPasswordDto, setUsernameDto, tokenDto } from 'src/user/user.dto';
+import { SetEmailDto, pinDto, setPasswordDto, setUsernameDto } from 'src/user/user.dto';
 
 @Controller('auth')
 export class AuthController {
