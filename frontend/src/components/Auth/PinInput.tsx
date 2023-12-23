@@ -1,11 +1,9 @@
 import api from '@/api';
-import store, { setProfile } from '@/redux/store';
 import { Dialog, DialogBody, Typography } from '@material-tailwind/react';
 import React, { useEffect, useRef, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify';
-import { refreshPage } from '../User/EditProfile';
 
-function PinInput() {
+function PinInput({token, username} : {token : string, username: string}) {
 	const [open, setOpen] = useState(true);
 	const [pin, setPin] = useState(['', '', '', '', '', '']);
 	const inputRefs = useRef<(HTMLInputElement | null)[]>(pin.map(() => null));
@@ -52,7 +50,7 @@ function PinInput() {
 		// Check if all digits are filled
 		const isPinFilled = pin.every((digit) => digit !== '');
 		if (isPinFilled) {
-			api.post('/user/verifyTwoFA', {pin: pin.join('')})
+			api.post('/auth/login2FA', {pin: pin.join(''), token, username})
 				.then((res: any) => {
 					if (res.status == 201) {
 						window.location.href = '/profile';

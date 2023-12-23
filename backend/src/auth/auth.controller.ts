@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { JwtAuthGuard } from './utils/Guards';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { SetEmailDto, setPasswordDto, setUsernameDto } from 'src/user/user.dto';
+import { SetEmailDto, pinDto, setPasswordDto, setUsernameDto, tokenDto } from 'src/user/user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -48,12 +48,27 @@ export class AuthController {
 	  try {
 		const {token, twoFA} = await this.authService.signin(username, password);
 		if (token) {
-			res.cookie('jwt', token, { httpOnly: false, path: '/'});
-			return { access_token: token, isTwoFA: twoFA };
+			if (twoFA)
+				return { access_token: token, isTwoFA: twoFA };
+			else {
+				res.cookie('jwt', token, { httpOnly: false, path: '/'});
+				return { access_token: token, isTwoFA: twoFA };
+			}
 		}
 	  } catch (error) {
 		throw error;
 	  }
+	}
+
+	@Post('/login2FA')
+	async verifyTwoFA(
+		@Body() pin: pinDto,
+		@Body('token') token: string,
+		@Body('username') username: string,
+		@Res({ passthrough: true }) res: Response) {
+			console.log("AT:", token); 
+			console.log("username:", username); 
+			await this.authService.login2FA(pin.pin, username, token, res);
 	}
 
 	@Post('logout')

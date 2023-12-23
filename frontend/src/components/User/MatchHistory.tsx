@@ -1,5 +1,5 @@
 import api from "@/api";
-import { Chip, List, Tooltip, Typography } from "@material-tailwind/react";
+import { Chip, List, ListItem, Tooltip, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { format } from 'date-fns';
@@ -42,22 +42,23 @@ function MatchHistory({ games, p1 }: MatchHistoryProps) {
 				console.error('Error fetching user:', error.response?.data || error.message);
 			  });
 		  }, [game.p2Id]);
-			
-		  if (loading) return (<Loading/>);
   
 		  let score = game.p1Score.toString() + " : " + game.p2Score.toString();
-  
-		  return (
+		  
+		  if (loading)
+		  	<Loading/>
+		  else
+		  	return (
 			<Tooltip content=
-			{ <div className="flex flex-col items-center">
-			<Typography variant="h6">
-				{game.gameType.toUpperCase()}
-			</Typography>
-			<Typography>
-				{format(new Date(game.createdAt), 'yyyy-MM-dd HH:mm')}
-			</Typography>
-			</div>}
-			className="bg-[#2e1b2d]" >
+				{ <div className="flex flex-col items-center">
+				<Typography variant="h6">
+					{game.gameType.toUpperCase()}
+				</Typography>
+				<Typography>
+					{format(new Date(game.createdAt), 'yyyy-MM-dd HH:mm')}
+				</Typography>
+				</div>}
+			className="bg-[#2e1b2d]" key={game.id}>
 			  <List key={game.id} className="w-[85%] bg-[#643461] rounded-[30px] shadow-lg relative mx-auto my-4 transition-all hover:bg-[#965792] hover:bg-opacity-80">
 				<div className="flex flex-row mx-2 p-1 gap-6 justify-between items-center">
 				  <div className="flex flex-row items-center gap-4">

@@ -8,7 +8,16 @@ export class UserService {
 
 	async getUserDataById(id: number) {
 		const user = await this.prisma.user.findUnique({ 
-			where: { id: id },	
+			where: { id: id },
+			select: {
+				id: true,
+				username: true,
+				userStats: true,
+				userStatus: true,
+				email: true,
+				avatar: true,
+				isTwoFA: true,
+			}
 		});
 		if (user)
 			return user;

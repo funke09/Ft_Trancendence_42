@@ -93,9 +93,7 @@ export class AuthService {
 		}
 
 		let twoFA: boolean = false;
-
-		if (user.isTwoFA)
-			twoFA = true;
+		if (user.isTwoFA) twoFA = true;
 	  
 		const token = this.JwtService.sign({
 		  username: user.username,
@@ -229,6 +227,27 @@ export class AuthService {
 			});
 		} catch (error) {
 			console.error(error);
+		}
+	}
+
+	async login2FA(pin: number, username: string, token: string, res:any) {
+		try {
+			const user = await this.prisma.user.findUnique({
+				where: { username: username },
+				select: { otpTwoFA: true },
+			});
+			if (!user) throw new NotFoundException("User not found");
+	
+			const verified = speakeasy.totp.verify({
+				secret: user.otpTwoFA,
+				encoding: 'ascii',
+				token: pin.toString(),
+			});
+			if (!verified) throw new BadRequestException("Invalid PIN");
+
+			res.cookie('jwt', token, { httpOnly: false, path: '/'});
+		} catch (error) {
+			throw error;
 		}
 	}
 }

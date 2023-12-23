@@ -1,4 +1,4 @@
-import { IsAlphanumeric, IsByteLength, IsEmail, IsString, IsStrongPassword, MinLength } from "class-validator";
+import { IsAlphanumeric, IsEmail, IsString, MinLength } from "class-validator";
 
 export class SetEmailDto {
 	@IsEmail()

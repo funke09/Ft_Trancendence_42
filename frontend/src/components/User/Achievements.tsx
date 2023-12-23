@@ -11,8 +11,8 @@ function Achiev({ stats }: any) {
 					{stats?.stats?.achievements?.map(
 						(achiev: {id: number; name: string; desc: string; icon: string; userId: number}) => {
 							return (
-								<Tooltip className="bg-gray-700 bg-opacity-80" content={achiev.desc} placement="top" animate={{mount: { scale: 1, x: 0 }, unmount: { scale: 0, x: -25 },}}>
-									<ListItem key={achiev.id} className="p-1 text-white hover:text-[#472C45]">
+								<Tooltip key={achiev.id} className="bg-gray-700 bg-opacity-80" content={achiev.desc} placement="top" animate={{mount: { scale: 1, x: 0 }, unmount: { scale: 0, x: -25 },}}>
+									<ListItem className="p-1 text-white hover:text-[#472C45]">
 										<ListItemPrefix>
 											<Image src={achiev.icon} width={50} height={50} alt={achiev.name} className="rounded-full"/>
 										</ListItemPrefix>

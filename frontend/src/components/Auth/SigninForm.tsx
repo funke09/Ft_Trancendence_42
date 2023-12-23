@@ -12,6 +12,7 @@ function SigninForm() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [isTwoFA, setIsTwoFA] = useState(false);
+	const [token, setToken] = useState("");
     
 
 	const handleSignup = async (e: any) => {
@@ -26,14 +27,19 @@ function SigninForm() {
 	  
 		  const { access_token, isTwoFA } = response.data;
 		  
-		  if (access_token && isTwoFA) {
-			setIsTwoFA(true);
+		  console.log("AT:", access_token);
+		  console.log("is2FA:", isTwoFA);
+
+		  if (access_token) {
+			if (isTwoFA) {
+				setIsTwoFA(true);
+				setToken(access_token);
+			}
+			// else
+			// 	window.location.href = '/profile';
 		  }
-		  else if (access_token) {
-			window.location.href = '/profile';
-		  } else {
-			console.error('Signup failed:', response.data.message);
-		  }
+		  else
+		  	toast.error("Signin Failed", {theme: 'dark'});
 		} catch (error: any) {
 			toast.error(error?.response.data.messages.toString(), {theme: 'dark'});
 		}
@@ -68,7 +74,7 @@ function SigninForm() {
 		  </Button>
 		</form>
 	  </Card>
-	  {isTwoFA && <PinInput/>}
+	  {isTwoFA && <PinInput token={token} username={username}/>}
 	</>
 	);
   }

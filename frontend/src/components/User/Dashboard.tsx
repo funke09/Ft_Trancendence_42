@@ -72,11 +72,9 @@ function Dashboard({ id }: {id: string}) {
 			api.get("/user/getStats/" + id)
             .then((res: AxiosResponse<GameData>) => {
 				if (res.status == 200)
-				setStats(res.data);
+					setStats(res.data);
 			})
-			.catch((err: AxiosError<{ message: string }>) => {
-				toast.error(err?.response?.data?.message?.toString(), {theme: 'dark'});
-			});
+			.catch((err: AxiosError<{ message: string }>) => {});
 		}, 200);
     }, [id]);
 
