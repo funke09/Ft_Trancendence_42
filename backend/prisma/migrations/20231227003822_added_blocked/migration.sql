@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "Blocked" INTEGER[] DEFAULT ARRAY[]::INTEGER[];

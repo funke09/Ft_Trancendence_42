@@ -14,7 +14,7 @@ export default class _Document extends Document {
 					referrerPolicy="no-referrer"
 				/>
 				</Head>
-				<body>
+				<body className="w-full h-full">
 					<Main/>
 					<NextScript/>
 				</body>

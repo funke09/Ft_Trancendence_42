@@ -5,6 +5,7 @@ import { AuthorisationHeaderMiddleware } from './middleware/header.middleware';
 import { AccessControlMiddleware } from './middleware/access.middleware';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
 	imports: [
@@ -12,6 +13,7 @@ import { GameModule } from './game/game.module';
 		AuthModule,
 		UserModule,
 		GameModule,
+		ChatModule,
 	],
 })
 export class AppModule implements NestModule {

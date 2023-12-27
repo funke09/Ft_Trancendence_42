@@ -19,9 +19,7 @@ body::before {
 	height: 100%;
 	background: linear-gradient(180deg, rgba(255, 63, 167, 0.4) 0%, rgba(56, 42, 57, 0.4) 100%);
 	z-index: 0;
-	/* Set a lower z-index for the body background */
 	pointer-events: none;
-	/* Ensure that the overlay doesn't interfere with interactions */
 }
 
 .container::-webkit-scrollbar {
