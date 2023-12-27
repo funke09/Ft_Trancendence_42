@@ -15,11 +15,14 @@ import {
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
-import store from "@/redux/store";
+import store, { removeFriend } from "@/redux/store";
 import { UserType } from "@/redux/profile";
 import { PlayModal } from "../Game/playMenu";
 import api from "@/api";
 import { toast } from "react-toastify";
+import chatSocket from "@/sockets/chatSocket";
+import { AddFriend } from "../User/types";
+import { NotifType, SocketRes } from "@/sockets/types";
  
 
 export function Nav() {
@@ -65,89 +68,100 @@ function ClockIcon() {
 	);
   }
    
-const NotificationsMenu = (
-	  <Menu>
-		<Badge color="red" className="opacity-75">
-		<MenuHandler>
-			<svg
-			  xmlns="http://www.w3.org/2000/svg"
-			  viewBox="0 0 24 24"
-			  fill="none"
-			  width={24}
-			  height={24}
-			  className="opacity-70 transition ease-in-out delay-150 hover:scale-110 hover:opacity-100 duration-300"
-			>
-				<path
-					d="M15 19.25C15 20.0456 14.6839 20.8087 14.1213 21.3713C13.5587 21.9339 12.7956 22.25 12 22.25C11.2044 22.25 10.4413 21.9339 9.87869 21.3713C9.31608 20.8087 9 20.0456 9 19.25"
-					stroke="#f2f2f2"
-					strokeWidth="1.5"
-					strokeLinecap="round"
-					strokeLinejoin="round"/>
-				<path
-					d="M5.58096 18.25C5.09151 18.1461 4.65878 17.8626 4.36813 17.4553C4.07748 17.048 3.95005 16.5466 4.01098 16.05L5.01098 7.93998C5.2663 6.27263 6.11508 4.75352 7.40121 3.66215C8.68734 2.57077 10.3243 1.98054 12.011 1.99998V1.99998C13.6977 1.98054 15.3346 2.57077 16.6207 3.66215C17.9069 4.75352 18.7557 6.27263 19.011 7.93998L20.011 16.05C20.0723 16.5452 19.9462 17.0454 19.6576 17.4525C19.369 17.8595 18.9386 18.144 18.451 18.25C14.2186 19.2445 9.81332 19.2445 5.58096 18.25V18.25Z"
-					stroke="#f2f2f2"
-					strokeWidth="1.5"
-					strokeLinecap="round"
-					strokeLinejoin="round"/>
-			</svg>
-		</MenuHandler>
-		</Badge>
-		<MenuList className="flex flex-col gap-2 bg-[#382A39] border-none shadow-md !text-white">
-		  <MenuItem className="flex items-center gap-4 py-2 pl-2 pr-8">
-			<Image
-					src={'/images/defaultAvatar.png'}
-					width={42}
-					height={42}
-					alt="avatar"
-					className="rounded-full"
-				/>
-			<div className="flex flex-col justify-center gap-1">
-			  <Typography variant="small" className="font-semibold">
-				Tania send you a message
-			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
-				<ClockIcon />
-				13 minutes ago
-			  </Typography>
-			</div>
-		  </MenuItem>
-		  <MenuItem className="flex items-center gap-4 py-2 pl-2 pr-8">
-			<Image
-				src={'/images/defaultAvatar.png'}
-				width={42}
-				height={42}
-				alt="avatar"
-				className="rounded-full"
-			/>
-			<div className="flex flex-col justify-center gap-1">
-			  <Typography variant="small" className="font-semibold">
-				Natali replied to your email.
-			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
-				<ClockIcon />1 hour ago
-			  </Typography>
-			</div>
-		  </MenuItem>
-		  <MenuItem className="flex items-center gap-4 py-2 pl-2 pr-8">
-			<Image
-					src={'/images/defaultAvatar.png'}
-					width={42}
-					height={42}
-					alt="avatar"
-					className="rounded-full"
-				/>
-			<div className="flex flex-col justify-center gap-1">
-			  <Typography variant="small" className="font-semibold">
-				You&apos;ve received a payment.
-			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
-				<ClockIcon />5 hours ago
-			  </Typography>
-			</div>
-		  </MenuItem>
-		</MenuList>
-	</Menu>
-)
+function NotificationsMenu() {
+	const [notifs, setNotifs] = useState<any[]>([]);
+	const [newNotifCount, setNewNotifCount] = useState<number>(1);
+
+	useEffect(() => {
+		store.subscribe(() => {
+			setNotifs(store.getState().notif.friendRequest ?? []);
+		});
+		chatSocket.on("notification", () => {
+			setNewNotifCount((prev) => prev + 1);
+		});
+	}, [])
+
+	const AcceptFriendReq = (id: number, notifID: number) => {
+		let payload: AddFriend = {id: id};
+		chatSocket.emit('acceptFriend', payload);
+
+		chatSocket.on('acceptFriend', (data: SocketRes | any) => {
+			if (data == null) return;
+			if (data && data?.status == 200) {
+				store.dispatch(removeFriend(notifID));
+				chatSocket.emit("reconnect");
+			} else {
+				if (data?.status) {
+					toast.error(data.message, {theme: "dark"});
+				}
+			}
+		});
+	};
+
+	const rejectFriend = (username: string, id: number) => {
+		api.post('/user/rejectFriend', {
+			friendUsername: username,
+		})
+			.then((res) => {
+				toast.warn(res.data.message ?? `You decliend ${username}'s friend request`, {theme: "dark"});
+			})
+			.catch((err) => {
+				toast.error(err?.response?.data.message ?? "An Error Occured!");
+			})
+		store.dispatch(removeFriend(id));
+	};
+
+	return (  
+		<Menu>
+			<Badge invisible={newNotifCount == 0} content={newNotifCount} className="cursor-pointer">
+			<MenuHandler>
+				<IconButton onClick={() => setNewNotifCount(0)} variant="text">
+					<i className="fa-regular fa-bell text-2xl" style={{ color: "#E1E1E1" }}></i>
+				</IconButton>
+			</MenuHandler>
+			<MenuList className="flex flex-col gap-2 bg-[#382A39] border-none shadow-md !text-white">
+				{notifs.length == 0 && (
+					<MenuItem>
+						<Typography variant="h6">No Notifications</Typography>
+					</MenuItem>
+				)}
+				{notifs.map((notif: NotifType) => (
+					<MenuItem key={notif.id} className="flex items-center gap-4 py-2 pl-2 pr-8">
+						<Image
+								src={notif.avatar}
+								width={42}
+								height={42}
+								alt="avatar"
+								className="rounded-full"
+							/>
+						<div className="flex flex-row gap-x-3 px-2">
+							<div className="flex flex-col justify-center gap-1">
+								<Typography variant="small" className="font-semibold">
+									{notif.msg}
+								</Typography>
+								<Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
+									<ClockIcon />
+									{notif.createdAt?.getTime()}
+								</Typography>
+							</div>
+							{notif.type &&
+								<div className="flex">
+									<Button>
+										Accept
+									</Button>
+									<Button>
+										Reject
+									</Button>
+								</div>
+							}
+						</div>
+					</MenuItem>
+				))}
+			</MenuList>
+			</Badge>
+		</Menu>
+	)
+}
 
 const ProfileMenu = (
 		<Menu>
@@ -311,7 +325,7 @@ const navList = (
         </Typography>
         <div className="hidden lg:block ">{navList}</div>
         <div className="flex items-center w-max gap-x-6">
-			<div className="hidden lg:flex">{NotificationsMenu}</div>
+			<div className="hidden samwil:flex">{NotificationsMenu()}</div>
 			<Button
 			onClick={handleOpen}
 			variant="gradient"

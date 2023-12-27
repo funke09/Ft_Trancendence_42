@@ -8,6 +8,8 @@ import MatchHistory from "./MatchHistory";
 import Loading from "../Layout/Loading";
 import EditProfile from "./EditProfile";
 import { toast } from "react-toastify";
+import chatSocket from "@/sockets/chatSocket";
+import { AddFriend } from "./types";
 
 interface Game {
 	id: number;
@@ -54,29 +56,63 @@ function Dashboard({ id }: {id: string}) {
 	const [stats, setStats] = useState<any>(null);
 	const [edit, setEdit] = useState(false);
 	const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        api.get("/user/id/" + id)
-            .then((res: any) => {
-                if (res.status == 200) {
+	const [friendStatus, setFriendStatus] = useState<'Friend' | 'Not_Friend' | 'Pending'>("Not_Friend");
+	const [message, setMessage] = useState<string | null>("");
+	
+	useEffect(() => {
+		api.get("/user/id/" + id)
+			.then((res: any) => {
+				if (res.status == 200) {
 					setLoading(!loading);
-                    setProfile(res.data);
-                }
-            })
-            .catch((err: any) => {
+					setProfile(res.data);
+					res?.dara?.Friends?.find((friend: any) => {
+						if (friend.friendId == user.id)
+							setFriendStatus(friend.status);
+					});
+				}
+			})
+			.catch((err: any) => {
 				setLoading(!loading);
 				toast.error(err?.response?.data?.messages?.toString(), {theme: 'dark'});
-            });
+			});
 		
-        setTimeout(() => {
+		setTimeout(() => {
 			api.get("/user/getStats/" + id)
-            .then((res: AxiosResponse<GameData>) => {
+			.then((res: AxiosResponse<GameData>) => {
 				if (res.status == 200)
 					setStats(res.data);
 			})
 			.catch((err: AxiosError<{ message: string }>) => {});
 		}, 200);
-    }, [id]);
+	}, [id]);
+
+	const sendMessage = (message: any) => {
+		if (!message || message.message === "") return;
+		chatSocket.emit("msg", {
+			receiver: profile.username,
+			msg: message.message,
+		});
+		setMessage(null);
+		chatSocket.emit("reconnect");
+	};
+
+	const addUser = () => {
+		const payload: AddFriend = {
+			id: profile.id,
+		};
+		chatSocket.emit("addFriend", (data: any) => {
+			if (data && data.status == 400) {
+				toast.error(data.message, {theme: 'dark'});
+				return;
+			}
+			if (data.status == 201) {
+				setFriendStatus('Pending');
+				toast.success(data.message, {theme: 'dark'});
+			}
+		});
+	};
+
+
 
 	const clickEdit = () => setEdit(!edit);
 
@@ -86,16 +122,24 @@ function Dashboard({ id }: {id: string}) {
 
 	return (
 	  <div>
-		  <main className="min-h-[720px] max-w-[1200px] rounded-[15px] flex m-auto bg-[#472C45] opacity-80">
+		  <main className="min-h-[720px] max-w-[1200px] rounded-[15px] flex m-auto bg-[#472C45] opacity-80 mb-1">
 		  	<section className="w-full samwil:w-1/4 bg-[#643461] p-3 flex-col justify-center rounded-[15px]">
-				{profile && profile.username == user.username ?
-				<IconButton onClick={clickEdit} size="sm" className="m-2 rounded-full shadow-md bg-[#351633] hover:scale-110 border-none">
-					<i className="fa-solid fa-gear fa-xl" style={{ color: "#E1E1E1" }} />
-				</IconButton>
-				:
-				<IconButton size="sm" className="m-2 rounded-full shadow-md bg-[#351633] hover:scale-110 border-none">
-					<i className="fa-sharp fa-solid fa-user-plus pl-0.5" style={{ color: "#E1E1E1" }} />
-				</IconButton>
+				{profile && profile.username == user.username ? <IconButton onClick={clickEdit} size="sm" className="m-2 rounded-full shadow-md bg-[#351633] hover:scale-110 border-none">
+							<i className="fa-solid fa-gear fa-xl" style={{ color: "#E1E1E1" }} />
+						</IconButton> : (
+					<>
+					{friendStatus === 'Not_Friend' ? (
+						<IconButton onClick={addUser} size="sm" className="m-2 rounded-full shadow-md bg-[#351633] hover:scale-110 border-none">
+							<i className="fa-sharp fa-solid fa-user-plus pl-0.5" style={{ color: "#E1E1E1" }} />
+						</IconButton>
+					) : friendStatus === 'Pending' ? (
+						<IconButton size="sm" className="m-2 rounded-full shadow-md bg-[#351633] hover:scale-110 border-none">
+							<i className="fa-solid fa-hourglass-half" style={{ color: "#E1E1E1" }} />
+						</IconButton>
+					) : (
+						null
+					)}
+				</>)
 				}
 			  	<div className="flex-col flex items-center justify-start gap-3 pb-4">
 				  <Tooltip className="bg-[#472C45] bg-opacity-70" content={stats?.stats?.rank ? stats?.stats?.rank : "Unranked"} placement="top" offset={10} animate={{mount: { scale: 1, y: 0 }, unmount: { scale: 0, y: 25 },}}>

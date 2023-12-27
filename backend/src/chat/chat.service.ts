@@ -435,7 +435,7 @@ export class ChatService {
                 type: 'friendRequest',
                 from: friendRequest,
                 to: user.username,
-                status: 'pending',
+                status: 'Pending',
             },
         });
 

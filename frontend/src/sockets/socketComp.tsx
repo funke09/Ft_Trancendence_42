@@ -94,6 +94,8 @@ const SocketComp = () => {
 
 		chatSocket.on('notifs', (data: NotifType) => {
 			store.dispatch(addFriend(data));
+			if (data.type == 'AcceptRequest')
+				chatSocket.emit("reconnect");
 		});
 
 		chatSocket.on('privateChat', (data) => {
