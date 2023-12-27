@@ -92,9 +92,7 @@ const SocketComp = () => {
 			store.dispatch(setNotif(data));
 		});
 
-		chatSocket.on('notifs', (data: NotifType) => {
-			console.log("AZBIIIII:",data)
-
+		chatSocket.on('notification', (data: NotifType) => {
 			store.dispatch(addFriend(data));
 			if (data.type == 'AcceptRequest')
 				chatSocket.emit("reconnect");

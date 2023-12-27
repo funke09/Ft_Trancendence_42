@@ -66,8 +66,10 @@ function Dashboard({ id }: {id: string}) {
 					setLoading(false);
 					setProfile(res.data);
 					res?.data?.Friends?.find((friend: any) => {
-						if (friend.friendId == user.id)
+						if (friend.friendId == user.id) {
 							setFriendStatus(friend.status);
+							console.log("Status:", friendStatus);
+						}
 					});
 				}
 			})

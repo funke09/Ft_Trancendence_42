@@ -279,9 +279,6 @@ export class ChatService {
             where: { id: id },
         });
 
-		console.log(userObj.username)
-		console.log(friendRequest)
-
         if (userObj.username === friendRequest) {
             const response: SocketResDto = {
                 status: HttpStatus.BAD_REQUEST,
@@ -342,7 +339,7 @@ export class ChatService {
                 type: 'friendRequest',
                 from: userObj.username,
                 to: friend.username,
-                status: 'pending',
+                status: 'Pending',
                 msg: userObj.username + ' sent you a friend request',
                 user: { connect: { id: friend.id } },
                 avatar: userObj.avatar,
@@ -357,17 +354,14 @@ export class ChatService {
         this.emitToUser(server, userObj.username, 'addFriend', response);
 	}
 
-	async acceptFriend(id: number, friendRequest: string, connectedClients: Map<string, Socket>): Promise<any> {
+	async acceptFriend(id: number, friendRequest: string, onlineClients: Map<string, Socket>): Promise<any> {
         const user = await this.prisma.user.findUnique({
-            where: {
-                id: id,
-            },
-            include: {
-                Friends: true,
-            },
+            where: {id: id},
+            include: {Friends: true},
         });
-        const userClient = connectedClients.get(user.username);
-        const friendClient = connectedClients.get(friendRequest);
+		
+        const userClient = onlineClients.get(user.username);
+        const friendClient = onlineClients.get(friendRequest);
 
         const friendUser = await this.prisma.user.findUnique({
             where: {
@@ -379,6 +373,9 @@ export class ChatService {
         });
 
         if (!user || !friendUser) return false;
+
+		console.log('user d zab:', user.id)
+		console.log('friend d zab:', friendUser.id)
 
         const userFriend = await this.prisma.friends.updateMany({
             where: {
@@ -397,7 +394,7 @@ export class ChatService {
                     status: HttpStatus.NOT_FOUND,
                     message: 'No friend request found',
                 };
-                userClient.emit('accept_friend_request', response);
+                userClient.emit('acceptFriend', response);
             }
             return undefined;
         }

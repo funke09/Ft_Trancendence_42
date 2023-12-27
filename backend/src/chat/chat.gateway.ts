@@ -330,7 +330,7 @@ export class ChatGateway {
 			return;
 		}
 
-		const friendObj: User = await this.channelService.getUserById(user.uid);
+		const friendObj: User = await this.channelService.getUserById(payload.id);
         if (!friendObj) {
             const response: SocketResDto = {
                 status: HttpStatus.NOT_FOUND,
@@ -340,7 +340,7 @@ export class ChatGateway {
             return;
         }
 
-		const res = await this.chatService.acceptFriend(user.id, friendObj.username, this.onlineClients);
+		const res = await this.chatService.acceptFriend(user.uid, friendObj.username, this.onlineClients);
 		if (res == false) {
 			const res: SocketResDto = {
 				status: HttpStatus.NOT_FOUND,
