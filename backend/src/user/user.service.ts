@@ -155,4 +155,30 @@ export class UserService {
 		  data: { avatar: filename },
 		});
 	}
+
+	async rejectFriend(id: number, friendUsername: string) {
+		const user = await this.prisma.user.findUnique({where: {id: id}});
+		const friend = await this.prisma.user.findUnique({where: {username: friendUsername}});
+		if (!user || !friend) throw new NotFoundException(`User not found`);
+
+		const friendRequest = await this.prisma.friends.deleteMany({
+			where: {
+				fromId: friend.id,
+				toId: user.id,
+				status: 'Pending'
+			},
+		});
+
+		if (friendRequest.count == 0) throw new NotFoundException("Friend Request not found");
+
+		const rmNotif = await this.prisma.notifs.deleteMany({
+			where: {
+				from: friendUsername,
+				to: user.username,
+				type: 'friendRequest',
+			}
+		});
+
+		return new HttpException('Friend Request Rejected', 200);
+	}
 }

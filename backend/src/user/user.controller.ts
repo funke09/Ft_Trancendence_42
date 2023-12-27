@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpException, NotFoundException, Param, ParseIntPipe, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpException, HttpStatus, NotFoundException, Param, ParseIntPipe, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/utils/Guards';
 import { AuthService } from 'src/auth/auth.service';
@@ -106,5 +106,13 @@ export class UserController {
 	async disableTwoFA(@Body() userId: userIdDto) {
 		if (!userId) throw new NotFoundException("User not found");
 		await this.authService.disableTwoFA(userId.userId);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('rejectFriend')
+	async rejectFriend(@Req() req: any, @Body() body: any) {
+		if (!body || !body.friendUsername)
+			throw new HttpException('No username was provided', HttpStatus.BAD_REQUEST);
+		return this.userService.rejectFriend(req.user.id, body.friendUsername);
 	}
 }

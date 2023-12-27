@@ -279,6 +279,9 @@ export class ChatService {
             where: { id: id },
         });
 
+		console.log(userObj.username)
+		console.log(friendRequest)
+
         if (userObj.username === friendRequest) {
             const response: SocketResDto = {
                 status: HttpStatus.BAD_REQUEST,

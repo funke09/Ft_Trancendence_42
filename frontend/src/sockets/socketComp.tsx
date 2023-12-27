@@ -33,15 +33,15 @@ const SocketComp = () => {
 		});
 
 		gameSocket.on("error", (err: string) => {
-			console.error("error", err)
+			toast.error(err, {theme: 'dark'});
 		});
 
 		gameSocket.on("achievement", (data: AchievDto) => {
-			toast.success(`Congratulations you unlocked ${data.name}`);
+			toast.success(`Congratulations you unlocked ${data.name}`, {theme:'dark'});
         });
 
 		gameSocket.on("rank", (data: RankDto) => {
-			toast.success(`Congratulations you reached ${data.name}`);
+			toast.success(`Congratulations you reached ${data.name}`, {theme:'dark'});
 		})
 		
 		gameSocket.on("endGame", () => {
@@ -59,11 +59,11 @@ const SocketComp = () => {
 		})
 
 		chatSocket.on("connect", () => {
-			console.log('Connected to Chat Socket');
+			console.log('/chat: Connected to server');
 		})
 
 		chatSocket.on("disconnect", () => {
-			console.log('Disconnected from Chat Socket')
+			console.log('/chat: Disconnected from server')
 		})
 
 		chatSocket.on("msg", (data: any) => {
@@ -93,9 +93,12 @@ const SocketComp = () => {
 		});
 
 		chatSocket.on('notifs', (data: NotifType) => {
+			console.log("AZBIIIII:",data)
+
 			store.dispatch(addFriend(data));
 			if (data.type == 'AcceptRequest')
 				chatSocket.emit("reconnect");
+			toast.success(data.msg)
 		});
 
 		chatSocket.on('privateChat', (data) => {

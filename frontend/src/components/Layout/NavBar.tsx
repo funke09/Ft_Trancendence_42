@@ -12,6 +12,12 @@ import {
   Avatar,
   Badge,
   Dialog,
+  Popover,
+  PopoverContent,
+  PopoverHandler,
+  List,
+  ListItem,
+  ListItemPrefix,
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -67,21 +73,26 @@ function ClockIcon() {
 	  </svg>
 	);
   }
-   
+  
 function NotificationsMenu() {
-	const [notifs, setNotifs] = useState<any[]>([]);
-	const [newNotifCount, setNewNotifCount] = useState<number>(1);
+    const [notifs, setNotifs] = useState<any[]>([]);
+	const [newNotifCount, setNewNotifCount] = useState<number>(0);
+	const [openNotif, setOpenNotif] = useState(false);
 
 	useEffect(() => {
 		store.subscribe(() => {
 			setNotifs(store.getState().notif.friendRequest ?? []);
+			console.log("Navbar:", notifs);
 		});
 		chatSocket.on("notification", () => {
 			setNewNotifCount((prev) => prev + 1);
 		});
-	}, [])
-
-	const AcceptFriendReq = (id: number, notifID: number) => {
+		return ()=>{
+		}
+	}, []);
+	
+  
+	const acceptFriend = (id: number, notifID: number) => {
 		let payload: AddFriend = {id: id};
 		chatSocket.emit('acceptFriend', payload);
 
@@ -102,66 +113,112 @@ function NotificationsMenu() {
 		api.post('/user/rejectFriend', {
 			friendUsername: username,
 		})
-			.then((res) => {
+			.then((res: any) => {
 				toast.warn(res.data.message ?? `You decliend ${username}'s friend request`, {theme: "dark"});
 			})
-			.catch((err) => {
-				toast.error(err?.response?.data.message ?? "An Error Occured!");
+			.catch((err: any) => {
+				toast.error(err?.response?.data.message ?? "An Error Occured!", {theme: "dark"});
 			})
 		store.dispatch(removeFriend(id));
 	};
 
-	return (  
-		<Menu>
-			<Badge invisible={newNotifCount == 0} content={newNotifCount} className="cursor-pointer">
-			<MenuHandler>
-				<IconButton onClick={() => setNewNotifCount(0)} variant="text">
-					<i className="fa-regular fa-bell text-2xl" style={{ color: "#E1E1E1" }}></i>
-				</IconButton>
-			</MenuHandler>
-			<MenuList className="flex flex-col gap-2 bg-[#382A39] border-none shadow-md !text-white">
-				{notifs.length == 0 && (
-					<MenuItem>
-						<Typography variant="h6">No Notifications</Typography>
-					</MenuItem>
-				)}
-				{notifs.map((notif: NotifType) => (
-					<MenuItem key={notif.id} className="flex items-center gap-4 py-2 pl-2 pr-8">
-						<Image
-								src={notif.avatar}
-								width={42}
-								height={42}
-								alt="avatar"
-								className="rounded-full"
-							/>
-						<div className="flex flex-row gap-x-3 px-2">
-							<div className="flex flex-col justify-center gap-1">
-								<Typography variant="small" className="font-semibold">
-									{notif.msg}
-								</Typography>
-								<Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
-									<ClockIcon />
-									{notif.createdAt?.getTime()}
-								</Typography>
-							</div>
-							{notif.type &&
-								<div className="flex">
-									<Button>
-										Accept
-									</Button>
-									<Button>
-										Reject
-									</Button>
-								</div>
-							}
-						</div>
-					</MenuItem>
-				))}
-			</MenuList>
+	const triggers = {
+		onMouseEnter: () => {
+			setOpenNotif(true);
+			setNewNotifCount(0);
+		},
+		onMouseLeave: () => setOpenNotif(false),
+	}
+
+	console.log('Notfi:', notifs);
+  
+	return (
+		<Popover
+		animate={{
+			mount: { scale: 1, y: 0 },
+			unmount: { scale: 0, y: -25 },
+		}}
+		handler={setOpenNotif}
+		open={openNotif}
+		offset={3}
+		>
+			<Badge invisible={newNotifCount == 0} content={newNotifCount}>
+				<PopoverHandler {...triggers}>
+					<IconButton onClick={() => (setOpenNotif(true), setNewNotifCount(0))} variant="text" className="border-none outline-none">
+						<i className="fa-regular fa-bell text-2xl" style={{ color: '#E1E1E1' }}></i>
+					</IconButton>
+				</PopoverHandler>
 			</Badge>
-		</Menu>
-	)
+			<PopoverContent {...triggers} className="flex flex-col p-0 gap-2 bg-[#382A39] min-w-[300px] z-50 border-none shadow-md !text-white">
+				<List>
+				{notifs.length === 0 && (
+					<div>
+						<Typography className="p-6 m-auto" variant="h6">No Notifications</Typography>
+					</div>
+				)}
+				{notifs && notifs
+					.map((notif) => (
+					<ListItem key={notif.id}>
+						<ListItemPrefix>
+							<Image src={notif.avatar} width={45} height={45} alt="avatar" className="rounded-full" />
+						</ListItemPrefix>
+						<div>
+							<Typography variant="small" color="white">
+								{notif.msg}
+							</Typography>
+						</div>
+						{notif.type && (
+							<div className="flex flex-row items-center justify-center h-5 w-5 gap-2">
+								<IconButton onClick={() => acceptFriend(notif.friendId, notif.id)}><i className="fa-solid fa-check"></i></IconButton>
+								<IconButton onClick={() => rejectFriend(notif.from, notif.id)}>Reject</IconButton>
+							</div>
+						)}
+					</ListItem>
+				))}
+				</List>
+			</PopoverContent>
+   		</Popover>
+	//   <Menu>
+	// 	<Badge invisible={newNotifCount === 0} content={newNotifCount} className="cursor-pointer">
+	// 	  <MenuHandler>
+	// 		<IconButton onClick={() => setNewNotifCount(0)} variant="text">
+	// 		  <i className="fa-regular fa-bell text-2xl" style={{ color: '#E1E1E1' }}></i>
+	// 		</IconButton>
+	// 	  </MenuHandler>
+	// 	  <MenuList className="flex flex-col gap-2 bg-[#382A39] border-none shadow-md !text-white">
+	// 		{/* {notifs.filter((notif) => !notif && notif.length == 0) && (
+	// 			<Typography className="p-6 m-auto" variant="h6">No Notifications</Typography>
+	// 		)} */}
+	// 		{notifs && notifs
+	// 			.filter((notif) => notif && notif.length > 0)
+	// 			.map((notif) => (
+	// 			<MenuItem key={notif.id} className="flex items-center gap-4 py-2 pl-2 pr-8">
+	// 				<Image src={notif.avatar} width={42} height={42} alt="avatar" className="rounded-full" />
+	// 				<div className="flex flex-row gap-x-3 px-2">
+	// 					<div className="flex flex-col justify-center gap-1">
+	// 					<Typography variant="small" className="font-semibold">
+	// 						{notif.msg}
+	// 					</Typography>
+	// 					<Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
+	// 						<ClockIcon />
+	// 						{notif.createdAt?.getTime()}
+	// 					</Typography>
+	// 					</div>
+	// 					{notif.type && (
+	// 					<div className="flex">
+	// 						<Button onClick={() => acceptFriend(notif.id, notif.id)}>Accept</Button>
+	// 						<Button onClick={() => rejectFriend(notif.sender, notif.id)}>Reject</Button>
+	// 					</div>
+	// 					)}
+	// 				</div>
+	// 			</MenuItem>
+	// 		))}
+	// 	  </MenuList>
+	// 	</Badge>
+	//   </Menu>
+	);
 }
+  
 
 const ProfileMenu = (
 		<Menu>

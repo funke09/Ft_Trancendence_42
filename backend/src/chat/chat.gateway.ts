@@ -296,7 +296,7 @@ export class ChatGateway {
 			return;
 		}
 
-		const friendObj: User = await this.channelService.getUserById(user.uid);
+		const friendObj: User = await this.channelService.getUserById(payload.id);
         if (!friendObj) {
             const response: SocketResDto = {
                 status: HttpStatus.NOT_FOUND,
