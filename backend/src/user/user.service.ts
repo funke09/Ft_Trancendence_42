@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as argon from 'argon2';
 
@@ -17,6 +17,7 @@ export class UserService {
 				email: true,
 				avatar: true,
 				isTwoFA: true,
+				Friends: true,
 			}
 		});
 		if (user)
@@ -46,6 +47,9 @@ export class UserService {
 
 		const findUser = await this.prisma.user.findUnique({ where: {id: findId} });
 		if (!findUser) throw new HttpException('User not Found', 404);
+
+		const isBlocked = findUser.Blocked.includes(currUser.id);
+		if (isBlocked) throw new HttpException('You are Blocked', 400);
 
 		if (currUser.id === findUser.id)
 			return this.getUserDataById(userId);
@@ -181,4 +185,55 @@ export class UserService {
 
 		return new HttpException('Friend Request Rejected', 200);
 	}
+
+	async blockFriend(id: number, friendID: number) {
+		const user = await this.prisma.user.findUnique({ where: { id: id } });
+		const friend = await this.prisma.user.findUnique({ where: { id: friendID } });
+	  
+		if (!user || !friend) throw new NotFoundException("User not found");
+	  
+		const isExist = await this.prisma.friends.findFirst({
+		  where: { friendID: friend.id, userId: user.id, status: 'Accepted' },
+		});
+	  
+		if (!isExist) throw new NotFoundException("User is not your friend or already blocked");
+	  
+		// Check if the user is already blocked
+		const isBlocked = user.Blocked.includes(friend.id);
+	  
+		if (!isBlocked) {
+		  // Add friend to the Blocked array
+		  await this.prisma.user.update({
+			where: { id: user.id },
+			data: { Blocked: { push: friend.id } },
+		  });
+
+		  await this.prisma.friends.updateMany({
+			where: {userId: friend.id},
+			data: {status: 'Blocked'},
+		  })
+		}
+	  
+		return new HttpException('Friend Blocked', HttpStatus.OK);
+	  }
+	  
+	  async unblockFriend(id: number, friendID: number) {
+		const user = await this.prisma.user.findUnique({ where: { id: id } });
+		const friend = await this.prisma.user.findUnique({ where: { id: friendID } });
+	  
+		if (!user || !friend) throw new NotFoundException("User not found");
+	  
+		// Remove friend from the Blocked array
+		await this.prisma.user.update({
+		  where: { id: user.id },
+		  data: { Blocked: { set: user.Blocked.filter((blockedId) => blockedId !== friend.id) } },
+		});
+
+		await this.prisma.friends.updateMany({
+			where: {userId: friend.id},
+			data: {status: 'Accepted'},
+		  })
+	  
+		return new HttpException('Friend Unblocked', HttpStatus.OK);
+	  }	  
 }

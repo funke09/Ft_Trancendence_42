@@ -248,12 +248,12 @@ export class ChatGateway {
 		await this.chatService.joinChannelsBack(user.uid, client);
 		this.chatService.setUserSocketId(client.id, user.uid);
 
-		const publicChat = await this.chatHistory.getUserPublicChatHistory(user.uid);
-		const privateChat = await this.chatHistory.getUserPrivateChatHistory(user.uid, 0);
+		// const publicChat = await this.chatHistory.getUserPublicChatHistory(user.uid);
+		// const privateChat = await this.chatHistory.getUserPrivateChatHistory(user.uid, 0);
 		const userNotif = await this.chatService.loadUserNotif(user.uid)
 
-		client.emit('publicChat', publicChat);
-		client.emit('privateChat', privateChat);
+		// client.emit('publicChat', publicChat);
+		// client.emit('privateChat', privateChat);
 		client.emit('notifs', userNotif);
 	}
 
@@ -366,12 +366,12 @@ export class ChatGateway {
 		await this.chatService.setUserSocketId(client.id, user.uid);
 		await this.chatService.joinChannelsBack(user.uid, client);
 
-		const publicChat = await this.chatHistory.getUserPublicChatHistory(user.uid);
-		const privateChat = await this.chatHistory.getUserPrivateChatHistory(user.uid, 0);
+		// const publicChat = await this.chatHistory.getUserPublicChatHistory(user.uid);
+		// const privateChat = await this.chatHistory.getUserPrivateChatHistory(user.uid, 0);
 		const userNotif = await this.chatService.loadUserNotif(user.uid)
 
-		client.emit('publicChat', publicChat);
-		client.emit('privateChat', privateChat);
+		// client.emit('publicChat', publicChat);
+		// client.emit('privateChat', privateChat);
 		client.emit('notifs', userNotif);
 	}
 

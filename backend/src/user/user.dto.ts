@@ -1,4 +1,4 @@
-import { IsAlphanumeric, IsEmail, IsString, MinLength } from "class-validator";
+import { IsAlphanumeric, IsEmail, IsNotEmpty, IsNumber, IsString, MinLength } from "class-validator";
 
 export class SetEmailDto {
 	@IsEmail()
@@ -22,4 +22,16 @@ export class userIdDto {
 
 export class pinDto {
 	pin: number;
+}
+
+export class BlockFriendDto {
+	@IsNotEmpty()
+	@IsNumber()
+	friendID: number;
+}
+
+export class UnblockFriendDto {
+	@IsNotEmpty()
+	@IsNumber()
+	friendID: number;
 }

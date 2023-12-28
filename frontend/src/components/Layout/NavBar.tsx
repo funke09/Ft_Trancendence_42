@@ -41,10 +41,10 @@ export function Nav() {
   const user: UserType = store.getState().profile.user;
 
   function clickLogout() {
-	api.post('/auth/logout', {user})
+	api.post('/auth/logout')
 		.then((res: any) => {
 			if (res.status == 201)
-				window.location.href = '/';
+				window.location.href = '/login';
 		})
   }
  
@@ -63,7 +63,6 @@ function NotificationsMenu() {
 	useEffect(() => {
 		store.subscribe(() => {
 			setNotifs(store.getState().notif.friendRequest ?? []);
-			console.log("Navbar:", notifs);
 		});
 		chatSocket.on("notification", () => {
 			setNewNotifCount((prev) => prev + 1);
@@ -78,7 +77,6 @@ function NotificationsMenu() {
 		chatSocket.emit('acceptFriend', payload);
 		
 		chatSocket.on('acceptFriend', (data: SocketRes | any) => {
-			console.log('ALLOOO');
 			if (data == null) return;
 			if (data && data?.status == 200) {
 				store.dispatch(removeFriend(notifID));
@@ -111,8 +109,6 @@ function NotificationsMenu() {
 		},
 		onMouseLeave: () => setOpenNotif(false),
 	}
-
-	console.log('Notfi:', notifs);
   
 	return (
 		<Popover
@@ -138,8 +134,7 @@ function NotificationsMenu() {
 						<Typography className="p-6 m-auto text-gray-500" variant="h6">No Notifications</Typography>
 					</div>
 				)}
-				{notifs && notifs
-					.map((notif) => (
+				{notifs.map((notif) => (
 					<ListItem key={notif.id} className="hover:bg-opacity-100 focus:bg-transparent focus:outline-none hover:bg-transparent active:bg-transparent">
 						<ListItemPrefix>
 							<Image src={notif.avatar} width={45} height={45} alt="avatar" className="rounded-full" />
@@ -149,7 +144,7 @@ function NotificationsMenu() {
 								{notif.msg}
 							</Typography>
 						</div>
-						{notif.type && (
+						{notif.type == 'friendRequest' && (
 							<div className="flex flex-row items-center justify-center gap-2 ml-3">
 								<IconButton size="sm" className="bg-[#1cce3a] hover:scale-105" onClick={() => acceptFriend(notif.friendId, notif.id)}><i className="fa-solid fa-check"></i></IconButton>
 								<IconButton size="sm" className="bg-[#ce1c1c] hover:scale-105" onClick={() => rejectFriend(notif.from, notif.id)}><i className="fa-solid fa-xmark"></i></IconButton>

@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/utils/Guards';
 import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
-import { SetEmailDto, pinDto, setPasswordDto, setUsernameDto, userIdDto } from './user.dto';
+import { BlockFriendDto, SetEmailDto, UnblockFriendDto, pinDto, setPasswordDto, setUsernameDto, userIdDto } from './user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterService } from './multer.service';
 
@@ -114,5 +114,19 @@ export class UserController {
 		if (!body || !body.friendUsername)
 			throw new HttpException('No username was provided', HttpStatus.BAD_REQUEST);
 		return this.userService.rejectFriend(req.user.id, body.friendUsername);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('blockFriend')
+	async blockFriend(@Req() req: any, @Body() body: BlockFriendDto) {
+		if (!body || !body.friendID) throw new HttpException('Username Invalid', HttpStatus.BAD_REQUEST);
+		return this.userService.blockFriend(req.user.id, body.friendID);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('unblockFriend')
+	async unblockFriend(@Req() req: any, @Body() body: UnblockFriendDto) {
+		if (!body || !body.friendID) throw new HttpException('Username Invalid', HttpStatus.BAD_REQUEST);
+		return this.userService.unblockFriend(req.user.id, body.friendID);
 	}
 }

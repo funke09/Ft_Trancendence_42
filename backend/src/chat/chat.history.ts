@@ -56,10 +56,8 @@ export class ChatHistory {
 			},
 		  });
 	  
-		  let userConversations = [];
-		  if (!user) {
-			return userConversations;
-		  }
+		  let userConvo = [];
+		  if (!user) return userConvo;
 	  
 		  const isBlocked = (otherUserId: number) => {
 			return user.Blocked.includes(otherUserId);
@@ -84,13 +82,12 @@ export class ChatHistory {
 			  } catch {
 				return;
 			  }
-
-			  console.log(ids);
 	  
 			  if (ids.length != 2) {
 				return;
 			  }
-	  
+
+			  
 			  const otherUserId: number = parseInt(ids[0]) == user.id ? parseInt(ids[1]) : parseInt(ids[0]);
 			  
 			  const otherUser = await this.prisma.user.findUnique({
@@ -105,11 +102,11 @@ export class ChatHistory {
 			  });
 			  otherUser['isBlocked'] = isBlocked(otherUserId);
 			  const conv = { chat, otherUser, privateChannelId: id };
-			  userConversations.push(conv);
+			  userConvo.push(conv);
 			}),
 		  );
 	  
-		  return userConversations.map((conv) => {
+		  return userConvo.map((conv) => {
 			return {
 			  chat: conv.chat.map((message) => {
 				return {

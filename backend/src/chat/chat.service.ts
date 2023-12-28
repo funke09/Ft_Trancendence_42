@@ -374,9 +374,6 @@ export class ChatService {
 
         if (!user || !friendUser) return false;
 
-		console.log('user d zab:', user.id)
-		console.log('friend d zab:', friendUser.id)
-
         const userFriend = await this.prisma.friends.updateMany({
             where: {
                 toId: user.id,
