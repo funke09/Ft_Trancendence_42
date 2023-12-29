@@ -44,7 +44,10 @@ export class UserController {
 	async getUserByUsername(@Param('username') username: string) {
 		if (!username)
 			throw new BadRequestException('Missing username');
-		return await this.userService.findUserByUsername(username);
+		const user = this.userService.findUserByUsername(username);
+		if (user) 
+			return user;
+		throw new NotFoundException(`${username} not Found`);
 	}
 
 	@UseGuards(JwtAuthGuard)

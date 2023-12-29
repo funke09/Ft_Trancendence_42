@@ -22,12 +22,22 @@ export class UserService {
 		});
 		if (user)
 			return user;
-		throw new NotFoundException(`User ${user.username} not found`)
+		throw new NotFoundException(`User not found`)
 	}
 
 	async findUserByUsername(username: string): Promise<any> {
 		const user = await this.prisma.user.findUnique({
 			where: { username: username },
+			select : {
+				id: true,
+				username: true,
+				userStats: true,
+				userStatus: true,
+				email: true,
+				avatar: true,
+				isTwoFA: true,
+				Friends: true,
+			}
 		});
 		return user;
 	}

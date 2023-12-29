@@ -4,16 +4,19 @@ import api from "@/api";
 import Loading from "@/components/Layout/Loading";
 import store, { setProfile } from "@/redux/store";
 import { ChatRoom } from "@/components/Chat/ChatRoom";
-import { IconButton, List, ListItem, ListItemPrefix, Menu, MenuHandler, MenuItem, MenuList, Tooltip, Typography } from "@material-tailwind/react";
+import { Dialog, IconButton, List, ListItem, ListItemPrefix, Menu, MenuHandler, MenuItem, MenuList, Tooltip, Typography } from "@material-tailwind/react";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import FriendList from "@/components/Chat/FriendList";
+import AddButton from "@/components/Chat/AddButton";
 
 const Chat: React.FC = () => {
 	const [loading, setLoading] = useState(true);
+	const [openAdd, setOpenAdd] = useState(false);
 	const user: any = store.getState().profile.user;
-	const filteredFriends = user.Friends.filter((friend: any) => friend.status !== 'Blocked');
-	
+	const Friends = user.Friends.filter((friend: any) => friend.status === 'Accepted');
+
+	const clickOpenAdd = () => setOpenAdd(!openAdd);
 	
     useEffect(() => {
 		api.get("/user/profile")
@@ -29,8 +32,6 @@ const Chat: React.FC = () => {
                 window.location.href = "/login";
             });
     }, []);
-
-	console.log(user.Friends)
 
 	if (loading) {
 		return(<Loading/>);
@@ -59,7 +60,7 @@ const Chat: React.FC = () => {
 					<div className="add-buttons flex flex-row items-center justify-evenly my-3">
 						<div className="flex flex-col justify-center items-center gap-2 hover:transition-all duration-200 ease-in-out hover:scale-105 hover:opacity-100">
 							<Tooltip placement="bottom" content='Add Friend' className='bg-[#807381] opacity-30'>
-								<IconButton className="bg-gray-100 bg-opacity-25" size="lg">
+								<IconButton onClick={clickOpenAdd} className="bg-gray-100 bg-opacity-25" size="lg">
 									<i className="fa-solid fa-user-plus fa-lg"/>
 								</IconButton>
 							</Tooltip>
@@ -75,7 +76,7 @@ const Chat: React.FC = () => {
 					<hr className="rounded-full mx-10 opacity-30 mt-5"/>
 					<div className="overflow-y-auto h-[400px] notif">
 						<List className="justify-start items-start">
-							{filteredFriends.length != 0 ? filteredFriends.map((friend: any) => {
+							{Friends.length != 0 ? Friends.reverse().map((friend: any) => {
 								return <FriendList id={friend.friendID} />
 							})
 							: <Typography variant="h3" className="justify-center self-center py-40 text-gray-500">No Friends</Typography>
@@ -117,6 +118,7 @@ const Chat: React.FC = () => {
 					</Menu>
 				</div>
 			</div>
+			{openAdd && <AddButton/>}
 		</>
     );
 };

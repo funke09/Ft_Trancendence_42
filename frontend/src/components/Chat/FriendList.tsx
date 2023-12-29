@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 import api from '@/api';
 import { toast } from 'react-toastify';
+import { AddFriend } from '../User/types';
 
 const FriendList = ({id} : {id : number}) => {
 	const [lastMsg, setLastMsg] = useState<string>("Let's Chat....");
