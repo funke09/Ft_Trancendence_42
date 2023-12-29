@@ -14,7 +14,7 @@ dist/
 output/
 
 # Ignore environment variables
-./.env
+/.env
 
 # Ignore OS generated files
 .DS_Store
