@@ -63,31 +63,32 @@ function Dashboard({ id }: {id: string}) {
 	
 	useEffect(() => {
 		api.get("/user/id/" + id)
-			.then((res: any) => {
-				if (res.status == 200) {
-					setLoading(false);
-					setProfile(res.data);
-					res?.data?.Friends.find((friend: any) => {
-						if (friend.friendId == user.id) {
-							setFriendStatus(friend.status);
-						}
-					});
-				}
+		  .then((res: any) => {
+			if (res.status === 200) {
+			  setLoading(false);
+			  setProfile(res.data);
+			  const foundFriend = res?.data?.Friends.find((friend: any) => friend.friendId === user.id);
+			  if (foundFriend)
+				setFriendStatus(foundFriend.status);
+			}
+		  })
+		  .catch((err: any) => {
+			setLoading(false);
+			toast.error(err?.response?.data?.messages?.toString(), { theme: 'dark' });
+		  });
+	  }, [id]);
+	  
+	  useEffect(() => {
+		if (friendStatus !== 'Blocked') {
+		  api.get("/user/getStats/" + id)
+			.then((res: AxiosResponse<GameData>) => {
+			  if (res.status === 200) {
+				setStats(res.data);
+			  }
 			})
-			.catch((err: any) => {
-				setLoading(false);
-				toast.error(err?.response?.data?.messages?.toString(), {theme: 'dark'});
-			});
-
-		setTimeout(() => {
-			api.get("/user/getStats/" + id)
-				.then((res: AxiosResponse<GameData>) => {
-					if (res.status == 200 && friendStatus != 'Blocked')
-						setStats(res.data);
-				})
-				.catch((err: AxiosError<{ message: string }>) => {});
-		}, 200)
-	}, [id]);
+			.catch((err: AxiosError<{ message: string }>) => {});
+		}
+	}, [id, friendStatus]);	  
 
 	const sendMessage = (message: any) => {
 		if (!message || message.message === "") return;
@@ -132,7 +133,6 @@ function Dashboard({ id }: {id: string}) {
 	}
 
 	const renderProfileActions = () => {
-
 		const block = () => {
 			let body: BlockFriend = {friendID: profile.id}
 			api.post('/user/blockFriend', body)
@@ -146,9 +146,24 @@ function Dashboard({ id }: {id: string}) {
 				})
 		}
 
+		const unfriend = () => {
+			let body: BlockFriend = {friendID: profile.id}
+			api.post('user/unfriend', body)
+				.then((res: any) => {
+					setFriendStatus("Not_Friend");
+					chatSocket.emit('reconnect');
+					toast.success(`${profile.username} has been Unfirended`, {theme: 'dark'})
+				})
+				.catch((err: any) => {
+					toast.error(err?.response?.data?.messages?.toString(), {theme: 'dark'});
+				})
+		}
+
 		const FriendParam = () => (
-			<MenuList className="bg-[#382A39] min-w-[100px] border-none hidden samwil:flex focus:outline-none rounded-[15px]">
-				<div className="focus:outline-none flex flex-col justify-center m-auto">
+			<MenuList className="bg-[#382A39] border-none hidden samwil:flex focus:outline-none rounded-[15px]">
+				<div className="focus:outline-none flex flex-col gap-y-2 justify-center m-auto">
+					<Button className="opacity-75 hover:opacity-100 text-md p-2" variant="text" color="white">Send Message</Button>
+					<Button onClick={unfriend} className="opacity-75 hover:opacity-100 text-md p-2" variant="text" color="white">Unfriend</Button>
 					<Button onClick={block} className="opacity-75 hover:opacity-100 text-md p-2" variant="text" color="red">Block</Button>
 				</div>
 			</MenuList>
@@ -198,7 +213,7 @@ function Dashboard({ id }: {id: string}) {
 			  return null;
 		  }
 		}
-	  };
+	};
 
 	const clickEdit = () => setEdit(!edit);
 

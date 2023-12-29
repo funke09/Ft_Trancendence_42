@@ -32,6 +32,17 @@ export class UserService {
 		return user;
 	}
 
+	async getBasicData(userId: number) : Promise<any>{
+		const data = await this.prisma.user.findUnique({
+			where: {id: userId},
+			select: {
+				username: true,
+				avatar: true,
+			}
+		})
+		return data;
+	}
+
 	async getAvataById(id: number) {
 		const user = await this.prisma.user.findUnique({
 			where : {id: id},
@@ -48,8 +59,11 @@ export class UserService {
 		const findUser = await this.prisma.user.findUnique({ where: {id: findId} });
 		if (!findUser) throw new HttpException('User not Found', 404);
 
-		const isBlocked = findUser.Blocked.includes(currUser.id);
-		if (isBlocked) throw new HttpException('You are Blocked', 400);
+		if (currUser.id === findUser.id)
+			return this.getUserDataById(userId);
+
+		if (findUser && findUser.Blocked.includes(currUser.id))
+			throw new HttpException('You are Blocked', 400);
 
 		if (currUser.id === findUser.id)
 			return this.getUserDataById(userId);
@@ -175,7 +189,7 @@ export class UserService {
 
 		if (friendRequest.count == 0) throw new NotFoundException("Friend Request not found");
 
-		const rmNotif = await this.prisma.notifs.deleteMany({
+		await this.prisma.notifs.deleteMany({
 			where: {
 				from: friendUsername,
 				to: user.username,
@@ -213,11 +227,10 @@ export class UserService {
 			data: {status: 'Blocked'},
 		  })
 		}
-	  
 		return new HttpException('Friend Blocked', HttpStatus.OK);
-	  }
+	}
 	  
-	  async unblockFriend(id: number, friendID: number) {
+	async unblockFriend(id: number, friendID: number) {
 		const user = await this.prisma.user.findUnique({ where: { id: id } });
 		const friend = await this.prisma.user.findUnique({ where: { id: friendID } });
 	  
@@ -235,5 +248,27 @@ export class UserService {
 		  })
 	  
 		return new HttpException('Friend Unblocked', HttpStatus.OK);
-	  }	  
+	}
+
+	async unfriend(id: number, friendID: number) {
+		const user = await this.prisma.user.findUnique({ where: { id: id } });
+		const friend = await this.prisma.user.findUnique({ where: { id: friendID } });
+	  
+		if (!user || !friend) {
+		  throw new NotFoundException("User not found");
+		}
+	  
+		// Delete the friendship records
+		await this.prisma.friends.deleteMany({
+		  where: {
+			OR: [
+			  { userId: user.id, friendId: friend.id },
+			  { userId: friend.id, friendId: user.id },
+			],
+		  },
+		});
+	  
+		return new HttpException(`${friend.username} Unfriended`, HttpStatus.OK);
+	}		
+	  
 }

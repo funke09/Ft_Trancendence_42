@@ -244,7 +244,7 @@ export class GameData {
 		data: { losses: { increment: 1 } },
 	  });
   
-	  await this.handleRankUpdates(wUser.id, wStats.wins);
+	  await this.handleRankUpdates(wUser.id, wStats?.wins);
   
 	} catch (error) {
 	  console.error("Error:", error);

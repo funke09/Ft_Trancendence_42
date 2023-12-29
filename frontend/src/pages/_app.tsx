@@ -1,6 +1,7 @@
 import api from '@/api';
 import React, { useEffect } from 'react';
 import store, { setProfile } from '@/redux/store';
+import Invite from '@/components/Game/gameInvite';
 import SocketComp from '@/sockets/socketComp';
 import { AppProps } from 'next/app';
 import { Provider } from 'react-redux';
@@ -23,9 +24,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
 	return (
 		<Provider store={store}>
-			<ToastContainer/>
+			<ToastContainer limit={1}/>
 			<ThemeProvider>
 			<SocketComp />
+			<Invite/>
 			<main>
 				<Component {...pageProps} />
 			</main>

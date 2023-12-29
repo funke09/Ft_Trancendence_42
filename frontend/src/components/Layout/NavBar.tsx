@@ -67,11 +67,8 @@ function NotificationsMenu() {
 		chatSocket.on("notification", () => {
 			setNewNotifCount((prev) => prev + 1);
 		});
-		return ()=>{
-		}
 	}, []);
 	
-  
 	const acceptFriend = (id: number, notifID: number) => {
 		let payload: AddFriend = {id: id};
 		chatSocket.emit('acceptFriend', payload);
@@ -127,7 +124,7 @@ function NotificationsMenu() {
 					</IconButton>
 				</PopoverHandler>
 			</Badge>
-			<PopoverContent {...triggers} className="flex flex-col p-0 gap-2 bg-[#382A39] min-w-[300px] z-50 border-none shadow-md !text-white">
+			<PopoverContent {...triggers} className="notif flex flex-col p-0 gap-2 bg-[#382A39] max-h-[200px] overflow-y-auto min-w-[300px] z-50 border-none shadow-md !text-white">
 				<List>
 				{notifs.length === 0 && (
 					<div className="flex items-center justify-center">
@@ -137,17 +134,21 @@ function NotificationsMenu() {
 				{notifs.map((notif) => (
 					<ListItem key={notif.id} className="hover:bg-opacity-100 focus:bg-transparent focus:outline-none hover:bg-transparent active:bg-transparent">
 						<ListItemPrefix>
-							<Image src={notif.avatar} width={45} height={45} alt="avatar" className="rounded-full" />
+						<Image src={notif.avatar} width={45} height={45} alt="avatar" className="rounded-full" />
 						</ListItemPrefix>
 						<div>
-							<Typography variant="small" color="white">
-								{notif.msg}
-							</Typography>
+						<Typography variant="small" color="white">
+							{notif.msg}
+						</Typography>
 						</div>
-						{notif.type == 'friendRequest' && (
+						{notif.type === 'friendRequest' && (
 							<div className="flex flex-row items-center justify-center gap-2 ml-3">
-								<IconButton size="sm" className="bg-[#1cce3a] hover:scale-105" onClick={() => acceptFriend(notif.friendId, notif.id)}><i className="fa-solid fa-check"></i></IconButton>
-								<IconButton size="sm" className="bg-[#ce1c1c] hover:scale-105" onClick={() => rejectFriend(notif.from, notif.id)}><i className="fa-solid fa-xmark"></i></IconButton>
+								<IconButton size="sm" className="bg-[#1cce3a] hover:scale-105" onClick={() => acceptFriend(notif.friendId, notif.id)}>
+									<i className="fa-solid fa-check"></i>
+								</IconButton>
+								<IconButton size="sm" className="bg-[#ce1c1c] hover:scale-105" onClick={() => rejectFriend(notif.from, notif.id)}>
+									<i className="fa-solid fa-xmark"></i>
+								</IconButton>
 							</div>
 						)}
 					</ListItem>
@@ -305,7 +306,7 @@ const navList = (
   
   return (
 	  <Navbar className="bg-[#3B2A3DBF] bg-opacity-70 m-auto mt-6 mb-6 border-0 px-4 py-2 lg:px-8 lg:py-4 max-w-[1200px]">
-      <div className="relative mx-auto flex items-center justify-between text-white">
+      <div className="relative samwil:mx-auto flex items-center samwil:justify-between text-white">
         <Typography
           className="mr-4 cursor-pointer py-1.5 content-start font-medium">
 			<Link href={'/'}>
@@ -321,7 +322,7 @@ const navList = (
         </Typography>
         <div className="hidden lg:block ">{navList}</div>
         <div className="flex items-center w-max gap-x-6">
-			<div className="relative ml-20 samwil:flex">{NotificationsMenu()}</div>
+			<div className="hidden samwil:flex">{NotificationsMenu()}</div>
 			<Button
 			onClick={handleOpen}
 			variant="gradient"
@@ -375,6 +376,9 @@ const navList = (
             </svg>
           )}
         </IconButton>
+		<div className="flex samwil:hidden">
+			{NotificationsMenu()}
+		</div>
       </div>
       <Collapse open={openNav}>
         <div className="container m-auto">

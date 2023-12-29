@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpException, HttpStatus, NotFoundException, Param, ParseIntPipe, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpException, HttpStatus, NotFoundException, Param, ParseArrayPipe, ParseIntPipe, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/utils/Guards';
 import { AuthService } from 'src/auth/auth.service';
@@ -32,6 +32,14 @@ export class UserController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@Get('toto/:userID')
+	async getBasicUser(@Param('userID') userID: number) {
+		if (userID)
+			return (await this.userService.getBasicData(+userID));
+		throw new NotFoundException("Missing User ID");
+	}
+
+	@UseGuards(JwtAuthGuard)
 	@Get('/:username')
 	async getUserByUsername(@Param('username') username: string) {
 		if (!username)
@@ -49,7 +57,7 @@ export class UserController {
 	@Get('/getStats/:id')
 	async getStats(@Req() req: any, @Param('id', ParseIntPipe) id: number) {
 		if (!req.user.id) throw new BadRequestException('Missing username');
-		return this.userService.getStatsById(id);
+		return this.userService.getStatsById(+id);
 	}
 
 	@UseGuards(JwtAuthGuard)
@@ -128,5 +136,12 @@ export class UserController {
 	async unblockFriend(@Req() req: any, @Body() body: UnblockFriendDto) {
 		if (!body || !body.friendID) throw new HttpException('Username Invalid', HttpStatus.BAD_REQUEST);
 		return this.userService.unblockFriend(req.user.id, body.friendID);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('unfriend')
+	async unfriend(@Req() req: any, @Body() body: BlockFriendDto) {
+		if (!body || !body.friendID) throw new HttpException('Username Invalid', HttpStatus.BAD_REQUEST);
+		return this.userService.unfriend(req.user.id, body.friendID);
 	}
 }
