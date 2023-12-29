@@ -228,7 +228,7 @@ function Dashboard({ id }: {id: string}) {
 		  	<section className="w-full samwil:w-1/4 bg-[#643461] p-3 flex-col justify-center rounded-[15px]">
 				{renderProfileActions()}
 			  	<div className="flex-col flex items-center justify-start gap-3 pb-4">
-				  <Tooltip className="bg-[#472C45] bg-opacity-70" content={friendStatus != 'Blocked' && stats?.stats?.rank ? stats?.stats?.rank : 'Blocked'} placement="top" offset={10} animate={{mount: { scale: 1, y: 0 }, unmount: { scale: 0, y: 25 },}}>
+				  <Tooltip className="bg-[#472C45] bg-opacity-70" content={friendStatus != 'Blocked' ? stats?.stats?.rank ? stats?.stats?.rank : 'Unranked' : 'Blocked'} placement="top" offset={10} animate={{mount: { scale: 1, y: 0 }, unmount: { scale: 0, y: 25 },}}>
 						<Avatar src={profile.avatar} variant="rounded" size="xxl" className={getAvatarBorder(stats?.stats?.rank || 'Unranked', friendStatus)}/>
 				  </Tooltip>
 					<Typography variant="h3" className="flex justify-center text-white font-bold">{profile.username}</Typography>

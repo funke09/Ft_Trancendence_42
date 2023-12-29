@@ -91,7 +91,7 @@ function NotificationsMenu() {
 			friendUsername: username,
 		})
 			.then((res: any) => {
-				toast.warn(res.data.message ?? `You decliend ${username}'s friend request`, {theme: "dark"});
+				toast.info(res.data.message ?? `You decliend ${username}'s friend request`, {theme: "dark"});
 			})
 			.catch((err: any) => {
 				toast.error(err?.response?.data.message ?? "An Error Occured!", {theme: "dark"});

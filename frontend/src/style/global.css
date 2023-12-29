@@ -59,6 +59,48 @@ body::before {
 	margin-left: 2rem;
 }
 
+.button-animate {
+	transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* Online state */
+.online {
+	border-radius: 50%;
+	border: 2px solid #34d399;
+	box-shadow: 0 0 15px rgba(52, 211, 153, 0.6);
+	ring: 8px solid #34d399;
+	ring-opacity: 0.3;
+}
+  
+  /* Away state */
+.away {
+	border-radius: 50%;
+	border: 2px solid #fbbf24;
+	box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+	ring: 8px solid #fbbf24;
+	ring-opacity: 0.3;
+}
+  
+  /* In-game state */
+.in-game {
+	border-radius: 50%;
+	border: 2px solid #6366f1;
+	box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+	ring: 8px solid #6366f1;
+	ring-opacity: 0.3;
+}
+  
+  /* Offline state */
+.offline {
+	border-radius: 50%;
+	border: 2px solid #e5e7eb;
+	box-shadow: 0 0 15px rgba(229, 231, 235, 0.6);
+	ring: 8px solid #e5e7eb;
+	ring-opacity: 0.3;
+ }
+
 /* .header {
 	background: #382A39BF;
 	opacity: 75%;

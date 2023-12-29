@@ -60,7 +60,7 @@ function EnableTwoFA() {
 				.then((res: any) => {
 					if (res.status == 201) {
 						store.dispatch(setProfile({ isTwoFA: true }));
-						toast.success("2FA Enabeled", {theme:'dark', toastId: "tId"});
+						toast.success("2FA Enabeled", {theme:'dark'});
 						refreshPage();
 					}
 				})

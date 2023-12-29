@@ -94,9 +94,10 @@ const SocketComp = () => {
 
 		chatSocket.on('notification', (data: NotifType) => {
 			store.dispatch(addFriend(data));
-			if (data.type == 'AcceptRequest')
+			if (data.type == 'AcceptRequest') {
 				chatSocket.emit("reconnect");
-			toast.success(data.msg)
+				toast.success(data.msg)
+			}
 		});
 
 		chatSocket.on('privateChat', (data) => {
