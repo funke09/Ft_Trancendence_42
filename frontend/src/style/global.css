@@ -308,3 +308,19 @@ body::before {
 	height: 67.813px;
 	flex-shrink: 0;
 }
+
+/* .channel-icon{
+	width: 48.438px;
+	height: 48.438px;
+	flex-shrink: 0;
+} */
+.channel-vec {
+    display: block;
+    margin: -40px auto 0 8px;
+    padding: auto;
+}
+.user-vec {
+    display: block;
+    margin: -40px auto 0 8px;
+    padding: auto;
+}
