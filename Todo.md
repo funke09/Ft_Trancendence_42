@@ -12,15 +12,22 @@
 
 - Build the chat frontend & backend: 
 
-    -> Create the necessary components and UI elements for the chat feature. | loading...
+	-> Create a UI Friend List on Left Side with new and exisiting friends. | W.I.P
+
+	-> Create a UI chat room to chat with other users.
+
+	-> Create channel creation and edit UI
+
+	-> Create a right side bar UI shows friend informations
+
+	-> Create Channel management methods in backend (HTTP only)
   
-    -> Implement the functionality to send and receive messages. | needed!!!
+    -> <strike> Implement the functionality to send and receive messages. </strike>
 
 - Game:
-    -> send/accept invite
-    -> MatchMaking not working yet?!
+    -> <strike> send/accept invite </strike>
 - Notification
-    -> use real data | backend
+    -> <strike> use real data | backend </strike>
 
     ///////// CHAT /////
 
