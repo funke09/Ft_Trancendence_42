@@ -28,7 +28,7 @@ export const ChatRoom: React.FC = () => {
                         <button
                             onClick={handleOpen}
                             className='hidden opacity-70 lg:inline-block transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-100 rounded-full px-3 py-3 font-bold m-1'
-                            >
+                            q>
                             <svg xmlns="http://www.w3.org/2000/svg" width="49" height="49" viewBox="0 0 49 49" fill="none">
                             <ellipse cx="24.5314" cy="24.5938" rx="24.2188" ry="24.2188" fill="#D9D9D9"/>
                             </svg>

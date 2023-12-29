@@ -9,7 +9,7 @@
     -> <strike>Once the user is signed in, retrieve their profile information from the backend.</strike> (use redux store)
   
     -> Design and implement the frontend component to display the user's profile. => W.I.P
-
+	
 - Build the chat frontend & backend: 
 
     -> Create the necessary components and UI elements for the chat feature. | loading...
@@ -49,3 +49,6 @@ Updating UI Based on Responses:
 Real-Time Updates:
 
     real-time updates, consider using WebSocket or a similar technology to notify users about incoming challenges or their responses without manual refreshing.
+
+## Issues:
+   ->  signout button disapears in small window (responsive issue)
