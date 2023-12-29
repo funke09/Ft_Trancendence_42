@@ -32,10 +32,6 @@ export class AuthService {
 		try {
 			const payload = { username: user.username, uid: user.id };
 			const token = this.JwtService.sign(payload);
-			await this.prisma.user.update({
-				where: {id: user.id},
-				data: {userStatus: 'Online'},
-			});
 			res.cookie('jwt', token, { httpOnly: false, path: '/'});
 			res.redirect("http://localhost:3000/profile");
 		} catch (error) {
@@ -107,13 +103,6 @@ export class AuthService {
 	  
 		return {token, twoFA};
 	  }
-
-	async logout(id: number) {
-		await this.prisma.user.update({
-		  where: { id: id },
-		  data: { userStatus: "Offline" },
-		});
-	}
 
 	async createUser(data: Prisma.UserCreateInput): Promise<User> {
 		const hash = await argon.hash(data.password);

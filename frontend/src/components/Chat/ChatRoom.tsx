@@ -9,7 +9,6 @@ export const ChatRoom: React.FC = () => {
     const user: UserType = store.getState().profile.user;
 
     return (
-        <div className="flex flex-row max-w-[1200px] m-auto">
             <div className="w-1/3 custom-slid-style">
                 <div className='flex flex-row justify-between m-auto gap-x-10'>
                         <button

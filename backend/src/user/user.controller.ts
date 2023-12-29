@@ -1,9 +1,9 @@
-import { BadRequestException, Body, Controller, Get, HttpException, NotFoundException, Param, ParseIntPipe, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpException, HttpStatus, NotFoundException, Param, ParseArrayPipe, ParseIntPipe, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/utils/Guards';
 import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
-import { SetEmailDto, pinDto, setPasswordDto, setUsernameDto, userIdDto } from './user.dto';
+import { BlockFriendDto, SetEmailDto, UnblockFriendDto, pinDto, setPasswordDto, setUsernameDto, userIdDto } from './user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterService } from './multer.service';
 
@@ -32,6 +32,14 @@ export class UserController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@Get('toto/:userID')
+	async getBasicUser(@Param('userID') userID: number) {
+		if (userID)
+			return (await this.userService.getBasicData(+userID));
+		throw new NotFoundException("Missing User ID");
+	}
+
+	@UseGuards(JwtAuthGuard)
 	@Get('/:username')
 	async getUserByUsername(@Param('username') username: string) {
 		if (!username)
@@ -49,7 +57,7 @@ export class UserController {
 	@Get('/getStats/:id')
 	async getStats(@Req() req: any, @Param('id', ParseIntPipe) id: number) {
 		if (!req.user.id) throw new BadRequestException('Missing username');
-		return this.userService.getStatsById(id);
+		return this.userService.getStatsById(+id);
 	}
 
 	@UseGuards(JwtAuthGuard)
@@ -106,5 +114,34 @@ export class UserController {
 	async disableTwoFA(@Body() userId: userIdDto) {
 		if (!userId) throw new NotFoundException("User not found");
 		await this.authService.disableTwoFA(userId.userId);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('rejectFriend')
+	async rejectFriend(@Req() req: any, @Body() body: any) {
+		if (!body || !body.friendUsername)
+			throw new HttpException('No username was provided', HttpStatus.BAD_REQUEST);
+		return this.userService.rejectFriend(req.user.id, body.friendUsername);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('blockFriend')
+	async blockFriend(@Req() req: any, @Body() body: BlockFriendDto) {
+		if (!body || !body.friendID) throw new HttpException('Username Invalid', HttpStatus.BAD_REQUEST);
+		return this.userService.blockFriend(req.user.id, body.friendID);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('unblockFriend')
+	async unblockFriend(@Req() req: any, @Body() body: UnblockFriendDto) {
+		if (!body || !body.friendID) throw new HttpException('Username Invalid', HttpStatus.BAD_REQUEST);
+		return this.userService.unblockFriend(req.user.id, body.friendID);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post('unfriend')
+	async unfriend(@Req() req: any, @Body() body: BlockFriendDto) {
+		if (!body || !body.friendID) throw new HttpException('Username Invalid', HttpStatus.BAD_REQUEST);
+		return this.userService.unfriend(req.user.id, body.friendID);
 	}
 }

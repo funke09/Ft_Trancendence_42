@@ -5,10 +5,14 @@ import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
 import { genID } from './utils/genID';
 import { Game } from './game';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class GameService {
-	constructor(private readonly config: ConfigService) {}
+	constructor(
+		private readonly config: ConfigService,
+		private readonly prisma: PrismaService,
+	) {}
 	
 	private games = new Map<string, Game>();
 	private queue : { client: Socket, username: string, gameType: number }[] = [];
@@ -60,7 +64,7 @@ export class GameService {
 		  this.games.set(id, game);
 		  game.startGame();
 		}
-	  }
+	}
 	  
 
 	cancelGame(client: Socket): void {
@@ -76,27 +80,28 @@ export class GameService {
 		} catch (error) {}
 	}
 
-	async invGame(fromClient: Socket, data: {username: string}) {
+	async invGame(fromClient: Socket, data: {username: string, gameType: number}) {
 		if (!data.username) return;
+		
 		const fromUsername = this.getUsernameBySocket(fromClient);
 		if (!fromUsername) return;
 
 		if (this.isInGame(data.username)) {
 			fromClient.emit('error', `${data.username} is Already in a game`);
-			fromClient.emit('canceledInvGame', {});
+			fromClient.emit('invite-canceled', {});
 			return;
 		}
 
 		if (this.isInGame(fromUsername)) {
 			fromClient.emit('error', 'You Already in a game');
-			fromClient.emit('canceledInvGame', {});
+			fromClient.emit('invite-canceled', {});
 			return;
 		}
 
 		const toClient = this.players.get(data.username);
 		if (!toClient) {
 			fromClient.emit('error', `${data.username} is not connected`);
-			fromClient.emit('canceledInvGame', {});
+			fromClient.emit('invite-canceled', {});
 			return;
 		}
 
@@ -104,18 +109,19 @@ export class GameService {
 			from: fromUsername,
 			to: data.username,
 			time: new Date(),
+			type: data.gameType,
 		});
-
+	
 		setTimeout(() => {
 			this.invits = this.invits.filter((i) => i.from !== fromUsername && i.to !== data.username);
-
 		}, 15 * 1000);
-
+	
 		const userId = (await this.getUser(fromClient)).uid;
-		toClient.emit('invite', {username: fromUsername, id: userId});
+		const avatar = await this.prisma.user.findUnique({where: {id: userId}, select:{avatar: true}})
+		toClient.emit('invGame', { username: fromUsername, id: userId, gameType: data.gameType, avatar: avatar.avatar});
 	}
 
-	async acceptGame(toClient: Socket, data: { username: string }, gameType: number) {
+	async acceptGame(toClient: Socket, data: { username: string }) {
 		if (!data.username) return;
 		const fromClient = this.players.get(data.username);
 		if (!fromClient) {
@@ -123,6 +129,7 @@ export class GameService {
 			return;
 		}
 		const toUsername = this.getUsernameBySocket(toClient);
+
 		const invite = this.invits.find((i) => i.from === data.username && i.to === toUsername);
 		if (!invite) {
 			toClient.emit('error', `No invites from ${data.username}`);
@@ -141,10 +148,9 @@ export class GameService {
 			p2Username: toUsername,
 			p1Id: (await this.getUser(fromClient)).uid,
 			p2Id: (await this.getUser(toClient)).uid,
-		}, gameType);
+		}, invite.type); // Use the gameType from the invitation
 
 		game.endGameCallback = this.stopGame;
-
 		this.games.set(
 			id,
 			game,

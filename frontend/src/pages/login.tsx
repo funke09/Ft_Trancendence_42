@@ -265,7 +265,7 @@ const Auth: React.FC = () => {
 	if (loading) return <Loading />;
 
 	return (
-		<main className="flex w-screen h-screen">
+		<main className="flex w-full h-screen m-auto">
 			{side &&
 				<section className="w-1/4 relative min-[0px] flex bg-[#382A39] bg-opacity-75">
 					<div className="absolute flex-grow top-4 left-4 opacity-95">

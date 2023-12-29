@@ -24,7 +24,7 @@ export class GameGateway {
   }
 
   @SubscribeMessage('invGame')
-  invGame(client: Socket, data: {username: string}): void {
+  invGame(client: Socket, data: {username: string, gameType: number}): void {
 	this.gameService.invGame(client, data);
   }
 
@@ -34,8 +34,8 @@ export class GameGateway {
   }
 
   @SubscribeMessage('acceptGame')
-  acceptGame(client: Socket, data: {username: string}, gameType: number): void {
-	this.gameService.acceptGame(client, data, gameType);
+  acceptGame(client: Socket, data: {username: string}): void {
+	this.gameService.acceptGame(client, data);
   }
 
   @SubscribeMessage('cancelInvGame')

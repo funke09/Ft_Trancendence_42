@@ -66,14 +66,11 @@ export class AuthController {
 		@Body('token') token: string,
 		@Body('username') username: string,
 		@Res({ passthrough: true }) res: Response) {
-			console.log("AT:", token); 
-			console.log("username:", username); 
 			await this.authService.login2FA(pin.pin, username, token, res);
 	}
 
 	@Post('logout')
-	async logout(@Body('user', new ValidationPipe()) user: any, @Res({ passthrough: true }) res: Response) {
-		await this.authService.logout(user.id);
+	async logout(@Res({ passthrough: true }) res: Response) {
 		res.clearCookie('jwt');
 	}
 }

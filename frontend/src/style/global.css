@@ -19,10 +19,22 @@ body::before {
 	height: 100%;
 	background: linear-gradient(180deg, rgba(255, 63, 167, 0.4) 0%, rgba(56, 42, 57, 0.4) 100%);
 	z-index: 0;
-	/* Set a lower z-index for the body background */
 	pointer-events: none;
-	/* Ensure that the overlay doesn't interfere with interactions */
 }
+
+.notif::-webkit-scrollbar {
+	width: 7px;
+  }
+  
+  .notif::-webkit-scrollbar-thumb {
+	background-color: #6b7280;
+	border-radius: 4px;
+  }
+  
+  .notif::-webkit-scrollbar-track {
+	background-color: #1f2937;
+	border-radius: 4px;
+  }
 
 .container::-webkit-scrollbar {
 	width: 10px;

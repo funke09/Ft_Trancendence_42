@@ -27,16 +27,13 @@ function SigninForm() {
 	  
 		  const { access_token, isTwoFA } = response.data;
 		  
-		  console.log("AT:", access_token);
-		  console.log("is2FA:", isTwoFA);
-
 		  if (access_token) {
 			if (isTwoFA) {
 				setIsTwoFA(true);
 				setToken(access_token);
 			}
-			// else
-			// 	window.location.href = '/profile';
+			else
+				window.location.href = '/profile';
 		  }
 		  else
 		  	toast.error("Signin Failed", {theme: 'dark'});

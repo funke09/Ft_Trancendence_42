@@ -12,14 +12,23 @@ import {
   Avatar,
   Badge,
   Dialog,
+  Popover,
+  PopoverContent,
+  PopoverHandler,
+  List,
+  ListItem,
+  ListItemPrefix,
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
-import store from "@/redux/store";
+import store, { removeFriend } from "@/redux/store";
 import { UserType } from "@/redux/profile";
 import { PlayModal } from "../Game/playMenu";
 import api from "@/api";
 import { toast } from "react-toastify";
+import chatSocket from "@/sockets/chatSocket";
+import { AddFriend } from "../User/types";
+import { NotifType, SocketRes } from "@/sockets/types";
  
 
 export function Nav() {
@@ -32,10 +41,10 @@ export function Nav() {
   const user: UserType = store.getState().profile.user;
 
   function clickLogout() {
-	api.post('/auth/logout', {user})
+	api.post('/auth/logout')
 		.then((res: any) => {
 			if (res.status == 201)
-				window.location.href = '/';
+				window.location.href = '/login';
 		})
   }
  
@@ -44,110 +53,112 @@ export function Nav() {
       "resize",
       () => window.innerWidth >= 960 && setOpenNav(false),
     );
-  }, []); 
+  }, []);
+  
+function NotificationsMenu() {
+    const [notifs, setNotifs] = useState<any[]>([]);
+	const [newNotifCount, setNewNotifCount] = useState<number>(0);
+	const [openNotif, setOpenNotif] = useState(false);
 
-function ClockIcon() {
+	useEffect(() => {
+		store.subscribe(() => {
+			setNotifs(store.getState().notif.friendRequest ?? []);
+		});
+		chatSocket.on("notification", () => {
+			setNewNotifCount((prev) => prev + 1);
+		});
+	}, []);
+	
+	const acceptFriend = (id: number, notifID: number) => {
+		let payload: AddFriend = {id: id};
+		chatSocket.emit('acceptFriend', payload);
+		
+		chatSocket.on('acceptFriend', (data: SocketRes | any) => {
+			if (data == null) return;
+			if (data && data?.status == 200) {
+				store.dispatch(removeFriend(notifID));
+				chatSocket.emit("reconnect");
+			} else {
+				if (data?.status) {
+					toast.error(data.message, {theme: "dark"});
+				}
+			}
+		});
+	};
+
+	const rejectFriend = (username: string, id: number) => {
+		api.post('/user/rejectFriend', {
+			friendUsername: username,
+		})
+			.then((res: any) => {
+				toast.warn(res.data.message ?? `You decliend ${username}'s friend request`, {theme: "dark"});
+			})
+			.catch((err: any) => {
+				toast.error(err?.response?.data.message ?? "An Error Occured!", {theme: "dark"});
+			})
+		store.dispatch(removeFriend(id));
+	};
+
+	const triggers = {
+		onMouseEnter: () => {
+			setOpenNotif(true);
+			setNewNotifCount(0);
+		},
+		onMouseLeave: () => setOpenNotif(false),
+	}
+  
 	return (
-	  <svg
-		width="16"
-		height="17"
-		viewBox="0 0 16 17"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-	  >
-		<path
-		  fillRule="evenodd"
-		  clipRule="evenodd"
-		  d="M7.99998 14.9C9.69736 14.9 11.3252 14.2257 12.5255 13.0255C13.7257 11.8252 14.4 10.1974 14.4 8.49998C14.4 6.80259 13.7257 5.17472 12.5255 3.97449C11.3252 2.77426 9.69736 2.09998 7.99998 2.09998C6.30259 2.09998 4.67472 2.77426 3.47449 3.97449C2.27426 5.17472 1.59998 6.80259 1.59998 8.49998C1.59998 10.1974 2.27426 11.8252 3.47449 13.0255C4.67472 14.2257 6.30259 14.9 7.99998 14.9ZM8.79998 5.29998C8.79998 5.0878 8.71569 4.88432 8.56566 4.73429C8.41563 4.58426 8.21215 4.49998 7.99998 4.49998C7.7878 4.49998 7.58432 4.58426 7.43429 4.73429C7.28426 4.88432 7.19998 5.0878 7.19998 5.29998V8.49998C7.20002 8.71213 7.28434 8.91558 7.43438 9.06558L9.69678 11.3288C9.7711 11.4031 9.85934 11.4621 9.95646 11.5023C10.0536 11.5425 10.1577 11.5632 10.2628 11.5632C10.3679 11.5632 10.472 11.5425 10.5691 11.5023C10.6662 11.4621 10.7544 11.4031 10.8288 11.3288C10.9031 11.2544 10.9621 11.1662 11.0023 11.0691C11.0425 10.972 11.0632 10.8679 11.0632 10.7628C11.0632 10.6577 11.0425 10.5536 11.0023 10.4565C10.9621 10.3593 10.9031 10.2711 10.8288 10.1968L8.79998 8.16878V5.29998Z"
-		  fill="#90A4AE"
-		/>
-	  </svg>
+		<Popover
+		animate={{
+			mount: { scale: 1, y: 0 },
+			unmount: { scale: 0, y: -25 },
+		}}
+		handler={setOpenNotif}
+		open={openNotif}
+		offset={3}
+		>
+			<Badge invisible={newNotifCount == 0} content={newNotifCount}>
+				<PopoverHandler {...triggers}>
+					<IconButton onClick={() => (setOpenNotif(true), setNewNotifCount(0))} variant="text" className="border-none outline-none">
+						<i className="fa-regular fa-bell text-2xl" style={{ color: '#E1E1E1' }}></i>
+					</IconButton>
+				</PopoverHandler>
+			</Badge>
+			<PopoverContent {...triggers} className="notif flex flex-col p-0 gap-2 bg-[#382A39] max-h-[200px] overflow-y-auto min-w-[300px] z-50 border-none shadow-md !text-white">
+				<List>
+				{notifs.length === 0 && (
+					<div className="flex items-center justify-center">
+						<Typography className="p-6 m-auto text-gray-500" variant="h6">No Notifications</Typography>
+					</div>
+				)}
+				{notifs.map((notif) => (
+					<ListItem key={notif.id} className="hover:bg-opacity-100 focus:bg-transparent focus:outline-none hover:bg-transparent active:bg-transparent">
+						<ListItemPrefix>
+						<Image src={notif.avatar} width={45} height={45} alt="avatar" className="rounded-full" />
+						</ListItemPrefix>
+						<div>
+						<Typography variant="small" color="white">
+							{notif.msg}
+						</Typography>
+						</div>
+						{notif.type === 'friendRequest' && (
+							<div className="flex flex-row items-center justify-center gap-2 ml-3">
+								<IconButton size="sm" className="bg-[#1cce3a] hover:scale-105" onClick={() => acceptFriend(notif.friendId, notif.id)}>
+									<i className="fa-solid fa-check"></i>
+								</IconButton>
+								<IconButton size="sm" className="bg-[#ce1c1c] hover:scale-105" onClick={() => rejectFriend(notif.from, notif.id)}>
+									<i className="fa-solid fa-xmark"></i>
+								</IconButton>
+							</div>
+						)}
+					</ListItem>
+				))}
+				</List>
+			</PopoverContent>
+   		</Popover>
 	);
-  }
-   
-const NotificationsMenu = (
-	  <Menu>
-		<Badge color="red" className="opacity-75">
-		<MenuHandler>
-			<svg
-			  xmlns="http://www.w3.org/2000/svg"
-			  viewBox="0 0 24 24"
-			  fill="none"
-			  width={24}
-			  height={24}
-			  className="opacity-70 transition ease-in-out delay-150 hover:scale-110 hover:opacity-100 duration-300"
-			>
-				<path
-					d="M15 19.25C15 20.0456 14.6839 20.8087 14.1213 21.3713C13.5587 21.9339 12.7956 22.25 12 22.25C11.2044 22.25 10.4413 21.9339 9.87869 21.3713C9.31608 20.8087 9 20.0456 9 19.25"
-					stroke="#f2f2f2"
-					strokeWidth="1.5"
-					strokeLinecap="round"
-					strokeLinejoin="round"/>
-				<path
-					d="M5.58096 18.25C5.09151 18.1461 4.65878 17.8626 4.36813 17.4553C4.07748 17.048 3.95005 16.5466 4.01098 16.05L5.01098 7.93998C5.2663 6.27263 6.11508 4.75352 7.40121 3.66215C8.68734 2.57077 10.3243 1.98054 12.011 1.99998V1.99998C13.6977 1.98054 15.3346 2.57077 16.6207 3.66215C17.9069 4.75352 18.7557 6.27263 19.011 7.93998L20.011 16.05C20.0723 16.5452 19.9462 17.0454 19.6576 17.4525C19.369 17.8595 18.9386 18.144 18.451 18.25C14.2186 19.2445 9.81332 19.2445 5.58096 18.25V18.25Z"
-					stroke="#f2f2f2"
-					strokeWidth="1.5"
-					strokeLinecap="round"
-					strokeLinejoin="round"/>
-			</svg>
-		</MenuHandler>
-		</Badge>
-		<MenuList className="flex flex-col gap-2 bg-[#382A39] border-none shadow-md !text-white">
-		  <MenuItem className="flex items-center gap-4 py-2 pl-2 pr-8">
-			<Image
-					src={'/images/defaultAvatar.png'}
-					width={42}
-					height={42}
-					alt="avatar"
-					className="rounded-full"
-				/>
-			<div className="flex flex-col justify-center gap-1">
-			  <Typography variant="small" className="font-semibold">
-				Tania send you a message
-			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
-				<ClockIcon />
-				13 minutes ago
-			  </Typography>
-			</div>
-		  </MenuItem>
-		  <MenuItem className="flex items-center gap-4 py-2 pl-2 pr-8">
-			<Image
-				src={'/images/defaultAvatar.png'}
-				width={42}
-				height={42}
-				alt="avatar"
-				className="rounded-full"
-			/>
-			<div className="flex flex-col justify-center gap-1">
-			  <Typography variant="small" className="font-semibold">
-				Natali replied to your email.
-			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
-				<ClockIcon />1 hour ago
-			  </Typography>
-			</div>
-		  </MenuItem>
-		  <MenuItem className="flex items-center gap-4 py-2 pl-2 pr-8">
-			<Image
-					src={'/images/defaultAvatar.png'}
-					width={42}
-					height={42}
-					alt="avatar"
-					className="rounded-full"
-				/>
-			<div className="flex flex-col justify-center gap-1">
-			  <Typography variant="small" className="font-semibold">
-				You&apos;ve received a payment.
-			  </Typography>
-			  <Typography className="flex items-center gap-1 text-sm font-medium text-[#a6a6a6]">
-				<ClockIcon />5 hours ago
-			  </Typography>
-			</div>
-		  </MenuItem>
-		</MenuList>
-	</Menu>
-)
+}
+  
 
 const ProfileMenu = (
 		<Menu>
@@ -295,7 +306,7 @@ const navList = (
   
   return (
 	  <Navbar className="bg-[#3B2A3DBF] bg-opacity-70 m-auto mt-6 mb-6 border-0 px-4 py-2 lg:px-8 lg:py-4 max-w-[1200px]">
-      <div className="relative mx-auto flex items-center justify-between text-white">
+      <div className="relative samwil:mx-auto flex items-center samwil:justify-between text-white">
         <Typography
           className="mr-4 cursor-pointer py-1.5 content-start font-medium">
 			<Link href={'/'}>
@@ -311,7 +322,7 @@ const navList = (
         </Typography>
         <div className="hidden lg:block ">{navList}</div>
         <div className="flex items-center w-max gap-x-6">
-			<div className="hidden lg:flex">{NotificationsMenu}</div>
+			<div className="hidden samwil:flex">{NotificationsMenu()}</div>
 			<Button
 			onClick={handleOpen}
 			variant="gradient"
@@ -365,6 +376,9 @@ const navList = (
             </svg>
           )}
         </IconButton>
+		<div className="flex samwil:hidden">
+			{NotificationsMenu()}
+		</div>
       </div>
       <Collapse open={openNav}>
         <div className="container m-auto">

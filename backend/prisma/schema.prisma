@@ -23,8 +23,89 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt	  DateTime @updatedAt
 
-  fromFriendship Friends[] @relation("fromFriendship")
-  toFriendships  Friends[] @relation("toFriendships")
+  Blocked	  Int[]		@default([])
+  socketId	  String?
+
+  Friends	  Friends[] @relation("userFriends")
+  userFriends Friends[] @relation("friend")
+
+  privateChannels String[]
+  channels		  Channel[] @relation("Member")
+  AdminOf		  Channel[] @relation("Admin")
+  invitedTo		  Channel[] @relation("Invited")
+  kickedFrom	  Channel[] @relation("Kicked")
+  bannedFrom	  Channel[] @relation("Banned")
+  sentMsgs		  DM[]		@relation("sentMsgs")
+  receivedMsgs	  DM[]		@relation("receivedMsgs")
+  msgs			  Msg[]		@relation("UserMsgs")
+  notifs		  Notifs[]	@relation("UserNotifs")
+}
+
+model Msg {
+	id			Int		 @id @default(autoincrement())
+	createdAt	DateTime @default(now())
+	updatedAt	DateTime @updatedAt
+
+	text		String
+
+	channel		Channel @relation(fields: [channelId], references: [id])
+	channelId	Int
+
+	user		User 	@relation("UserMsgs", fields: [fromId], references: [id])
+	fromId		Int
+}
+
+model Notifs {
+	id			Int @id @default(autoincrement())
+	type		String // friend-request, game...
+	from		String
+	to			String
+	status		String // accepted, rejected... etc
+	msg			String
+	
+	createdAt	DateTime @default(now())
+	updatedAt	DateTime @updatedAt
+
+	user		User @relation("UserNotifs", fields: [userId], references: [id])
+	userId		Int
+	avatar		String	@default("http://localhost:3000/images/jesus.webp")
+	friendId	Int
+}
+
+model DM {
+	id			Int 	 @id @default(autoincrement())
+
+	text		String
+
+	createdAt	DateTime @default(now())
+
+	from		User 	 @relation("sentMsgs", fields: [fromId], references: [id])
+	fromId		Int
+
+	to			User	 @relation("receivedMsgs", fields: [toId], references: [id])
+	toId		Int
+
+	channelId	String
+}
+
+model Channel {
+	id			Int		@id @default(autoincrement())
+	name		String
+	createdAt	DateTime @default(now())
+	updatedAt	DateTime @updatedAt
+
+	type		String? // public, private, with key
+	password	String?
+	hash		String?
+	ownerId		Int
+	adminsIds	Int[]
+
+	member		User[]	@relation("Member")
+	admins		User[]	@relation("Admin")
+	invited		User[]	@relation("Invited")
+	kicked		User[]	@relation("Kicked")
+	banned		User[]	@relation("Banned")
+	msgs		Msg[]
 }
 
 model Stats {
@@ -64,10 +145,15 @@ model Friends {
 
   fromId	Int
   toId      Int
+
+  friendID	Int
   status	String   @default("Pending") // Pending, Accepted, Declined, Blocked
 
-  from		User     @relation("fromFriendship", fields: [fromId], references: [id])
-  to		User     @relation("toFriendships", fields: [toId], references: [id])
+  user		User @relation("userFriends", fields: [userId], references: [id])
+  userId	Int
+
+  friend	User @relation("friend", fields: [friendId], references: [id])
+  friendId	Int
 }
 
 model Game {

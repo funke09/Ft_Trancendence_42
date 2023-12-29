@@ -5,6 +5,7 @@ import Image from "next/image";
 import { format } from 'date-fns';
 import Link from "next/link";
 import Loading from "../Layout/Loading";
+import { toast } from "react-toastify";
 
 interface Game {
 	id: number;
@@ -33,24 +34,26 @@ function MatchHistory({ games, p1 }: MatchHistoryProps) {
 		  const [loading, setLoading] = useState(true);
   
 		  useEffect(() => {
-			api.get("user/id/" + game.p2Id)
+			api.get("user/toto/" + game.p2Id)
 			  .then((res: any) => {
-				setOpp(res.data);
-				setLoading(false);
+				if (res.status == 200) {
+					setOpp(res.data);
+					setLoading(false);
+				}
 			  })
-			  .catch((error) => {
-				console.error('Error fetching user:', error.response?.data || error.message);
-			  });
-		  }, [game.p2Id]);
+			  .catch((error) => {});
+		}, [game.p2Id]);
   
-		  let score = game.p1Score.toString() + " : " + game.p2Score.toString();
+		let score = game.p1Score.toString() + " : " + game.p2Score.toString();
 		  
-		  if (loading)
-		  	<Loading/>
-		  else
-		  	return (
-			<Tooltip content=
-				{ <div className="flex flex-col items-center">
+		if (loading) return <Loading key={game.id} />;
+
+		if (!opp) return <div key={game.id}></div>;
+		
+		return (
+			<Tooltip
+				content=
+				{<div className="flex flex-col items-center">
 				<Typography variant="h6">
 					{game.gameType.toUpperCase()}
 				</Typography>
@@ -58,7 +61,7 @@ function MatchHistory({ games, p1 }: MatchHistoryProps) {
 					{format(new Date(game.createdAt), 'yyyy-MM-dd HH:mm')}
 				</Typography>
 				</div>}
-			className="bg-[#2e1b2d]" key={game.id}>
+				className="bg-[#2e1b2d]" key={game.id}>
 			  <List key={game.id} className="w-[85%] bg-[#643461] rounded-[30px] shadow-lg relative mx-auto my-4 transition-all hover:bg-[#965792] hover:bg-opacity-80">
 				<div className="flex flex-row mx-2 p-1 gap-6 justify-between items-center">
 				  <div className="flex flex-row items-center gap-4">

@@ -121,7 +121,7 @@ function EditProfile({ user } : {user : any}) {
 		api.post('/user/saveAvatar', formData)
 			.then((res: any) => {
 				if (res.status == 201){
-					toast.success("Successfully changed Avatar", {theme: 'dark'});
+					toast.success("Avatar changed Successfully", {theme: 'dark'});
 					refreshPage();
 				}
 			})

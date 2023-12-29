@@ -15,6 +15,7 @@ import store, { setOpp } from "@/redux/store";
 import { useRouter } from "next/router";
 import gameSocket from "@/sockets/gameSocket";
 import { ToastContainer, toast } from "react-toastify";
+import chatSocket from "@/sockets/chatSocket";
  
 export function PlayModal() {
 	const [selected, setSelected] = useState(1);
@@ -30,6 +31,8 @@ export function PlayModal() {
 		setIsFindGame(false);
 		setIsInvite(false);
 		gameSocket.emit("cancelGame", { msg: "cancel" });
+		gameSocket.emit("cancelInvGame", { username: username});
+	
 	  };
 	
 	const handleOpen = () => setIsFindGame(!isFindGame);
@@ -46,17 +49,22 @@ export function PlayModal() {
 		api.get(`user/${username}`)
 		.then((res: any) => {
 			if (!res.data || res.data.id == currentUser.id || res.data.userStatus != "Online") {
-				setIsInvite(false);
-				toast.error(`${username} is Unavailable`, {theme: 'dark'});		
+				setIsInvite(false);	
 			}
-			else
-				setIsInvite(true);		
 		})
+		setIsInvite(true);
+		gameSocket.emit('invGame', {
+			username: username,
+			gameType: selected,
+		});
 	};
 
 	const router = useRouter();
 		
 	useEffect(() => {
+        if (!chatSocket.connected) chatSocket.connect();
+        if (!gameSocket.connected) gameSocket.connect();
+
 		gameSocket.on("match", (data) => {
 			store.dispatch(setOpp(data));
 			router.push(`/game/${data.roomName}`);
@@ -66,6 +74,14 @@ export function PlayModal() {
 			setIsFindGame(false);
 			setIsInvite(false);
 		});
+
+        gameSocket.on("invite-canceled", () => {
+            setIsInvite(false);
+        });
+
+		return () => {
+			setIsInvite(false);
+		}
 	}, []);
 	
 	return (
@@ -121,7 +137,7 @@ export function PlayModal() {
 					}} crossOrigin={undefined}/>
 				<Button
 					size="sm"
-					color={username ? "gray" : "gray"}
+					color={username ? "green" : "gray"}
 					disabled={!username || username === currentUser.username}
 					className="!absolute right-1 top-1 rounded"
 					onClick={clickInvite}
@@ -138,12 +154,12 @@ export function PlayModal() {
 				FIND GAME
 			</Button>
 			{ isFindGame && 
-				<Dialog size="sm" className="bg-[#382A39] p-5 rounded-[30px]" open={isFindGame} handler={handleOpen}>
+				<Dialog size="xs" className="bg-[#382A39] p-5 rounded-[30px]" open={isFindGame} handler={handleOpen}>
 						{<QueueModal type={"normal"} onCancel={handleCancel}/>}
 				</Dialog>
 			}
 			{ isInvite && 
-				<Dialog size="sm" className="bg-[#382A39] p-5 rounded-[30px]" open={isInvite} handler={handleInvOpen}>
+				<Dialog size="xs" className="bg-[#382A39] p-5 rounded-[30px]" open={isInvite} handler={handleInvOpen}>
 					<QueueModal type={"invite"} onCancel={handleCancel}/>
 				</Dialog>
 			}
