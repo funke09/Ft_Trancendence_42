@@ -42,7 +42,7 @@ const AddButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatch<Re
 	  }, [setOpen]);
 
   return (
-	<Dialog size='xs' open={open} handler={openHandler} className='bg-primary1 h-[300px] rounded-[15px] border-none'>
+	<Dialog size='xs' open={open} handler={openHandler} className='bg-primary1 h-[300px] rounded-[15px] border-none focus:outline-none'>
 		<ToastContainer/>
 		<div className='flex w-1/2 flex-col p-4 items-center m-auto my-[2.5rem] gap-y-10'>
 			<Typography variant='h4' color='white'>Add a Friend</Typography>
@@ -55,7 +55,7 @@ const AddButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatch<Re
 					containerProps={{
 					className: "min-w-0",
 				}} crossOrigin={undefined}/>
-			<Button disabled={!username} onClick={clickAddUser} variant='gradient' color='green' className='opacity-80 hover:opacity-100 transition-all hover:scale-105'>ADD</Button>
+			<Button disabled={!username} onClick={clickAddUser} variant='gradient' color='pink' className='opacity-80 hover:opacity-100 transition-all hover:scale-105'>ADD</Button>
 		</div>
 	</Dialog>
   )

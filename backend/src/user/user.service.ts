@@ -18,6 +18,7 @@ export class UserService {
 				avatar: true,
 				isTwoFA: true,
 				Friends: true,
+				channels: true,
 			}
 		});
 		if (user)

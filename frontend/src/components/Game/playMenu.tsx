@@ -86,7 +86,6 @@ export function PlayModal() {
 	
 	return (
 		<div className="flex-col justify-center m-auto p-6">
-			<ToastContainer/>
 			<Typography color="white" className="m-auto text-2xl p-2 font-bold flex justify-center">Chose a Mode</Typography>
 			<hr className="m-auto max-w-[220px] border-1 opacity-70 rounded-full"/>
 			<List className="m-auto pt-8 gap-8 flex-row justify-between">
@@ -163,6 +162,7 @@ export function PlayModal() {
 					<QueueModal type={"invite"} onCancel={handleCancel}/>
 				</Dialog>
 			}
+		<ToastContainer/>
 	</div>
   );
 }

@@ -4,7 +4,7 @@ import gameSocket from "./gameSocket";
 import store, { addFriend, addNewMsgToGroup, addNewMsgToPrivate, setGame, setGroupChat, setNotif, setPrivateChat, setSocket } from "@/redux/store";
 import { AchievDto, NotifType, RankDto, SocketRes } from "./types";
 import chatSocket from "./chatSocket";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 const SocketComp = () => {
 	const [connectedGame, setConnectedGame] = useState(false);
@@ -114,7 +114,11 @@ const SocketComp = () => {
 		};
 	}, [gameSocket, chatSocket]);
 
-	return <></>;
+	return (
+		<>
+			<ToastContainer/>
+		</>
+	);
 };
 
 export default SocketComp;

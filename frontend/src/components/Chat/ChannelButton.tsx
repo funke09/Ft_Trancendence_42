@@ -45,11 +45,11 @@ const ChannelButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatc
 			})
 	}
 
-	// useEffect(() => {
-	// 	return () => {
-	// 	  setOpen(false);
-	// 	};
-	//   }, [setOpen]);
+	useEffect(() => {
+		return () => {
+		  setOpen(false);
+		};
+	  }, [setOpen]);
 
   return (
 	<Dialog size='sm' open={open} handler={openHandler} className='bg-primary1 rounded-[15px] border-none'>

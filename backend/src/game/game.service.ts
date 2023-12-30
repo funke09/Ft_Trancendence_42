@@ -123,40 +123,42 @@ export class GameService {
 
 	async acceptGame(toClient: Socket, data: { username: string }) {
 		if (!data.username) return;
+	  
 		const fromClient = this.players.get(data.username);
 		if (!fromClient) {
-			toClient.emit('error', `${data.username} is no longer Online`);
-			return;
+		  toClient.emit('error', `${data.username} is no longer Online`);
+		  return;
 		}
+	  
 		const toUsername = this.getUsernameBySocket(toClient);
-
+	  
 		const invite = this.invits.find((i) => i.from === data.username && i.to === toUsername);
+		
 		if (!invite) {
-			toClient.emit('error', `No invites from ${data.username}`);
-			return;
+		  toClient.emit('error', `No invites from ${data.username}`);
+		  return;
 		}
-
+	  
 		this.invits.splice(this.invits.indexOf(invite), 1);
+	  
 		fromClient.emit('invite-accepted', {});
 		toClient.emit('invite-accepted', {});
+	  
 		const id = genID(this.games);
 		const game = new Game({
-			id,
-			client1: fromClient,
-			client2: toClient,
-			p1Username: data.username,
-			p2Username: toUsername,
-			p1Id: (await this.getUser(fromClient)).uid,
-			p2Id: (await this.getUser(toClient)).uid,
-		}, invite.type); // Use the gameType from the invitation
-
+		  id,
+		  client1: fromClient,
+		  client2: toClient,
+		  p1Username: data.username,
+		  p2Username: toUsername,
+		  p1Id: (await this.getUser(fromClient)).uid,
+		  p2Id: (await this.getUser(toClient)).uid,
+		}, invite.type);
+	  
 		game.endGameCallback = this.stopGame;
-		this.games.set(
-			id,
-			game,
-		);
+		this.games.set(id, game);
 		game.startGame();
-	}
+	}	  
 
 	cancelInvGame(client: Socket, data: { username: string }): void {
 		if (!data.username) return;
