@@ -96,7 +96,6 @@ model Channel {
 
 	type		String? // public, private, with key
 	password	String?
-	hash		String?
 	ownerId		Int
 	adminsIds	Int[]
 

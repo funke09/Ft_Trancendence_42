@@ -5,8 +5,7 @@ import { Button, Dialog, Input, Typography } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 
-const AddButton = () => {
-	const [open, setOpen] = useState(true);
+const AddButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatch<React.SetStateAction<boolean>>}) => {
 	const [username, setUsername] = useState("");
 
 	const openHandler = () => setOpen(!open);
@@ -35,6 +34,12 @@ const AddButton = () => {
 				}
 			})
 	}
+
+	useEffect(() => {
+		return () => {
+		  setOpen(false);
+		};
+	  }, [setOpen]);
 
   return (
 	<Dialog size='xs' open={open} handler={openHandler} className='bg-primary1 h-[300px] rounded-[15px] border-none'>

@@ -5,6 +5,7 @@ import { UserService } from './user.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MulterService } from './multer.service';
 import { MulterModule } from '@nestjs/platform-express';
+import { ChannelService } from './channel.service';
 
 @Module({
 	imports: [
@@ -18,6 +19,7 @@ import { MulterModule } from '@nestjs/platform-express';
 		UserService,
 		PrismaService,
 		MulterService,
+		ChannelService,
 	],
 	exports: [
 		UserService,

@@ -4,19 +4,21 @@ import api from "@/api";
 import Loading from "@/components/Layout/Loading";
 import store, { setProfile } from "@/redux/store";
 import { ChatRoom } from "@/components/Chat/ChatRoom";
-import { Dialog, IconButton, List, ListItem, ListItemPrefix, Menu, MenuHandler, MenuItem, MenuList, Tooltip, Typography } from "@material-tailwind/react";
+import { IconButton, List, ListItem, ListItemPrefix, Menu, MenuHandler, MenuItem, MenuList, Tooltip, Typography } from "@material-tailwind/react";
 import Image from "next/image";
-import { toast } from "react-toastify";
 import FriendList from "@/components/Chat/FriendList";
 import AddButton from "@/components/Chat/AddButton";
+import ChannelButton from "@/components/Chat/ChannelButton";
 
 const Chat: React.FC = () => {
 	const [loading, setLoading] = useState(true);
 	const [openAdd, setOpenAdd] = useState(false);
+	const [openChannel, setOpenChannel] = useState(false);
 	const user: any = store.getState().profile.user;
 	const Friends = user.Friends.filter((friend: any) => friend.status === 'Accepted');
 
 	const clickOpenAdd = () => setOpenAdd(!openAdd);
+	const clickOpenChannel = () => setOpenChannel(!openChannel);
 	
     useEffect(() => {
 		api.get("/user/profile")
@@ -40,7 +42,7 @@ const Chat: React.FC = () => {
     return (
         <><Nav/>
 			<div className="flex m-auto w-[1200px] h-[720px] bg-gradient-to-t from-[#137882] to-[#146871] opacity-75 rounded-[15px] shadow-md">
-				<div className="w-1/4 bg-primary1 rounded-s-[15px] flex flex-col">
+				<section className="w-1/4 bg-primary1 rounded-s-[15px] flex flex-col">
 					<div className="search-bar self-center my-6">
 						<div className='max-w-md mx-auto'>
 							<div className="relative flex items-center w-full h-12 rounded-full focus-within:shadow-lg bg-white overflow-hidden">
@@ -67,7 +69,7 @@ const Chat: React.FC = () => {
 						</div>
 						<div className="flex flex-col justify-center items-center gap-2 hover:transition-all duration-200 ease-in-out hover:scale-105 hover:opacity-100">
 							<Tooltip placement="bottom" content='Create Channel' className='bg-[#807381] opacity-30'>
-								<IconButton className="bg-gray-100 bg-opacity-20" size="lg">
+								<IconButton onClick={clickOpenChannel} className="bg-gray-100 bg-opacity-20" size="lg">
 									<i className="fa-solid fa-user-group fa-lg"/>
 								</IconButton>
 							</Tooltip>
@@ -116,9 +118,13 @@ const Chat: React.FC = () => {
 							</MenuItem>
 						</MenuList>
 					</Menu>
-				</div>
+				</section>
+				<section>
+					{/* Chat Room */}
+				</section>
 			</div>
-			{openAdd && <AddButton/>}
+			{openAdd && <AddButton open={openAdd} setOpen={setOpenAdd}/>}
+			{openChannel && <ChannelButton open={openChannel} setOpen={setOpenChannel}/>}
 		</>
     );
 };

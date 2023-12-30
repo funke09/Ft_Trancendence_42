@@ -1,11 +1,12 @@
-import { BadRequestException, Body, Controller, Get, HttpException, HttpStatus, NotFoundException, Param, ParseArrayPipe, ParseIntPipe, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpException, HttpStatus, NotFoundException, Param, ParseArrayPipe, ParseIntPipe, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/utils/Guards';
 import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
-import { BlockFriendDto, SetEmailDto, UnblockFriendDto, pinDto, setPasswordDto, setUsernameDto, userIdDto } from './user.dto';
+import { BlockFriendDto, CreateChannelDto, SetEmailDto, UnblockFriendDto, pinDto, setPasswordDto, setUsernameDto, userIdDto } from './user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterService } from './multer.service';
+import { ChannelService } from './channel.service';
 
 @Controller('user')
 export class UserController {
@@ -13,6 +14,7 @@ export class UserController {
 		private readonly userService: UserService,
 		private readonly authService: AuthService,
 		private readonly multerService: MulterService,
+		private readonly channelService: ChannelService,
 	) {}
 
 	@UseGuards(JwtAuthGuard)
@@ -146,5 +148,13 @@ export class UserController {
 	async unfriend(@Req() req: any, @Body() body: BlockFriendDto) {
 		if (!body || !body.friendID) throw new HttpException('Username Invalid', HttpStatus.BAD_REQUEST);
 		return this.userService.unfriend(req.user.id, body.friendID);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@UsePipes(ValidationPipe)
+	@Post('/createChannel')
+	async createChannel(@Req() req:any, @Body() body: CreateChannelDto) {
+		if (!body || !req.user.id) throw new HttpException('No Channel Name or Username', 400);
+		return this.channelService.createChannel(req.user.id, body);
 	}
 }

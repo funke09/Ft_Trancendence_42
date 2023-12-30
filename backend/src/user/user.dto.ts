@@ -1,4 +1,4 @@
-import { IsAlphanumeric, IsEmail, IsNotEmpty, IsNumber, IsString, MinLength } from "class-validator";
+import { IsAlphanumeric, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from "class-validator";
 
 export class SetEmailDto {
 	@IsEmail()
@@ -35,3 +35,26 @@ export class UnblockFriendDto {
 	@IsNumber()
 	friendID: number;
 }
+
+export class CreateChannelDto {
+	@IsString()
+	@IsAlphanumeric()
+	name: string;
+  
+	createdAt?: Date | string;
+	updatedAt?: Date | string;
+  
+	type: string;
+  
+	password?: string | "";
+  
+	owner: string;
+  
+	members?: string[];
+	admins?: string[];
+	invited?: string[];
+	banned?: string[];
+	kicked?: string[];
+	msgs?: string[];
+};
+  
