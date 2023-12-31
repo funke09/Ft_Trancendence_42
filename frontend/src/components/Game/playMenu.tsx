@@ -6,7 +6,6 @@ import {
   ListItem,
   Button,
   Input,
-  Alert,
 } from "@material-tailwind/react";
 import Image from "next/image";
 import QueueModal from "./findGame";
@@ -14,8 +13,7 @@ import api from "@/api";
 import store, { setOpp } from "@/redux/store";
 import { useRouter } from "next/router";
 import gameSocket from "@/sockets/gameSocket";
-import { ToastContainer, toast } from "react-toastify";
-import chatSocket from "@/sockets/chatSocket";
+import { ToastContainer } from "react-toastify";
  
 export function PlayModal() {
 	const [selected, setSelected] = useState(1);
@@ -62,7 +60,6 @@ export function PlayModal() {
 	const router = useRouter();
 		
 	useEffect(() => {
-        if (!chatSocket.connected) chatSocket.connect();
         if (!gameSocket.connected) gameSocket.connect();
 
 		gameSocket.on("match", (data) => {

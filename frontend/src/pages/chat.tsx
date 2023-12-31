@@ -18,8 +18,6 @@ const Chat: React.FC = () => {
 	const Friends = user.Friends.filter((friend: any) => friend.status === 'Accepted');
 	const Channels = user.channels.filter((channel: any) => channel.banned !== user.id);
 
-	console.log(Channels);
-
 	const clickOpenAdd = () => setOpenAdd(!openAdd);
 	const clickOpenChannel = () => setOpenChannel(!openChannel);
 	
@@ -79,7 +77,7 @@ const Chat: React.FC = () => {
 							</div>
 						</div>
 					</div>
-					<div className="overflow-y-auto h-[450px] notif">
+					<div className="overflow-y-auto h-[450px] notif bg-white bg-opacity-10 mx-1 rounded-3xl">
 						<List className="justify-start items-start">
 							{Friends.length != 0 ? Friends.reverse().map((friend: any) => {
 								return <FriendList id={friend.friendID} />

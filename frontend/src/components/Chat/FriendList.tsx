@@ -23,8 +23,6 @@ const FriendList = ({id} : {id : number}) => {
 			})
 	}, [])
 
-	console.log(friend);
-
 	return (
 		<ListItem className="text-white">
 			<ListItemPrefix>

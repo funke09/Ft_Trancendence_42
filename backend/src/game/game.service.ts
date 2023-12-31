@@ -59,6 +59,10 @@ export class GameService {
 			p1Id: (await this.getUser(p1.client)).uid,
 			p2Id: (await this.getUser(p2.client)).uid,
 		  }, gameType);
+
+		  let p1Id = (await this.getUser(p1.client)).uid;
+		  let p2Id = (await this.getUser(p2.client)).uid; 
+		  this.setUserStatus(p1Id, p2Id, 'In-Game')
 	  
 		  game.endGameCallback = this.stopGame;
 		  this.games.set(id, game);
@@ -79,6 +83,19 @@ export class GameService {
 			game.move(client, data.move);
 		} catch (error) {}
 	}
+
+	async setUserStatus(p1: number, p2:number, status: string) {
+		try {
+			await this.prisma.user.update({
+				where: {id: p1},
+				data: {userStatus: status},
+			});
+			await this.prisma.user.update({
+				where: {id: p2},
+				data: {userStatus: status},
+			})
+		} catch {}
+	};
 
 	async invGame(fromClient: Socket, data: {username: string, gameType: number}) {
 		if (!data.username) return;
@@ -123,6 +140,7 @@ export class GameService {
 
 	async acceptGame(toClient: Socket, data: { username: string }) {
 		if (!data.username) return;
+		console.log("/Game: Accepted invite");
 	  
 		const fromClient = this.players.get(data.username);
 		if (!fromClient) {
@@ -154,6 +172,10 @@ export class GameService {
 		  p1Id: (await this.getUser(fromClient)).uid,
 		  p2Id: (await this.getUser(toClient)).uid,
 		}, invite.type);
+
+		let p1 = (await this.getUser(fromClient)).uid;
+		let p2 = (await this.getUser(toClient)).uid;
+		this.setUserStatus(p1, p2, 'In-Game')
 	  
 		game.endGameCallback = this.stopGame;
 		this.games.set(id, game);
@@ -283,6 +305,7 @@ export class GameService {
 				game = value;
 		});
 		if (!game) return;
+		this.setUserStatus(game.p1Id, game.p2Id, 'Online');
 		game.afkGame(username);
 	}
 }
