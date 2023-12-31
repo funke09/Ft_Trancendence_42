@@ -3,3 +3,7 @@ export class CreateChannelDto {
 	type: string;
 	password?: string | "";
 }
+
+export class SearchDto {
+	query: string;
+}

@@ -198,7 +198,7 @@ export class ChatGateway {
 		client.to(channelName).emit("PublicMsg", res);
 	}
 
-	@SubscribeMessage('search')
+	@SubscribeMessage('searchQuery')
 	async searchQuery(@ConnectedSocket() client: Socket, @MessageBody() payload: SearchDto) {
 		let user = await this.chatService.jwtDecoe(client);
 		if (!user) {

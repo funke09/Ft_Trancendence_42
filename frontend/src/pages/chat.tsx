@@ -5,15 +5,12 @@ import Loading from "@/components/Layout/Loading";
 import store, { setProfile } from "@/redux/store";
 import { ChatRoom } from "@/components/Chat/ChatRoom";
 import { IconButton, List, ListItem, ListItemPrefix, Menu, MenuHandler, MenuItem, MenuList, Tab, TabPanel, Tabs, TabsBody, TabsHeader, Tooltip, Typography } from "@material-tailwind/react";
-import Image from "next/image";
 import FriendList from "@/components/Chat/FriendList";
 import AddButton from "@/components/Chat/AddButton";
 import ChannelButton from "@/components/Chat/ChannelButton";
 import ChannelList from "@/components/Chat/ChannelList";
-
-const FriendTab = {
-	
-}
+import chatSocket from "@/sockets/chatSocket";
+import { SearchDto } from "@/components/Chat/types";
 
 const Chat: React.FC = () => {
 	const [loading, setLoading] = useState(true);
@@ -22,25 +19,40 @@ const Chat: React.FC = () => {
 	const user: any = store.getState().profile.user;
 	const Friends = user.Friends.filter((friend: any) => friend.status === 'Accepted');
 	const Channels = user.channels.filter((channel: any) => channel.banned !== user.id);
+	const [query, setQuery] = useState("");
+	const [searchResults, setSearchResults] = useState([]);
 	const [activeTab, setActiveTab] = useState("friends");
+	
+	const searchRes = searchResults;
 
 	const clickOpenAdd = () => setOpenAdd(!openAdd);
 	const clickOpenChannel = () => setOpenChannel(!openChannel);
 	
     useEffect(() => {
 		api.get("/user/profile")
-		.then((res: any) => {
-			if (res.status == 200) {
-					store.dispatch(setProfile(res.data));
-                    setLoading(false);
-                } else {
-                    window.location.href = "/";
-                }
+			.then((res: any) => {
+				if (res.status == 200) {
+						store.dispatch(setProfile(res.data));
+						setLoading(false);
+					} else {
+						window.location.href = "/";
+					}
             })
             .catch((err: any) => {
                 window.location.href = "/login";
             });
-    }, []);
+
+		if (query) {
+			const payload:SearchDto = {query};
+			chatSocket.emit('searchQuery', payload);
+		  
+			chatSocket.on('search', (result) => {
+			  setSearchResults(result);
+			});
+		}
+	}, [query]);
+
+	console.log(searchResults)
 
 	if (loading) {
 		return(<Loading/>);
@@ -72,15 +84,25 @@ const Chat: React.FC = () => {
 												<input
 												className="peer h-full w-full outline-none pl-4 text-[14px] text-gray-700 pr-2"
 												type="text"
-												id="search"
+												value={query} 
+              									onChange={e => {setQuery(e.target.value); if (!e.target.value) setQuery('')}}
 												placeholder="Search..." /> 
 											</div>
 										</div>
 										<List className="justify-start items-start">
-											{Friends.length != 0 ? Friends.reverse().map((friend: any) => {
-												return <FriendList id={friend.friendID} />
-											})
-											: <Typography variant="h3" className="justify-center self-center py-40 text-gray-500">No Friends</Typography>
+											{searchRes.length !== 0 ?
+												searchRes.map((res: any) => {
+													console.log("ZABII")
+													return <FriendList id={res.id}/>
+												})
+											: 
+											<>
+												{Friends.length != 0 ? Friends.reverse().map((friend: any) => {
+													return <FriendList id={friend.friendID} />
+												})
+												: <Typography variant="h3" className="justify-center self-center py-40 text-gray-500">No Friends</Typography>
+												}
+											</>
 											}
 										</List>
 								</TabPanel>
