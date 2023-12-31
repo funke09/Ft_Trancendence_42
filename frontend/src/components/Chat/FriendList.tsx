@@ -24,7 +24,8 @@ const FriendList = ({id} : {id : number}) => {
 	}, [])
 
 	return (
-		<ListItem className="text-white">
+		<>
+		<ListItem  className="text-white">
 			<ListItemPrefix>
 				<Badge invisible={lastMsg !== "Let's Chat...."} content={'new'} color='green'>
 					<Tooltip content={friend.userStatus} className={'bg-opacity-50'}>
@@ -47,6 +48,7 @@ const FriendList = ({id} : {id : number}) => {
 				</Typography>
 			</div>
 		</ListItem>
+		</>
 	)
 }
 
