@@ -511,7 +511,6 @@ export class ChatService {
     }
 
 
-
 	///////////// UTILS ///////////
 
 	async findUserByUsername(username: string) : Promise<any> {
