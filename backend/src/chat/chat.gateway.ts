@@ -2,7 +2,7 @@ import { HttpStatus } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { User } from "@prisma/client";
 import { Server, Socket } from "socket.io";
-import { AcceptFriendDto, AddFriendDto, AnyMsgDto, MsgPrivateReqDto, PublicMsgDto, SearchDto, SetChannelMsgDto, SocketResDto } from "./dto/chat.dto";
+import { AcceptFriendDto, AddFriendDto, AnyMsgDto, ChannelSearchDto, MsgPrivateReqDto, PublicMsgDto, SetChannelMsgDto, SocketResDto, UserSearchDto } from "./dto/chat.dto";
 import { ChatService } from "./chat.service";
 import { ChannelService } from "./channel.service";
 import { ChatHistory } from "./chat.history";
@@ -198,8 +198,8 @@ export class ChatGateway {
 		client.to(channelName).emit("PublicMsg", res);
 	}
 
-	@SubscribeMessage('searchQuery')
-	async searchQuery(@ConnectedSocket() client: Socket, @MessageBody() payload: SearchDto) {
+	@SubscribeMessage('userSearchQuery')
+	async userSearchQuery(@ConnectedSocket() client: Socket, @MessageBody() payload: UserSearchDto) {
 		let user = await this.chatService.jwtDecoe(client);
 		if (!user) {
 			const res: SocketResDto = {
@@ -211,7 +211,7 @@ export class ChatGateway {
 			return;
 		}
 
-		if (!payload || !payload.query) {
+		if (!payload || !payload.userQuery) {
 			const res: SocketResDto = {
 				status: HttpStatus.BAD_REQUEST,
 				message: 'No payload provided',
@@ -220,7 +220,75 @@ export class ChatGateway {
 			return;
 		}
 
-		const res = await this.chatService.searchQuery(user.uid, payload.query);
+		const res = await this.chatService.userSearchQuery(user.uid, payload.userQuery);
+		if (!res) {
+			const res: SocketResDto = {
+				status: HttpStatus.NOT_FOUND,
+				message: 'No results',
+			};
+			client.emit('search', res);
+			return;
+		}
+		client.emit('search', res);
+	}
+
+	@SubscribeMessage('channelSearchQuery')
+	async channelSearchQuery(@ConnectedSocket() client: Socket, @MessageBody() payload: ChannelSearchDto) {
+		let user = await this.chatService.jwtDecoe(client);
+		if (!user) {
+			const res: SocketResDto = {
+				status: HttpStatus.NOT_FOUND,
+				message: 'User not found',
+			};
+			client.emit('search', res);
+			client.disconnect();
+			return;
+		}
+
+		if (!payload || !payload.channelQuery) {
+			const res: SocketResDto = {
+				status: HttpStatus.BAD_REQUEST,
+				message: 'No payload provided',
+			};
+			client.emit('search', res);
+			return;
+		}
+
+		const res = await this.chatService.channelSearchQuery(user.uid, payload.channelQuery);
+		if (!res) {
+			const res: SocketResDto = {
+				status: HttpStatus.NOT_FOUND,
+				message: 'No results',
+			};
+			client.emit('search', res);
+			return;
+		}
+		client.emit('search', res);
+	}
+
+	@SubscribeMessage('searchAllChannels')
+	async searchAllChannels(@ConnectedSocket() client: Socket, @MessageBody() payload: ChannelSearchDto) {
+		let user = await this.chatService.jwtDecoe(client);
+		if (!user) {
+			const res: SocketResDto = {
+				status: HttpStatus.NOT_FOUND,
+				message: 'User not found',
+			};
+			client.emit('search', res);
+			client.disconnect();
+			return;
+		}
+
+		if (!payload || !payload.channelQuery) {
+			const res: SocketResDto = {
+				status: HttpStatus.BAD_REQUEST,
+				message: 'No payload provided',
+			};
+			client.emit('search', res);
+			return;
+		}
+
+		const res = await this.chatService.searchAllChannels(user.uid, payload.channelQuery);
 		if (!res) {
 			const res: SocketResDto = {
 				status: HttpStatus.NOT_FOUND,

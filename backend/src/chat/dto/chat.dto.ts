@@ -46,8 +46,12 @@ export class SetChannelMsgDto {
 	fromAvatar: string;
 }
 
-export class SearchDto {
-	query: string;
+export class UserSearchDto {
+	userQuery: string;
+};
+
+export class ChannelSearchDto {
+	channelQuery: string;
 };
 
 export class NotifsDto {

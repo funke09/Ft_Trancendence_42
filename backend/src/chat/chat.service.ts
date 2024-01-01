@@ -66,7 +66,7 @@ export class ChatService {
 		if (fromID.id < toID.id)
 			genID =  fromID.id + '+' + toID.id;
 		else
-			genID = toID.id + '+' + fromID;
+			genID = toID.id + '+' + fromID.id;
 
 		const id = `__private__@${genID}`;
 		return id;
@@ -147,8 +147,12 @@ export class ChatService {
 	}
 
 
-	async searchQuery(userId: number, query: string) : Promise<any[]> {
-		const User = await this.prisma.user.findUnique({where: {id: userId}});
+	async userSearchQuery(userId: number, query: string) : Promise<any[]> {
+		const User = await this.prisma.user.findUnique({
+			where: {id: userId}, 
+			include: {Friends: true}
+		});
+		
 		let users = await this.prisma.user.findMany({
 			where: {
 				OR: [
@@ -165,23 +169,39 @@ export class ChatService {
 				userStatus: true,
 				id: true,
 				avatar: true,
+				Friends: true,
 			},
 		});
 
 		users = users.filter((user) => {
-			if (User.Blocked.includes(user.id)) return false;
-			return true;
+			if (User.Friends.some(friend => friend.friendID === user.id && friend.status === 'Accepted')) {
+				return true;
+			}
+			return false;
 		});
 
-		const channels = await this.prisma.channel.findMany({
+
+		if (users.length === 0) return [];
+
+		return [...users];
+	}
+
+	async channelSearchQuery(userId: number, query: string) : Promise<any[]> {
+		const User = await this.prisma.user.findUnique({
+			where: {id: userId},
+			include: { channels: true }
+		});
+	 
+		let channels = await this.prisma.channel.findMany({
 			where: {
-				name: {
-					contains: query,
-					mode: 'insensitive',
-				},
-				type: {
-					not: 'private',
-				},
+				AND: [
+					{
+					   name: {
+						   contains: query,
+						   mode: 'insensitive',
+					   },
+					},
+				]
 			},
 			select: {
 				name: true,
@@ -190,12 +210,59 @@ export class ChatService {
 				ownerId: true,
 			},
 		});
+	 
+		channels = channels.filter((channel) => {
+			if (User.channels.some(chan => chan.id === channel.id)) {
+				return true;
+			}
+			return false;
+		});
+	 
+		if (channels.length === 0) return [];
+	 
+		return [...channels];
+	}
 
-		if (users.length === 0 && channels.length === 0) return [];
-		if (users.length === 0) return channels;
-		if (channels.length === 0) return users;
+	async searchAllChannels(userId: number, query: string) : Promise<any[]> {
+	    const user = await this.prisma.user.findUnique({
+	        where: { id: userId },
+	        select: { channels: true }
+	    });
 
-		return [...users, ...channels];
+	    const userChannelIds = user.channels.map(channel => channel.id);
+
+	    let channels = await this.prisma.channel.findMany({
+	        where: {
+	            AND: [
+	                {
+	                    name: {
+	                        contains: query,
+	                        mode: 'insensitive',
+	                    },
+	                },
+	                {
+	                    type: {
+	                        not: 'private',
+	                    },
+	                },
+	                {
+	                    id: {
+	                        notIn: userChannelIds,
+	                    },
+	                },
+	            ],
+	        },
+	        select: {
+	            name: true,
+	            id: true,
+	            type: true,
+	            ownerId: true,
+	        },
+	    });
+
+	    if (channels.length === 0) return [];
+
+	    return [...channels];
 	}
 
 	async setUserOnline(id: number) : Promise<any> {

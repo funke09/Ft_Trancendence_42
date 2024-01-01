@@ -4,6 +4,10 @@ export class CreateChannelDto {
 	password?: string | "";
 }
 
-export class SearchDto {
-	query: string;
+export class UserSearchDto {
+	userQuery: string;
+}
+
+export class ChannelSearchDto {
+	channelQuery: string;
 }
