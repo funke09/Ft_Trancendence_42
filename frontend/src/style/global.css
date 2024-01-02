@@ -232,12 +232,12 @@ body::before {
 
 
 .custom-chat-style {
-    height: 60rem; /* 697.5px / 16px = 43.59375rem */
+   /* 697.5px / 16px = 43.59375rem */
     flex-shrink: 0;
-	display: flex;
-    border-radius:1rem 1rem; /* Assuming 20px = 1.25rem, 10px = 0.625rem */
-    background: linear-gradient(180deg, rgba(19, 120, 130, 0.44) 0%, #146871 100%);
-    box-shadow: 0px 0.25rem 0.25rem 0px rgba(0, 0, 0, 0.25); /* Assuming 4px = 0.25rem */
+	display: block;
+    /* border-radius:0rem 0 1rem 0; Assuming 20px = 1.25rem, 10px = 0.625rem */
+    background: linear-gradient(180deg, #426666f2 0%, #146871 100%);
+    box-shadow: 0px 0.25rem 0.25rem 0px rgba(12, 12, 12, 0.25); /* Assuming 4px = 0.25rem */
 	justify-content: end;
 }
 .custom-slid-style {
@@ -254,12 +254,11 @@ body::before {
     box-shadow: 0px 0.25rem 0.25rem 0px rgba(0, 0, 0, 0.25); /* Assuming 4px = 0.25rem */
 }
 .nav-chat-style {
-    height: 7.5rem; /* 120.125px / 16px = 7.508rem */
     flex-shrink: 0;
-    border-radius: 1rem 1rem;
-    /* background: #175262f2; */
+    /* border-radius: 1rem 1rem; */
+    background: #315e5ef2;
 	
-	background: linear-gradient(180deg, rgba(19, 120, 130, 0.44) 0%, #146871 100%);
+	/* background: linear-gradient(180deg, rgba(19, 120, 130, 0.44) 0%, #146871 100%); */
 }
 
 .points{

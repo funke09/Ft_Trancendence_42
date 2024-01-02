@@ -18,6 +18,8 @@ const Chat: React.FC = () => {
 	const Friends = user.Friends.filter((friend: any) => friend.status === 'Accepted');
 	const Channels = user.channels.filter((channel: any) => channel.banned !== user.id);
 
+	const [selectedFriend, setSelectedFriend] = useState(null);
+
 	const clickOpenAdd = () => setOpenAdd(!openAdd);
 	const clickOpenChannel = () => setOpenChannel(!openChannel);
 	
@@ -122,6 +124,7 @@ const Chat: React.FC = () => {
 				</section>
 				<section>
 					{/* Chat Room */}
+					<ChatRoom friendID={4} />
 				</section>
 			</div>
 			{openAdd && <AddButton open={openAdd} setOpen={setOpenAdd}/>}
