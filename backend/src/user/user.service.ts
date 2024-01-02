@@ -211,6 +211,34 @@ export class UserService {
 		return new HttpException('Friend Request Rejected', 200);
 	}
 
+	async removePrivateChannel(userId1: number, userId2: number) {
+		// Construct the private channel ID
+		const channelId = `__private__@${Math.min(userId1, userId2)}+${Math.max(userId1, userId2)}`;
+	
+		// Fetch the users
+		const user1 = await this.prisma.user.findUnique({ where: { id: userId1 } });
+		const user2 = await this.prisma.user.findUnique({ where: { id: userId2 } });
+	
+		if (!user1 || !user2) {
+			throw new NotFoundException(`User not found`);
+		}
+	
+		// Remove the channel from the privateChannels arrays
+		const updatedPrivateChannels1 = user1.privateChannels.filter(c => c !== channelId);
+		const updatedPrivateChannels2 = user2.privateChannels.filter(c => c !== channelId);
+	
+		// Save the users back to the database
+		await this.prisma.user.update({
+			where: { id: userId1 },
+			data: { privateChannels: updatedPrivateChannels1 },
+		});
+	
+		await this.prisma.user.update({
+			where: { id: userId2 },
+			data: { privateChannels: updatedPrivateChannels2 },
+		});
+	}
+
 	async blockFriend(id: number, friendID: number) {
 		const user = await this.prisma.user.findUnique({ where: { id: id } });
 		const friend = await this.prisma.user.findUnique({ where: { id: friendID } });
@@ -237,6 +265,9 @@ export class UserService {
 			where: {userId: friend.id},
 			data: {status: 'Blocked'},
 		  })
+
+		  // Remove the private channel between the 2 users
+		  this.removePrivateChannel(id, friendID);
 		}
 		return new HttpException('Friend Blocked', HttpStatus.OK);
 	}

@@ -38,7 +38,6 @@ export class UnblockFriendDto {
 
 export class CreateChannelDto {
 	@IsString()
-	@IsAlphanumeric()
 	name: string;
   
 	createdAt?: Date | string;

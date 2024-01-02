@@ -13,6 +13,7 @@ import chatSocket from "@/sockets/chatSocket";
 import { ChannelSearchDto, UserSearchDto } from "@/components/Chat/types";
 import UserChatRoom from "@/components/Chat/UserChatRoom";
 import ChannelChatRoom from "@/components/Chat/ChannelChatRoom";
+import Image from "next/image";
 
 const Chat: React.FC = () => {
 	const [loading, setLoading] = useState(true);
@@ -80,22 +81,22 @@ const Chat: React.FC = () => {
 								indicatorProps={{
 								className: "bg-gray-900/50 shadow-none !text-gray-900",}}
 							>
-								<Tab className="text-white" value="friends" onClick={() => setActiveTab("friends")}>Friends</Tab>
-								<Tab className="text-white" value="channels" onClick={() => setActiveTab("channels")}>Channels</Tab>
+								<Tab key={'friends'} className="text-white" value="friends" onClick={() => setActiveTab("friends")}>Friends</Tab>
+								<Tab key={'channels'} className="text-white" value="channels" onClick={() => setActiveTab("channels")}>Channels</Tab>
 							</TabsHeader>
 							<TabsBody>
-								<TabPanel value="friends" className="px-0 overflow-y-auto max-h-[660px] notif">
+								<TabPanel key={'friends'} value="friends" className="px-0 overflow-y-auto max-h-[660px] notif">
 									<List className="justify-start items-start">
 										{Friends &&
 											(Friends.length !== 0 ?
-												Friends.reverse().map((friend: any) => {return <FriendList key={friend.friendID} friendObj={friend} onSelect={handleUserSelect}/>})
+												Friends.reverse().map((friend: any) => {return <FriendList key={friend.privateChannelId} friendObj={friend} onSelect={handleUserSelect}/>})
 												:
 												<Typography variant="h3" className="justify-center self-center py-40 text-gray-500">No Friends</Typography>
 											) 
 										}
 									</List>
 								</TabPanel>
-								<TabPanel value="channels" className="px-0 overflow-y-auto max-h-[660px] notif">
+								<TabPanel key={'channels'} value="channels" className="px-0 overflow-y-auto max-h-[660px] notif">
 									<List className="justify-start items-start">
 										{Channels &&
 											(Channels.length !== 0 ? 
