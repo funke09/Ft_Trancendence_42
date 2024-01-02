@@ -15,19 +15,19 @@ export class AuthService {
 
 	async signUser(profile: any): Promise<any> {
 		let user = await this.findUserByEmail(profile.emails[0].value);
-
+		
 		if (!user) {
 			user = await this.createUser({
-				email: profile.emails[0].value,
-				username: profile.username,
-				avatar: profile._json.image.link,
-				userStatus: 'Offline',
-				password: 'tmpPass',
+			email: profile.emails[0].value,
+			username: profile.username,
+			avatar: profile._json.image.link,
+			userStatus: 'Offline',
+			password: 'tmpPass',
 			});
 		}
 		return user;
 	}
-
+	
 	async login(user: any, res: Response) {
 		try 
 		{
@@ -116,9 +116,14 @@ export class AuthService {
 		const existingUser = await this.prisma.user.findUnique({
 			where: { username: data.username },
 		});
+
+		const existingEmail = await this.prisma.user.findUnique({
+			where: { email: data.email },
+		});
+		
 	
-		if (existingUser) {
-			throw new BadRequestException('Username is already taken.');
+		if (existingUser || existingEmail) {
+			throw new BadRequestException('Username or email is already in use.');
 		}
 		const hash = await argon.hash(data.password);
 		return this.prisma.user.create({
