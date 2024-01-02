@@ -1,59 +1,43 @@
 import { Badge, ListItem, ListItemPrefix, Tooltip, Typography } from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
-import api from '@/api';
-import { toast } from 'react-toastify';
-import { AddFriend } from '../User/types';
-import Loading from '../Layout/Loading';
 
-const FriendList = ({id} : {id : number}) => {
-	const [loading, setLoading] = useState(true);
-	const [lastMsg, setLastMsg] = useState<string>("Let's Chat....");
-	const [friend, setFriend] = useState<any>("");
-	const [status, setStatus] = useState<string>("Offline");
+const FriendList = ({friendObj, onSelect} : {friendObj: any, onSelect: Function}) => {
+	const friend = friendObj.otherUser;
 
-	useEffect(() => {
-		api.get('user/id/' + id)
-			.then((res: any) => {
-				if (res.status === 200) {
-					setFriend(res.data);
-					setStatus(res.data.userStatus);
-					setLoading(false);
-				}
-			})
-			.catch((err) => {
-				toast.error(err?.response?.data.message ?? "An Error Occured!", {theme: "dark"});
-			})
-	}, [])
+	const handleSelect = () => {
+        onSelect(friendObj);
+    };
+
+	function getLastMsg() {
+        if (friendObj.chat.length == 0) return "Let's Chat....";
+        const lastMsg = friendObj.chat[friendObj.chat.length - 1];
+        return lastMsg.text;
+    }
 
 	return (
-		<>
-		{ loading ? <Loading/> :
-			<ListItem className="text-white">
-				<ListItemPrefix>
-					<Badge invisible={lastMsg !== "Let's Chat...."} content={'new'} color='green'>
-						<Tooltip content={friend.userStatus} className={'bg-opacity-50'}>
-							<Image
-								src={friend.avatar}
-								height={60}
-								width={60}
-								alt="avatar"
-								className={status.toLowerCase()}/>
-						</Tooltip>
-					</Badge>
-				</ListItemPrefix>
-				<div>
-					<Typography variant="h6">
-						{friend.username}
-					</Typography>
-					<Typography variant="small" className="font-normal opacity-70">
-						{/* Message capped at 20... */}
-						{lastMsg}
-					</Typography>
-				</div>
-			</ListItem>
-		}
-		</>
+		<ListItem className="text-white" onClick={handleSelect}>
+			<ListItemPrefix>
+				<Badge invisible={getLastMsg() !== "Let's Chat...."} content={'new'} color='green'>
+					<Tooltip content={friend.userStatus} className={'bg-opacity-50'}>
+						<Image
+							src={friend.avatar}
+							height={60}
+							width={60}
+							alt="avatar"
+							className={friend.userStatus.toLowerCase()}/>
+					</Tooltip>
+				</Badge>
+			</ListItemPrefix>
+			<div>
+				<Typography variant="h6">
+					{friend.username}
+				</Typography>
+				<Typography variant="small" className="font-normal opacity-70">
+					{getLastMsg().slice(0, 20)}
+				</Typography>
+			</div>
+		</ListItem>
 	)
 }
 

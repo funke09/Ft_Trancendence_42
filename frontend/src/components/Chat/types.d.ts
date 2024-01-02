@@ -11,3 +11,32 @@ export class UserSearchDto {
 export class ChannelSearchDto {
 	channelQuery: string;
 }
+
+export class AnyMsgDto {
+	avatar: string;
+	text: string;
+  
+	updatedAt: Date;
+	createdAt: Date;
+  
+	channelName: string | null;
+	channelId: number | null;
+  
+	privateChannelId: string | null;
+  
+	senderUsername: string;
+	senderId: number;
+  
+	receiverId: number | null;
+	receiverUsername: string | null;
+
+    user?:{
+        username: string;
+        avatar: string;
+    }
+};
+
+export class PrivateMsgReq {
+    toId: number;
+    text: string;
+};

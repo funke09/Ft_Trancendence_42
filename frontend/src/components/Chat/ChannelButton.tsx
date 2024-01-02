@@ -60,7 +60,6 @@ const ChannelButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatc
 			chatSocket.emit('searchAllChannels', payload);
 
 			chatSocket.on('search', (result) => {
-				console.log(result);
 				setSearchRes(result);
 			})
 		}

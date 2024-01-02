@@ -79,17 +79,14 @@ export class ChatHistory {
 			  let ids = null;
 			  try {
 				ids = id.split('@')[1].split('+');
-			  } catch {
-				return;
-			  }
+			  } catch {return;}
 	  
 			  if (ids.length != 2) {
 				return;
-			  }
+			}
 
-			  
 			  const otherUserId: number = parseInt(ids[0]) == user.id ? parseInt(ids[1]) : parseInt(ids[0]);
-			  
+
 			  const otherUser = await this.prisma.user.findUnique({
 				where: { id: otherUserId },
 				select: {
