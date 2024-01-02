@@ -11,7 +11,7 @@ import * as qrcode from 'qrcode';
 export class AuthService {
 	constructor(
 		private prisma: PrismaService,
-		private JwtService: JwtService) {}
+		private JwtService: JwtService,) {}
 
 	async signUser(profile: any): Promise<any> {
 		let user = await this.findUserByEmail(profile.emails[0].value);
@@ -132,11 +132,8 @@ export class AuthService {
 		});
 	 }
 
-	 async updateUser(id: number, data: Prisma.UserUpdateInput): Promise<User> {
-		return this.prisma.user.update({
-			where: { id: id },
-			data: data,
-		});
+	async updateEmail(userId: number, newEmail: string): Promise<any> {
+		return this.prisma.updateUserEmail(userId, newEmail);
 	  }
 
 	async findUserByEmail(email: string): Promise<any> {

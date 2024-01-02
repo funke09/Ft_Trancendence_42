@@ -62,14 +62,13 @@ export class AuthController {
 	  }
 	}
 
-	@Put(':id/update')
-	async updateProfile(
+	@Put(':id/email')
+	async updateEmail(
 		@Param('id') id: string,
-		@Body() updateData: Prisma.UserUpdateInput,
-	) 
-	{
+		@Body('newEmail') newEmail: string,
+		) {
 		const userId = parseInt(id, 10);
-		return this.authService.updateUser(userId, updateData);
+		return this.authService.updateEmail(userId, newEmail);
 	}
 
 	@Post('/login2FA')
