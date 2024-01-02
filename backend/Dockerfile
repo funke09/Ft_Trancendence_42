@@ -8,10 +8,10 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
-RUN npm i -g @nestjs/cli
-RUN npm i -g prisma
-RUN npx prisma generate
+RUN npm install \
+    && npm i -g @nestjs/cli \
+    && npm i -g prisma \
+    && npx prisma generate
 
 # Copy the rest of the application code to the container
 COPY . .

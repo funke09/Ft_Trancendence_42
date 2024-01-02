@@ -1,5 +1,7 @@
-import { ExecutionContext, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
+import { AuthService } from "../auth.service";
+import { Observable } from "rxjs";
 
 @Injectable()
 export class FTAuthGuard extends AuthGuard('42') {
@@ -13,3 +15,16 @@ export class FTAuthGuard extends AuthGuard('42') {
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {}
+
+@Injectable()
+export class JwtAuthGuardSockets implements CanActivate {
+	constructor (private authService: AuthService) {}
+
+	canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+		const client = context.switchToWs().getClient();
+		const token = client.handshake.headers.token;
+		if (!token) {
+			return false;
+		}
+	}
+}

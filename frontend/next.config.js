@@ -1,6 +1,19 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
 	images: {
-	  domains: ['cdn.intra.42.fr'],
-	},
-  }
+		remotePatterns: [
+		  {
+			protocol: 'https',
+			hostname: 'cdn.intra.42.fr',
+		  },
+		  {
+			protocol: 'https',
+			hostname: 'cdn-icons-png.flaticon.com',
+		  },
+		  {
+			protocol: 'http',
+			hostname: 'localhost',
+		  },
+		],
+	  },
+}

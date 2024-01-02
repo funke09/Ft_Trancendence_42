@@ -1,8 +1,9 @@
 import api from '@/api';
 import Header from '@/components/Layout/Header';
-import Navbar from '@/components/Layout/NavBar';
 import store, { setProfile } from '@/redux/store';
+import {Nav} from '@/components/Layout/NavBar';
 import { useEffect, useState } from 'react';
+import Loading from '@/components/Layout/Loading';
   
 const Home: React.FC = () => {
 	const [loading, setLoading] = useState(true);
@@ -21,13 +22,13 @@ const Home: React.FC = () => {
             });
     }, []);
 
-    if (loading) {
-        return <h1>Loading...</h1>;
-    }
+	if (loading) {
+		return(<Loading/>);
+	} 
 
   return (
     <div>
-      <Navbar />
+		<Nav/>
       <div>
         <Header />
       </div>

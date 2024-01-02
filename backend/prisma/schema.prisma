@@ -7,69 +7,168 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Status {
-	ONLINE
-	OFFLINE
-	INGAME
-}
-
 model User {
   id          Int     @default(autoincrement()) @id
   email       String? @unique
   username    String  @unique
   password	  String
   avatar      String?
-  userStatus  Status  @default(OFFLINE) // online | in-game | away ...
-  player1Games Game[] @relation("Player1")
-  player2Games Game[] @relation("Player2")
-  stats		  Stats?
-  createdAt   DateTime @default(now())
+  isTwoFA	  Boolean @default(false)
+  otpTwoFA	  String? @unique
 
-  @@map("users")
+  userStatus  String  // online | in-game | offline
+  userStats	  Stats?
+  Games		  Game[] @relation("Game")
+
+  createdAt   DateTime @default(now())
+  updatedAt	  DateTime @updatedAt
+
+  Blocked	  Int[]		@default([])
+  socketId	  String?
+
+  Friends	  Friends[] @relation("userFriends")
+  userFriends Friends[] @relation("friend")
+
+  privateChannels String[]
+  channels		  Channel[] @relation("Member")
+  AdminOf		  Channel[] @relation("Admin")
+  invitedTo		  Channel[] @relation("Invited")
+  kickedFrom	  Channel[] @relation("Kicked")
+  bannedFrom	  Channel[] @relation("Banned")
+  sentMsgs		  DM[]		@relation("sentMsgs")
+  receivedMsgs	  DM[]		@relation("receivedMsgs")
+  msgs			  Msg[]		@relation("UserMsgs")
+  notifs		  Notifs[]	@relation("UserNotifs")
+}
+
+model Msg {
+	id			Int		 @id @default(autoincrement())
+	createdAt	DateTime @default(now())
+	updatedAt	DateTime @updatedAt
+
+	text		String
+
+	channel		Channel @relation(fields: [channelId], references: [id])
+	channelId	Int
+
+	user		User 	@relation("UserMsgs", fields: [fromId], references: [id])
+	fromId		Int
+}
+
+model Notifs {
+	id			Int @id @default(autoincrement())
+	type		String // friend-request, game...
+	from		String
+	to			String
+	status		String // accepted, rejected... etc
+	msg			String
+	
+	createdAt	DateTime @default(now())
+	updatedAt	DateTime @updatedAt
+
+	user		User @relation("UserNotifs", fields: [userId], references: [id])
+	userId		Int
+	avatar		String	@default("http://localhost:3000/images/jesus.webp")
+	friendId	Int
+}
+
+model DM {
+	id			Int 	 @id @default(autoincrement())
+
+	text		String
+
+	createdAt	DateTime @default(now())
+
+	from		User 	 @relation("sentMsgs", fields: [fromId], references: [id])
+	fromId		Int
+
+	to			User	 @relation("receivedMsgs", fields: [toId], references: [id])
+	toId		Int
+
+	channelId	String
+}
+
+model Channel {
+	id			Int		@id @default(autoincrement())
+	name		String
+	createdAt	DateTime @default(now())
+	updatedAt	DateTime @updatedAt
+
+	type		String? // public, private, with key
+	password	String?
+	hash		String?
+	ownerId		Int
+	adminsIds	Int[]
+
+	member		User[]	@relation("Member")
+	admins		User[]	@relation("Admin")
+	invited		User[]	@relation("Invited")
+	kicked		User[]	@relation("Kicked")
+	banned		User[]	@relation("Banned")
+	msgs		Msg[]
 }
 
 model Stats {
-	User	User @relation(fields: [userId], references: [id])
-	userId 	Int
-	matchesPlayed Int @default(0)
+	id		Int @id @default(autoincrement())
+	
+	achievements Achievements[]
+
 	wins	Int @default(0)
 	losses	Int @default(0)
-	rank 	String @default("Iron") // Bronze, Silver, Gold, Emerald, Diamond, Master, Challenger
+	rank 	String	// Unranked, Bronze, Silver, Gold, Platinum, Diamond
+	
 	createdAt DateTime @default(now())
 	updatedAt DateTime @updatedAt
 
-	@@id([userId])
+  	user   User @relation(fields: [userId], references: [id])
+ 	userId Int  @unique
 }
 
-enum GameStatus {
-	MATCHMAKING
-	INVITE
-	ONGOING
-	FINISHED
+model Achievements {
+	id		Int @id @default(autoincrement())
+
+	user	Stats @relation(fields: [userId], references: [id])
+	userId	Int
+
+	name	String
+	desc	String
+	icon	String
+
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
 }
 
-enum GameType {
-	CLASSIC
-	MEDIUM
-	HARDCORE
+model Friends {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt	DateTime @updatedAt
+
+  fromId	Int
+  toId      Int
+
+  friendID	Int
+  status	String   @default("Pending") // Pending, Accepted, Declined, Blocked
+
+  user		User @relation("userFriends", fields: [userId], references: [id])
+  userId	Int
+
+  friend	User @relation("friend", fields: [friendId], references: [id])
+  friendId	Int
 }
 
 model Game {
-	id		Int @id @default(autoincrement())
-
-	player1	User? @relation("Player1", fields: [player1Id], references: [id])
-	player1Id Int?
-	player1Score Int @default(0)
-
-	player2	User? @relation("Player2", fields: [player2Id], references: [id])
-	player2Id Int?
-	player2Score Int @default(0)
-
-	winner Int?
-
-	status GameStatus
-	gameType GameType @default(CLASSIC)
-
-	createdAt DateTime @default(now())
-
+  id        Int      @id @default(autoincrement())
+  
+  outcome   String?  @default("Undefined") // Win | Loss
+  p1Score   Int      @default(0)
+  p2Score   Int      @default(0)
+  p2Id      Int
+  
+  gameType  String?  @default("Undefined")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user   User @relation("Game", fields: [userId], references: [id])
+  userId	Int
 }

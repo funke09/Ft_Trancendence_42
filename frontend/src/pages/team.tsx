@@ -1,17 +1,40 @@
-import React from "react";
-import Navbar from "@/components/Layout/NavBar";
+import React, { useEffect, useState } from "react";
+import store, { setProfile } from "@/redux/store";
+import api from "@/api";
+import { Nav } from "@/components/Layout/NavBar";
 
 const Team: React.FC = () => {
     const teamMembers = [
         { id: 1, name: "Funke09", githubUsername: "funke09", role: "Developer" },
         { id: 2, name: "haytham10", githubUsername: "haytham10", role: "Developer" },
-        { id: 3, name: "0xPacman", githubUsername: "0xPacman", role: "Developer" },
-        { id: 4, name: "YOPll", githubUsername: "YOPll", role: "Developer" },
+        { id: 3, name: "Oussamazz", githubUsername: "Oussamazz", role: "Developer" },
+        { id: 4, name: "0xPacman", githubUsername: "0xPacman", role: "Developer" },
+        { id: 5, name: "YOPll", githubUsername: "YOPll", role: "Developer" },
     ];
+
+	const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        api.get("/user/profile")
+            .then((res: any) => {
+                if (res.status == 200) {
+                    store.dispatch(setProfile(res.data));
+                    setLoading(false);
+                } else {
+                    window.location.href = "/";
+                }
+            })
+            .catch((err: any) => {
+                window.location.href = "/login";
+            });
+    }, []);
+
+    if (loading) {
+        return <h1>Loading...</h1>;
+    }
 
     return (
         <div className=" text-white">
-            <Navbar />
+			<Nav/>
             <div className="text-center my-8">
                 <h1 className="text-3xl">Our Team</h1>
                 <ul className="mt-4">

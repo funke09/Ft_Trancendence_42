@@ -15,3 +15,12 @@
   .Manrope {
 	font-family: "Manrope";
   }
+
+@font-face {
+	font-family: "Sarpanch";
+	src: url("../fonts/Sarpanch/Sarpanch-Bold.ttf") format("truetype");
+}
+
+	.Sarpanch {
+		font-family: "Sarpanch";
+	}
