@@ -58,6 +58,7 @@ Real-Time Updates:
     real-time updates, consider using WebSocket or a similar technology to notify users about incoming challenges or their responses without manual refreshing.
 
 -- ## Issue Section:
+    
     Issue-1 (Back-end && Axios): When a user logs in for the first time, everything works correctly. However, after logging in, changing user information, and logging out, attempting to log in again with the same credentials results in an error saying the username already exists.
 
     Tasks:
