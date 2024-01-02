@@ -3,6 +3,7 @@ import store from "@/redux/store";
 import { Avatar, Button, Dialog,IconButton, Menu, MenuHandler, MenuItem, MenuList, Tooltip, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { AxiosError, AxiosResponse } from "axios";
+import axios from 'axios';
 import Achiev from "./Achievements";
 import MatchHistory from "./MatchHistory";
 import Loading from "../Layout/Loading";
@@ -89,6 +90,16 @@ function Dashboard({ id }: {id: string}) {
 			.catch((err: AxiosError<{ message: string }>) => {});
 		}
 	}, [id, friendStatus]);	  
+
+	const handleProfileUpdate = async (newData: any) => {
+		try {
+		  const response = await axios.put(`/auth/${id}/update`, newData);
+		  // Update the profile state with the new data
+		  setProfile(response.data);
+		} catch (error) {
+		  // Handle error
+		}
+	  };
 
 	const sendMessage = (message: any) => {
 		if (!message || message.message === "") return;

@@ -29,7 +29,15 @@ export class AuthService {
 	}
 
 	async login(user: any, res: Response) {
-		try {
+		try 
+		{
+			const existingUser = await this.prisma.user.findUnique({
+				where: { 
+					username: user.username 
+				},});
+			if (!existingUser) {
+				throw new BadRequestException('User does not exist');
+			}	 
 			const payload = { username: user.username, uid: user.id };
 			const token = this.JwtService.sign(payload);
 			res.cookie('jwt', token, { httpOnly: false, path: '/'});
@@ -37,7 +45,7 @@ export class AuthService {
 		} catch (error) {
 			throw new BadRequestException('ERROR:', error.message);
 		}
-	}
+	 }
 
 	async signup(username: string, email: string, password: string) {
 		  const existingUser = await this.prisma.user.findFirst({
@@ -104,7 +112,14 @@ export class AuthService {
 		return {token, twoFA};
 	  }
 
-	async createUser(data: Prisma.UserCreateInput): Promise<User> {
+	  async createUser(data: Prisma.UserCreateInput): Promise<User> {
+		const existingUser = await this.prisma.user.findUnique({
+			where: { username: data.username },
+		});
+	
+		if (existingUser) {
+			throw new BadRequestException('Username is already taken.');
+		}
 		const hash = await argon.hash(data.password);
 		return this.prisma.user.create({
 			data: {
@@ -115,7 +130,14 @@ export class AuthService {
 				password: hash,	
 			},
 		});
-	}
+	 }
+
+	 async updateUser(id: number, data: Prisma.UserUpdateInput): Promise<User> {
+		return this.prisma.user.update({
+			where: { id: id },
+			data: data,
+		});
+	  }
 
 	async findUserByEmail(email: string): Promise<any> {
 		return this.prisma.user.findUnique({

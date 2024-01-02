@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
 import { Response } from 'express';
 import { JwtAuthGuard } from './utils/Guards';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { SetEmailDto, pinDto, setPasswordDto, setUsernameDto } from 'src/user/user.dto';
+import { Prisma } from '@prisma/client';
+
 
 @Controller('auth')
 export class AuthController {
@@ -58,6 +60,16 @@ export class AuthController {
 	  } catch (error) {
 		throw error;
 	  }
+	}
+
+	@Put(':id/update')
+	async updateProfile(
+		@Param('id') id: string,
+		@Body() updateData: Prisma.UserUpdateInput,
+	) 
+	{
+		const userId = parseInt(id, 10);
+		return this.authService.updateUser(userId, updateData);
 	}
 
 	@Post('/login2FA')
