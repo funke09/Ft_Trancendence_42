@@ -65,9 +65,5 @@ Real-Time Updates:
 
     Investigate where the createUser method is being called when a user logs in. It should only be called when creating a new user, not when logging in an existing user.
     Check the logic in the login method. If a user with the provided username exists, the method should authenticate the user and log them in, not attempt to create a new user.
-    Ensure that the user's updated information is being saved correctly when they update their profile. The updated information should persist and be used when the user logs out and logs back in.
-    Add error handling to give more informative messages when a login attempt fails. This can help with debugging this issue and can also improve the user experience.
-    Write tests to reproduce the issue and confirm when it's fixed. The tests should cover the steps the user takes when they encounter this issue.
-    Remember, these are just suggested tasks based on the information you've provided. You might need to adjust them based on your specific application and codebase.
 
     Issue-2 ( - && - ): ...
