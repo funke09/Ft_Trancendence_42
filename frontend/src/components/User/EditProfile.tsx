@@ -177,15 +177,14 @@ function EditProfile({ user } : {user : any}) {
 									type="email"
 									variant="standard"
 									color="white"
-									label="Email"
-									onChange={changeEmail}
+									label="You can't change your Email!"
+									readonly
 									crossOrigin={undefined}
 									containerProps={{className: "min-w-0",}}
 									className='text-white'
 								/>
 								<Button
 									size="sm"
-									onClick={() => saveEmail(email)}
 									color={email !== user.email ? "green" : "blue-gray"}
 									disabled={!email || email == user.email}
 									className="!absolute right-1 top-1 rounded"
