@@ -1,6 +1,6 @@
 import api from "@/api";
-import store from "@/redux/store";
-import { Avatar, Button, Dialog,IconButton, Menu, MenuHandler, MenuItem, MenuList, Tooltip, Typography } from "@material-tailwind/react";
+import store, { setProfile } from "@/redux/store";
+import { Avatar, Button,IconButton, Menu, MenuHandler, MenuList, Tooltip, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { AxiosError, AxiosResponse } from "axios";
 import Achiev from "./Achievements";
@@ -10,6 +10,9 @@ import EditProfile from "./EditProfile";
 import { toast } from "react-toastify";
 import chatSocket from "@/sockets/chatSocket";
 import { AddFriend, BlockFriend, UnblockFriend } from "./types";
+import { useDispatch } from "react-redux";
+import EnableTwoFA from "../Auth/EnableTwoFA";
+import { useSelector } from "react-redux";
 
 interface Game {
 	id: number;
@@ -53,51 +56,48 @@ function getAvatarBorder(rank: string | undefined, friendStatus: string): string
 }
 
 function Dashboard({ id }: {id: string}) {
-	const user = store.getState().profile.user;
-	const [profile, setProfile] = useState<any>(null);
+	const user = useSelector((state: any) => state.profile.user);
+	const [profile, setProfilee] = useState<any>(null);
 	const [stats, setStats] = useState<any>(null);
 	const [edit, setEdit] = useState(false);
 	const [loading, setLoading] = useState(true);
+	const [showEnableTwoFA, setShowEnableTwoFA] = useState(false);
 	const [friendStatus, setFriendStatus] = useState<'Accepted' | 'Not_Friend' | 'Pending' | 'Blocked'>("Not_Friend");
-	const [message, setMessage] = useState<string | null>("");
 	
 	useEffect(() => {
-		api.get("/user/id/" + id)
-		  .then((res: any) => {
-			if (res.status === 200) {
-			  setLoading(false);
-			  setProfile(res.data);
-			  const foundFriend = res?.data?.Friends.find((friend: any) => friend.friendId === user.id);
-			  if (foundFriend)
-				setFriendStatus(foundFriend.status);
-			}
-		  })
-		  .catch((err: any) => {
+		const fetchProfile = async () => {
+		  try {
+			const res = await api.get(`/user/id/${id}`);
+			setProfilee(res.data);
 			setLoading(false);
+			const foundFriend = res?.data?.Friends.find((friend: any) => friend.friendId === user.id);
+			if (foundFriend) setFriendStatus(foundFriend.status);
+		  } catch (err: any) {
 			toast.error(err?.response?.data?.messages?.toString(), { theme: 'dark' });
-		  });
-	  }, [id, friendStatus]);
+			setLoading(false);
+		  }
+		};
+	
+		fetchProfile();
+	}, [id]);
 	  
-	  useEffect(() => {
+	useEffect(() => {
 		if (friendStatus !== 'Blocked') {
 		  api.get("/user/getStats/" + id)
-			.then((res: AxiosResponse<GameData>) => {
+			.then((res) => {
 			  if (res.status === 200) {
 				setStats(res.data);
 			  }
 			})
-			.catch((err: AxiosError<{ message: string }>) => {});
+			.catch((err) => {});
 		}
-	}, [id, friendStatus]);	  
+	}, [id]);
 
-	const sendMessage = (message: any) => {
-		if (!message || message.message === "") return;
-		chatSocket.emit("msg", {
-			receiver: profile.username,
-			msg: message.message,
-		});
-		setMessage(null);
-		chatSocket.emit("reconnect");
+	const dispatch = useDispatch();
+	
+	const updateProfile = (newProfile: any) => {
+		setProfilee(newProfile);
+		dispatch(setProfile(newProfile));
 	};
 
 	const addUser = () => {
@@ -162,14 +162,13 @@ function Dashboard({ id }: {id: string}) {
 		const FriendParam = () => (
 			<MenuList className="bg-[#382A39] border-none hidden samwil:flex focus:outline-none rounded-[15px]">
 				<div className="focus:outline-none flex flex-col gap-y-2 justify-center m-auto">
-					<Button className="opacity-75 hover:opacity-100 text-md p-2" variant="text" color="white">Send Message</Button>
 					<Button onClick={unfriend} className="opacity-75 hover:opacity-100 text-md p-2" variant="text" color="white">Unfriend</Button>
 					<Button onClick={block} className="opacity-75 hover:opacity-100 text-md p-2" variant="text" color="red">Block</Button>
 				</div>
 			</MenuList>
 		)
 		
-		if (profile && profile.username === user.username) {
+		if (profile && profile.id === user.id) {
 		  return (
 			<IconButton onClick={clickEdit} size="sm" className="m-2 rounded-full shadow-md bg-[#351633] hover:scale-110 border-none">
 			  <i className="fa-solid fa-gear fa-xl" style={{ color: "#E1E1E1" }} />
@@ -215,10 +214,10 @@ function Dashboard({ id }: {id: string}) {
 		}
 	};
 
-	const clickEdit = () => setEdit(!edit);
+	const clickEdit = () => setEdit(true)
 
 	if (loading) return (<Loading/>);
-	
+
 	if (!profile)
 		return <Typography variant="h1" className="m-auto flex justify-center p-10 text-white">No Content</Typography>
 
@@ -227,7 +226,8 @@ function Dashboard({ id }: {id: string}) {
 		  <main className="min-h-[720px] max-w-[1200px] rounded-[15px] flex m-auto bg-[#472C45] opacity-80 mb-1">
 		  	<section className="w-full samwil:w-1/4 bg-[#643461] p-3 flex-col justify-center rounded-[15px]">
 				{renderProfileActions()}
-			  	<div className="flex-col flex items-center justify-start gap-3 pb-4">
+		  		{edit && <EditProfile user={profile} updateProfile={updateProfile} setEdit={setEdit} setShowEnableTwoFA={setShowEnableTwoFA}/>}
+				<div className="flex-col flex items-center justify-start gap-3 pb-4">
 				  <Tooltip className="bg-[#472C45] bg-opacity-70" content={friendStatus != 'Blocked' ? stats?.stats?.rank ? stats?.stats?.rank : 'Unranked' : 'Blocked'} placement="top" offset={10} animate={{mount: { scale: 1, y: 0 }, unmount: { scale: 0, y: 25 },}}>
 						<Avatar src={profile.avatar} variant="rounded" size="xxl" className={getAvatarBorder(stats?.stats?.rank || 'Unranked', friendStatus)}/>
 				  </Tooltip>
@@ -255,7 +255,7 @@ function Dashboard({ id }: {id: string}) {
 				}
 			</section>
 		  </main>
-		  {edit && <EditProfile user={user}/>}
+		  {showEnableTwoFA && <EnableTwoFA setShow={setShowEnableTwoFA}/>}
 	  </div>
 	);
 }

@@ -3,70 +3,30 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import Image from "next/image";
 import api from "@/api";
-import EnableTwoFA from "../Auth/EnableTwoFA";
+import store, { setProfile } from "@/redux/store";
 
-export function refreshPage() {
-	setTimeout(() => {
-		location.reload();
-	}, 1000);
-}
-
-function saveUsername(username: string) {
-	api.post('/user/setUsername', {username})
-		.then((res: any) => {
-			if (res.status == 201) {
-				toast.success('Successfully changed Username', {
-					position: "top-right",
-					autoClose: 1000,
-					theme: "dark",})
-			}
-		})
-		.catch((error: any) => {
-			toast.error(error?.response.data.messages[0].toString(), {
-				position: "top-right",
-				autoClose: 3000,
-				theme: "dark",});
-		})
-}
-
-function savePassword(password: string) {
-	api.post('/user/setPassword', {password})
-		.then((res: any) => {
-			if (res.status == 201) {
-				toast.success('Successfully changed Password', {
-					position: "top-right",
-					autoClose: 1000,
-					theme: "dark",})
-			}
-		})
-		.catch((error) => {
-			toast.error(error?.response.data.messages[0].toString(), {
-				position: "top-right",
-				autoClose: 3000,
-				theme: "dark",});
-		})
-}
-
-function EditProfile({ user } : {user : any}) {
-	const [open, setOpen] = useState(true);
+function EditProfile({ user, updateProfile, setEdit, setShowEnableTwoFA} : {user : any, updateProfile: (newProfile: any) => void, setEdit: React.Dispatch<React.SetStateAction<boolean>>, setShowEnableTwoFA: any }) {
+	const [open] = useState(true);
 	const [username, setUsername] = useState(user.username);
 	const [password, setPassword] = useState("*********");
 	const [avatar, setAvatar] = useState<any>(user.avatar);
 	const [file, setFile] = useState<File | null>(null);
-	const [clickEnb, setClickEnb] = useState(false);
 	const [is2FA, setIs2FA] = useState(user.isTwoFA);
 
-	const openHandler = () => setOpen(!open);
+	const openHandler = () => setEdit(!open);
 	
-	const clickEnable = () => setClickEnb(!clickEnb);
+	const clickEnable = () => {
+		setEdit(false); // Close the EditProfile modal
+		setShowEnableTwoFA(true); // Open the EnableTwoFA modal
+	}
 
 	const clickDisable = () => {
 		api.post('/user/disableTwoFA', {userId: user.id})
 			.then((res: any) => {
 				if (res.status == 201) {
-					setIs2FA(false);
+					updateProfile({...user});
 					toast.success("2-FA Disabled", {theme: "dark"});
-					setOpen(false);
+					setEdit(!open);
 				}
 			})
 			.catch((err: any) => {
@@ -79,29 +39,70 @@ function EditProfile({ user } : {user : any}) {
 
 	useEffect(() => {
 		if (file) 
-			setAvatar(URL.createObjectURL(file));
+		  setAvatar(URL.createObjectURL(file));
 		else 
-			setAvatar(user.avatar);
-	}, [file]);
-
-	const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+		  setAvatar(user.avatar);
+	  }, [file]);
+	
+	  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files)
 		  setFile(e.target.files[0]);
-	  };
+	};
 
-	function saveAvatar() {
-        if (!file) return;
+	
+	const saveAvatar = async () => {
+		if (!file) return;
 		const formData = new FormData();
 		formData.append('file', file as File);
+	
+		try {
+		  const res = await api.post('/user/saveAvatar', formData);
+		  if (res.status == 201){
+			toast.success("Avatar changed Successfully", {theme: 'dark'});
+			updateProfile({...user, avatar});
+			setEdit(false);
+		  }
+		} catch (error: any) {
+		  toast.error(error?.response?.data?.messages?.toString(), {theme: 'dark'});
+		}
+	}
 
-		api.post('/user/saveAvatar', formData)
+	function saveUsername(username: string) {
+		api.post('/user/setUsername', {username})
 			.then((res: any) => {
-				if (res.status == 201){
-					toast.success("Avatar changed Successfully", {theme: 'dark'});
+				if (res.status == 201) {
+					toast.success('Username changed Successfully', {
+						position: "top-right",
+						autoClose: 1000,
+						theme: "dark",})
+						updateProfile({...user, username});
+						setEdit(!open);
 				}
 			})
 			.catch((error: any) => {
-				toast.error(error?.response?.data?.messages?.toString(), {theme: 'dark'});
+				toast.error(error?.response.data.messages[0].toString(), {
+					position: "top-right",
+					autoClose: 3000,
+					theme: "dark",});
+			})
+	}
+	
+	function savePassword(password: string) {
+		api.post('/user/setPassword', {password})
+			.then((res: any) => {
+				if (res.status == 201) {
+					toast.success('Successfully changed Password', {
+						position: "top-right",
+						autoClose: 1000,
+						theme: "dark",});
+					setEdit(!open);
+				}
+			})
+			.catch((error) => {
+				toast.error(error?.response.data.messages[0].toString(), {
+					position: "top-right",
+					autoClose: 3000,
+					theme: "dark",});
 			})
 	}
 	
@@ -175,7 +176,6 @@ function EditProfile({ user } : {user : any}) {
 				<Button onClick={clickEnable} variant="gradient" color="green">Enable 2FA</Button>
 				:
 				<Button onClick={clickDisable} variant="gradient" color="red">Disable 2FA</Button>}
-				{clickEnb && <EnableTwoFA/>}
 				<ToastContainer/>
 			</DialogBody>
 		</Dialog>

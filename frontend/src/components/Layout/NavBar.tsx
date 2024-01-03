@@ -29,7 +29,7 @@ import { toast } from "react-toastify";
 import chatSocket from "@/sockets/chatSocket";
 import { AddFriend } from "../User/types";
 import { SocketRes } from "@/sockets/types";
-import { refreshPage } from "../User/EditProfile";
+import { useSelector } from "react-redux";
  
 
 export function Nav() {
@@ -39,7 +39,7 @@ export function Nav() {
  
   const handleOpen = () => setOpen(!open);
 
-  const user: UserType = store.getState().profile.user;
+  const user: UserType = useSelector((state: any) => state.profile.user);
 
   function clickLogout() {
 	api.post('/auth/logout')

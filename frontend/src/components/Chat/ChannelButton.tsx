@@ -3,7 +3,6 @@ import { Button, Card, Dialog, Input, List, Switch, Tab, TabPanel, Tabs, TabsBod
 import React, { useEffect, useState } from 'react'
 import { ChannelSearchDto, CreateChannelDto } from './types';
 import { ToastContainer, toast } from 'react-toastify';
-import { refreshPage } from '../User/EditProfile';
 import ChannelList from './ChannelList';
 import chatSocket from '@/sockets/chatSocket';
 

@@ -133,28 +133,17 @@ export class UserService {
 	async setUsername(id: number, username: string) {
 		const user = await this.prisma.user.findUnique({where: {id: id}});
 		if (!user) throw new NotFoundException(`${id} not found`);
-
+	
 		const checkUser = await this.prisma.user.findFirst({where: {username: username}});
-		if (checkUser) throw new BadRequestException("Username already taken")
+		if (checkUser) throw new BadRequestException("Username already taken");
 		
-		await this.prisma.user.update({
+		const updatedUser = await this.prisma.user.update({
 			where: {id: id},
 			data: {username: username},
 		});
-	}
-
-	async setEmail(id: number, email: string) {
-		const user = await this.prisma.user.findUnique({where: {id: id},});
-		if (!user) throw new NotFoundException(`${id} not found`);
-
-		const checkEmail = await this.prisma.user.findFirst({where: {email: email}});
-		if (checkEmail) throw new BadRequestException("Email already used");
-
-		await this.prisma.user.update({
-			where: {id: id},
-			data: {email: email},
-		});
-	}
+	
+		return updatedUser;
+	}	
 
 	async setPassword(id: number, password: string) {
 		const user = await this.prisma.user.findUnique({where: {id: id}});

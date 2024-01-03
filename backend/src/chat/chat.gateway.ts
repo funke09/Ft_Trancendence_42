@@ -430,6 +430,7 @@ export class ChatGateway {
 		}
 		this.onlineClients.set(user.username, client);
 
+
 		await this.chatService.setUserOnline(user.uid);
 		await this.chatService.setUserSocketId(client.id, user.uid);
 		await this.chatService.joinChannelsBack(user.uid, client);

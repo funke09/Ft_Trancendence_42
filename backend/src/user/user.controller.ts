@@ -67,16 +67,10 @@ export class UserController {
 
 	@UseGuards(JwtAuthGuard)
 	@Post('/setUsername')
-	async setUsername(@Req() req: any, @Body() username: setUsernameDto) {
-		if (!username) throw new BadRequestException("Invalid Username");
-		await this.userService.setUsername(req.user.id, username.username);
-	}
-
-	@UseGuards(JwtAuthGuard)
-	@Post('/setEmail')
-	async setEmail(@Req() req: any, @Body() emailDto: SetEmailDto) {
-		if (!emailDto) throw new BadRequestException("Invalid Email");
-		await this.userService.setEmail(req.user.id, emailDto.email);
+	async setUsername(@Res() res: any, @Req() req: any, @Body() username: setUsernameDto) {
+	    if (!username) throw new BadRequestException("Invalid Username");
+	    const updatedUser = await this.userService.setUsername(req.user.id, username.username);
+	    await this.authService.login(updatedUser, res);
 	}
 
 	@UseGuards(JwtAuthGuard)

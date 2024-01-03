@@ -14,6 +14,7 @@ import store, { setOpp } from "@/redux/store";
 import { useRouter } from "next/router";
 import gameSocket from "@/sockets/gameSocket";
 import { ToastContainer } from "react-toastify";
+import { useSelector } from "react-redux";
  
 export function PlayModal() {
 	const [selected, setSelected] = useState(1);
@@ -36,7 +37,7 @@ export function PlayModal() {
 	const handleOpen = () => setIsFindGame(!isFindGame);
 	const handleInvOpen = () => setIsInvite(!isInvite);
 
-	const currentUser = store.getState().profile.user;
+	const currentUser = useSelector((state: any) => state.profile.user);
 
 	const clickFindGame = () => {
 		gameSocket.emit("createGame", { gameType: selected });
@@ -60,25 +61,25 @@ export function PlayModal() {
 	const router = useRouter();
 		
 	useEffect(() => {
-        if (!gameSocket.connected) gameSocket.connect();
-
 		gameSocket.on("match", (data) => {
-			store.dispatch(setOpp(data));
-			router.push(`/game/${data.roomName}`);
+		  store.dispatch(setOpp(data));
+		  router.push(`/game/${data.roomName}`);
 		});
-		
+	
 		gameSocket.on("cancelGame", () => {
-			setIsFindGame(false);
-			setIsInvite(false);
+		  setIsFindGame(false);
+		  setIsInvite(false);
 		});
-
-        gameSocket.on("invite-canceled", () => {
-            setIsInvite(false);
-        });
-
+	
+		gameSocket.on("invite-canceled", () => {
+		  setIsInvite(false);
+		});
+	
 		return () => {
-			setIsInvite(false);
-		}
+		  gameSocket.off("match");
+		  gameSocket.off("cancelGame");
+		  gameSocket.off("invite-canceled");
+		};
 	}, []);
 	
 	return (
