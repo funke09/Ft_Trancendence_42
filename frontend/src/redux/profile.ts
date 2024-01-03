@@ -59,10 +59,7 @@ const profileSlice = createSlice({
 	initialState: initialStateProfile,
 	reducers: {
 		setProfile: (state, action) => {
-			state.user = {
-				...action.payload,
-				email: state.user.email,
-			};
+			state.user = action.payload;
 		},
 		updateAvatar: (state, action) => {
 			state.user.avatar = action.payload.avatar;

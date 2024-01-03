@@ -140,8 +140,7 @@ export class GameService {
 
 	async acceptGame(toClient: Socket, data: { username: string }) {
 		if (!data.username) return;
-		console.log("/Game: Accepted invite");
-	  
+		
 		const fromClient = this.players.get(data.username);
 		if (!fromClient) {
 		  toClient.emit('error', `${data.username} is no longer Online`);

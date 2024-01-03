@@ -17,6 +17,7 @@ const SocketComp = () => {
 				gameSocket.connect();
 			else
 				setConnectedGame(!connectedGame);
+
 			if (!chatSocket.connected)
 				chatSocket.connect();
 			else

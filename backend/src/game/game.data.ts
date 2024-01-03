@@ -233,19 +233,22 @@ export class GameData {
 		  },
 		},
 	  });
-  
+
+	  const updatedWStats = await this.getUserStatsByUsername(res.winner);
+	  const updatedLStats = await this.getUserStatsByUsername(res.loser);
+
 	  await this.prisma.stats.update({
 		where: { userId: wUser.id },
-		data: { wins: { increment: 1 } },
+		data: { wins: updatedWStats.wins },
 	  });
-  
+
 	  await this.prisma.stats.update({
 		where: { userId: lUser.id },
-		data: { losses: { increment: 1 } },
+		data: { losses: updatedLStats.losses },
 	  });
-  
-	  await this.handleRankUpdates(wUser.id, wStats?.wins);
-  
+
+	  await this.handleRankUpdates(wUser.id, updatedWStats.wins);
+
 	} catch (error) {
 	  console.error("Error:", error);
 	}

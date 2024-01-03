@@ -76,7 +76,7 @@ function Dashboard({ id }: {id: string}) {
 			setLoading(false);
 			toast.error(err?.response?.data?.messages?.toString(), { theme: 'dark' });
 		  });
-	  }, [id]);
+	  }, [id, friendStatus]);
 	  
 	  useEffect(() => {
 		if (friendStatus !== 'Blocked') {

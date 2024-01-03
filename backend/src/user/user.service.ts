@@ -266,7 +266,6 @@ export class UserService {
 			data: {status: 'Blocked'},
 		  })
 
-		  // Remove the private channel between the 2 users
 		  this.removePrivateChannel(id, friendID);
 		}
 		return new HttpException('Friend Blocked', HttpStatus.OK);
@@ -309,8 +308,9 @@ export class UserService {
 			],
 		  },
 		});
+
+		this.removePrivateChannel(id, friendID);
 	  
 		return new HttpException(`${friend.username} Unfriended`, HttpStatus.OK);
-	}		
-	  
+	}			  
 }

@@ -21,7 +21,7 @@ const Chat: React.FC = () => {
 	const [openChannel, setOpenChannel] = useState(false);
 	const user: any = store.getState().profile.user;
 	const [Friends, setFriends] = useState<any>([]);
-	const Channels = user.channels.filter((channel: any) => channel.banned !== user.id);
+	const [Channels, setChannels] = useState<any>([]);
 	const [activeTab, setActiveTab] = useState("friends");
 	const [selectedUser, setSelectedUser] = useState<any>(null);
 	const [selectedChannel, setSelectedChannel] = useState(null);
@@ -48,6 +48,12 @@ const Chat: React.FC = () => {
                 return chatsFromStore;
             });
         });
+
+		setChannels(store.getState().chat.GroupChats);
+		store.subscribe(() => {
+			const chatsFromStore = store.getState().chat.GroupChats;
+			setChannels(chatsFromStore);
+		});
     }, []);
 	
     useEffect(() => {
@@ -69,6 +75,8 @@ const Chat: React.FC = () => {
 	if (loading) {
 		return(<Loading/>);
 	}
+
+	console.log('channels:', Channels);
 
     return (
         <><Nav/>
@@ -100,7 +108,7 @@ const Chat: React.FC = () => {
 									<List className="justify-start items-start">
 										{Channels &&
 											(Channels.length !== 0 ? 
-												Channels.reverse().map((channel: any) => {return <ChannelList key={channel.id} channel={channel}/>})
+												Channels.reverse().map((channel: any) => {return <ChannelList key={channel.id} channel={channel} onSelect={handleChannelSelect}/>})
 												:
 												<Typography variant="h3" className="justify-center self-center py-40 text-gray-500">No Channels</Typography>
 											)

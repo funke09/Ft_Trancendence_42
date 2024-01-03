@@ -143,7 +143,6 @@ export class AuthService {
         });
     }
 
-
 	async enableTwoFA(id: number) {
 		try {
 		  const user = await this.prisma.user.findUnique({ where: { id: id } });

@@ -1,11 +1,7 @@
-import api from '@/api';
 import gameSocket from '@/sockets/gameSocket';
 import { Button, Card, CardBody, CardFooter, Dialog, Typography } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
-import Loading from '../Layout/Loading';
-import store, { setOpp } from '@/redux/store';
-import {useRouter} from 'next/router';
 
 interface InviteData {
 	username: string;
@@ -16,7 +12,6 @@ interface InviteData {
 function Invite() {
 	const [open, setOpen] = useState(false);
 	const [invData, setInvData] = useState<InviteData>({username: "", id: 0, avatar: ""});
-	const router = useRouter();
 
 	const handleOpen = () => setOpen(!open);
 	

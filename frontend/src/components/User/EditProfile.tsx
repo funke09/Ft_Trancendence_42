@@ -19,7 +19,6 @@ function saveUsername(username: string) {
 					position: "top-right",
 					autoClose: 1000,
 					theme: "dark",})
-				refreshPage();
 			}
 		})
 		.catch((error: any) => {
@@ -27,26 +26,6 @@ function saveUsername(username: string) {
 				position: "top-right",
 				autoClose: 3000,
 				theme: "dark",});
-		})
-}
-
-function saveEmail(email: string) {
-	api.post('/user/setEmail', {email})
-		.then((res: any) => {
-			if (res.status == 201) {
-				toast.success('Successfully changed Email', {
-					position: "top-right",
-					autoClose: 1000,
-					theme: "dark",})
-				refreshPage();
-			}
-		})
-		.catch((error: any) => {
-			toast.error(error?.response.data.messages[0].toString(), {
-				position: "top-right",
-				autoClose: 3000,
-				theme: "dark",
-			});
 		})
 }
 
@@ -58,7 +37,6 @@ function savePassword(password: string) {
 					position: "top-right",
 					autoClose: 1000,
 					theme: "dark",})
-				refreshPage();
 			}
 		})
 		.catch((error) => {
@@ -72,7 +50,6 @@ function savePassword(password: string) {
 function EditProfile({ user } : {user : any}) {
 	const [open, setOpen] = useState(true);
 	const [username, setUsername] = useState(user.username);
-	const [email, setEmail] = useState(user.email);
 	const [password, setPassword] = useState("*********");
 	const [avatar, setAvatar] = useState<any>(user.avatar);
 	const [file, setFile] = useState<File | null>(null);
@@ -89,7 +66,7 @@ function EditProfile({ user } : {user : any}) {
 				if (res.status == 201) {
 					setIs2FA(false);
 					toast.success("2-FA Disabled", {theme: "dark"});
-					refreshPage();
+					setOpen(false);
 				}
 			})
 			.catch((err: any) => {
@@ -98,7 +75,6 @@ function EditProfile({ user } : {user : any}) {
 	}
 
 	const changeUsername = ({ target } : {target: any}) => setUsername(target.value);
-	const changeEmail = ({ target } : {target: any}) => setEmail(target.value);
 	const changePassword = ({ target } : {target: any}) => setPassword(target.value);
 
 	useEffect(() => {
@@ -122,7 +98,6 @@ function EditProfile({ user } : {user : any}) {
 			.then((res: any) => {
 				if (res.status == 201){
 					toast.success("Avatar changed Successfully", {theme: 'dark'});
-					refreshPage();
 				}
 			})
 			.catch((error: any) => {
@@ -165,28 +140,6 @@ function EditProfile({ user } : {user : any}) {
 									onClick={() => saveUsername(username)}
 									color={username !== user.username ? "green" : "blue-gray"}
 									disabled={!username || username == user.username}
-									className="!absolute right-1 top-1 rounded"
-								>
-								SAVE
-								</Button>
-							</div>
-							<div className="relative flex w-full max-w-[20rem]">
-								<Input
-									size="lg"
-									value={email}
-									type="email"
-									variant="standard"
-									color="white"
-									label="You can't change your Email!"
-									readonly
-									crossOrigin={undefined}
-									containerProps={{className: "min-w-0",}}
-									className='text-white'
-								/>
-								<Button
-									size="sm"
-									color={email !== user.email ? "green" : "blue-gray"}
-									disabled={!email || email == user.email}
 									className="!absolute right-1 top-1 rounded"
 								>
 								SAVE

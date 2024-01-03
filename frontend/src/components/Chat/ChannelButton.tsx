@@ -16,9 +16,14 @@ const ChannelButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatc
 	const [activeTab, setActiveTab] = useState("create");
 	const [channelQuery, setChannelQuery] = useState("");
 	const [searchRes, setSearchRes] = useState([]);
+	const [selectedChannel, setSelectedChannel] = useState(null);
 
 	
 	const openHandler = () => setOpen(!open);
+
+	const handleChannelSelect = (channel: any) => {
+		setSelectedChannel(channel);
+	};
 
 	const handleIsProtected = (event: any) => {
 		setIsProtected(event.target.checked);
@@ -46,7 +51,7 @@ const ChannelButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatc
 			.then((res) => {
 				if (res.status === 201) {
 					toast.success('Channel Created', {theme:'dark'})
-					refreshPage();
+					chatSocket.emit('reconnect');
 				}
 			})
 			.catch((err) => {
@@ -153,7 +158,7 @@ const ChannelButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatc
 								<div className="bg-white w-80 h-[250px] ml-2 bg-opacity-10 rounded-[15px] overflow-y-auto notif">
 									<List className="justify-start items-start">
 										{searchRes.length !== 0 ?
-											searchRes.map((channel: any) => {return <ChannelList key={channel.id} channel={channel}/>})
+											searchRes.map((channel: any) => {return <ChannelList key={channel.id} channel={channel} onSelect={handleChannelSelect}/>})
 											: 
 											<Typography variant="h3" className="text-gray-500 self-center translate-y-[200%]">No Results</Typography>
 										}

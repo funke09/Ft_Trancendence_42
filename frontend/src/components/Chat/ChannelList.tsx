@@ -2,11 +2,14 @@ import { Badge, Chip, ListItem, ListItemPrefix, Tooltip, Typography } from "@mat
 import { useState } from "react";
 import Loading from "../Layout/Loading";
 
-const ChannelList = ({ channel } : {channel: any}) => {
+const ChannelList = ({ channel, onSelect } : {channel: any, onSelect: Function}) => {
 	if (channel) {
 		const avatar: string = channel.name.charAt(0);
+		const handleSelect = () => {
+			onSelect(channel);
+		};
 		return (
-		   <ListItem className="text-white">
+		   <ListItem className="text-white" onClick={handleSelect}>
 				<Tooltip content={channel.type} className="bg-opacity-50">
 				<ListItemPrefix>
 					<img 
