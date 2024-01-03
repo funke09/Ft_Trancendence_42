@@ -40,3 +40,8 @@ export class PrivateMsgReq {
     toId: number;
     text: string;
 };
+
+export class JoinChannelDto {
+	channelID: number;
+	password: string | null;
+};

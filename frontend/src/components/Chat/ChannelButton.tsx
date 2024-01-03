@@ -5,6 +5,7 @@ import { ChannelSearchDto, CreateChannelDto } from './types';
 import { ToastContainer, toast } from 'react-toastify';
 import ChannelList from './ChannelList';
 import chatSocket from '@/sockets/chatSocket';
+import JoinChannel from './JoinChannel';
 
 const ChannelButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatch<React.SetStateAction<boolean>>}) => {
 	const [isProtected, setIsProtected] = useState(false);
@@ -57,10 +58,6 @@ const ChannelButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatc
 				toast.error(err?.response?.data.message ?? "An Error Occured!", {theme: "dark"});
 			})
 	}
-
-	// if (selectedChannel) {
-	// 	api.post('user/joinChannel', selectedChannel)
-	// }
 
 	useEffect(() => {
 		if (channelQuery) {
@@ -161,7 +158,7 @@ const ChannelButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatc
 								<div className="bg-white w-80 h-[250px] ml-2 bg-opacity-10 rounded-[15px] overflow-y-auto notif">
 									<List className="justify-start items-start">
 										{searchRes.length !== 0 ?
-											searchRes.map((channel: any) => {return <ChannelList key={channel.id} channel={channel} onSelect={handleChannelSelect}/>})
+											searchRes.map((channel: any) => {return <JoinChannel key={channel.id} channel={channel} setOpen={setOpen}/>})
 											: 
 											<Typography variant="h3" className="text-gray-500 self-center translate-y-[200%]">No Results</Typography>
 										}

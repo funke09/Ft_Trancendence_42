@@ -56,4 +56,9 @@ export class CreateChannelDto {
 	kicked?: string[];
 	msgs?: string[];
 };
+
+export class JoinChannelDto {
+	channelID: number;
+	password: string | null;
+};
   

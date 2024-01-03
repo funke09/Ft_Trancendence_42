@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/utils/Guards';
 import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
-import { BlockFriendDto, CreateChannelDto, SetEmailDto, UnblockFriendDto, pinDto, setPasswordDto, setUsernameDto, userIdDto } from './user.dto';
+import { BlockFriendDto, CreateChannelDto, JoinChannelDto, SetEmailDto, UnblockFriendDto, pinDto, setPasswordDto, setUsernameDto, userIdDto } from './user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterService } from './multer.service';
 import { ChannelService } from './channel.service';
@@ -153,7 +153,10 @@ export class UserController {
 		return this.channelService.createChannel(req.user.id, body);
 	}
 
-	// @UseGuards(JwtAuthGuard)
-	// @Post('/joinChannel')
-	// async joinChannel
+	@UseGuards(JwtAuthGuard)
+	@Post('/joinChannel')
+	async joinChannel(@Req() req, @Body() payload: JoinChannelDto) {
+		if (!payload || !payload.channelID) throw new BadRequestException("Missing Channel ID");
+		return this.channelService.joinChannel(req.user.id, payload.channelID, payload.password);
+	}
 }

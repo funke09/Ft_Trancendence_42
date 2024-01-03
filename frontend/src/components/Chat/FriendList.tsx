@@ -1,14 +1,11 @@
 import { Badge, ListItem, ListItemPrefix, Tooltip, Typography } from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
+import store, { setCurrentChat, setCurrentChatGroup } from '@/redux/store';
 
-const FriendList = ({friendObj, onSelect} : {friendObj: any, onSelect: Function}) => {
+const FriendList = ({friendObj} : {friendObj: any}) => {
+
 	const friend = friendObj.otherUser;
-
-	const handleSelect = () => {
-        onSelect(friendObj);
-    };
-
 	function getLastMsg() {
         if (friendObj.chat.length == 0) return "Let's Chat....";
         const lastMsg = friendObj.chat[friendObj.chat.length - 1];
@@ -16,7 +13,10 @@ const FriendList = ({friendObj, onSelect} : {friendObj: any, onSelect: Function}
     }
 
 	return (
-		<ListItem className="text-white" onClick={handleSelect}>
+		<ListItem className="text-white" onClick={() => {
+			store.dispatch(setCurrentChat(friendObj));
+			store.dispatch(setCurrentChatGroup(null));
+		}}>
 			<ListItemPrefix>
 				<Badge invisible={getLastMsg() !== "Let's Chat...."} content={'new'} color='green'>
 					<Tooltip content={friend.userStatus} className={'bg-opacity-50'}>

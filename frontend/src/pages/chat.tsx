@@ -13,31 +13,18 @@ import chatSocket from "@/sockets/chatSocket";
 import { ChannelSearchDto, UserSearchDto } from "@/components/Chat/types";
 import UserChatRoom from "@/components/Chat/UserChatRoom";
 import ChannelChatRoom from "@/components/Chat/ChannelChatRoom";
-import Image from "next/image";
 
 const Chat: React.FC = () => {
+	const user: any = store.getState().profile.user;
 	const [loading, setLoading] = useState(true);
 	const [openAdd, setOpenAdd] = useState(false);
 	const [openChannel, setOpenChannel] = useState(false);
-	const user: any = store.getState().profile.user;
 	const [Friends, setFriends] = useState<any>([]);
 	const [Channels, setChannels] = useState<any>([]);
 	const [activeTab, setActiveTab] = useState("friends");
-	const [selectedUser, setSelectedUser] = useState<any>(null);
-	const [selectedChannel, setSelectedChannel] = useState(null);
 	
 	const clickOpenAdd = () => setOpenAdd(!openAdd);
 	const clickOpenChannel = () => setOpenChannel(!openChannel);
-
-	const handleUserSelect = (user: any) => {
-		setSelectedUser(user);
-		setSelectedChannel(null);
-	};
-	
-	const handleChannelSelect = (channel: any) => {
-		setSelectedChannel(channel);
-		setSelectedUser(null);
-	};
 
 	useEffect(() => {
         setFriends(store.getState().chat.PrivateChats);
@@ -54,6 +41,7 @@ const Chat: React.FC = () => {
 			const chatsFromStore = store.getState().chat.GroupChats;
 			setChannels(chatsFromStore);
 		});
+		
     }, []);
 	
     useEffect(() => {
@@ -97,7 +85,7 @@ const Chat: React.FC = () => {
 									<List className="justify-start items-start">
 										{Friends &&
 											(Friends.length !== 0 ?
-												Friends.map((friend: any) => {return <FriendList key={friend.privateChannelId} friendObj={friend} onSelect={handleUserSelect}/>})
+												Friends.map((friend: any) => {return <FriendList key={friend.privateChannelId} friendObj={friend}/>})
 												:
 												<Typography variant="h3" className="justify-center self-center py-40 text-gray-500">No Friends</Typography>
 											) 
@@ -108,7 +96,7 @@ const Chat: React.FC = () => {
 									<List className="justify-start items-start">
 										{Channels &&
 											(Channels.length !== 0 ? 
-												Channels.map((channel: any) => {return <ChannelList key={channel.id} channel={channel} onSelect={handleChannelSelect}/>})
+												Channels.map((channel: any) => {return <ChannelList key={channel.id} channel={channel}/>})
 												:
 												<Typography variant="h3" className="justify-center self-center py-40 text-gray-500">No Channels</Typography>
 											)
@@ -132,8 +120,8 @@ const Chat: React.FC = () => {
 					</div>
 				</section>
 				<section>
-					{selectedUser && <UserChatRoom user={user} chat={selectedUser}/>}
-					{selectedChannel && <ChannelChatRoom channel={selectedChannel}/>}
+					{/* {selectedUser && <UserChatRoom user={user} chat={selectedUser}/>}
+					{selectedChannel && <ChannelChatRoom channel={selectedChannel}/>} */}
 				</section>
 			</div>
 			{openAdd && <AddButton open={openAdd} setOpen={setOpenAdd}/>}
