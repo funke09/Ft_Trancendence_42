@@ -1,6 +1,7 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as argon from 'argon2';
+import * as jwt from 'jsonwebtoken'
 
 @Injectable()
 export class UserService {

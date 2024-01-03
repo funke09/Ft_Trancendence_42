@@ -28,12 +28,12 @@ export class AuthService {
 		return user;
 	}
 
-	async login(user: any, res: Response) {
+	async login(user: any, res: Response, flag: boolean = false) {
 		try {
 			const payload = { username: user.username, uid: user.id };
 			const token = this.JwtService.sign(payload);
 			res.cookie('jwt', token, { httpOnly: false, path: '/'});
-			res.redirect("http://localhost:3000/profile");
+			if (!flag) res.redirect("http://localhost:3000/profile");
 		} catch (error) {
 			throw new BadRequestException('ERROR:', error.message);
 		}

@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import Image from "next/image";
 import api from "@/api";
-import store, { setProfile } from "@/redux/store";
+import chatSocket from "@/sockets/chatSocket";
 
 function EditProfile({ user, updateProfile, setEdit, setShowEnableTwoFA} : {user : any, updateProfile: (newProfile: any) => void, setEdit: React.Dispatch<React.SetStateAction<boolean>>, setShowEnableTwoFA: any }) {
 	const [open] = useState(true);
@@ -24,7 +24,6 @@ function EditProfile({ user, updateProfile, setEdit, setShowEnableTwoFA} : {user
 		api.post('/user/disableTwoFA', {userId: user.id})
 			.then((res: any) => {
 				if (res.status == 201) {
-					updateProfile({...user});
 					toast.success("2-FA Disabled", {theme: "dark"});
 					setEdit(!open);
 				}
@@ -72,12 +71,11 @@ function EditProfile({ user, updateProfile, setEdit, setShowEnableTwoFA} : {user
 			.then((res: any) => {
 				if (res.status == 201) {
 					toast.success('Username changed Successfully', {
-						position: "top-right",
 						autoClose: 1000,
 						theme: "dark",})
 						updateProfile({...user, username});
 						setEdit(!open);
-				}
+					}
 			})
 			.catch((error: any) => {
 				toast.error(error?.response.data.messages[0].toString(), {

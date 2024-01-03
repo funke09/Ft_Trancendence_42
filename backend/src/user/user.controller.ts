@@ -7,6 +7,7 @@ import { BlockFriendDto, CreateChannelDto, SetEmailDto, UnblockFriendDto, pinDto
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterService } from './multer.service';
 import { ChannelService } from './channel.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('user')
 export class UserController {
@@ -67,10 +68,10 @@ export class UserController {
 
 	@UseGuards(JwtAuthGuard)
 	@Post('/setUsername')
-	async setUsername(@Res() res: any, @Req() req: any, @Body() username: setUsernameDto) {
+	async setUsername(@Res({ passthrough: true }) res: Response, @Req() req: any, @Body() username: setUsernameDto) {
 	    if (!username) throw new BadRequestException("Invalid Username");
 	    const updatedUser = await this.userService.setUsername(req.user.id, username.username);
-	    await this.authService.login(updatedUser, res);
+	    await this.authService.login(updatedUser, res, true);
 	}
 
 	@UseGuards(JwtAuthGuard)
@@ -151,4 +152,8 @@ export class UserController {
 		if (!body || !req.user.id) throw new HttpException('No Channel Name or Username', 400);
 		return this.channelService.createChannel(req.user.id, body);
 	}
+
+	// @UseGuards(JwtAuthGuard)
+	// @Post('/joinChannel')
+	// async joinChannel
 }

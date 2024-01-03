@@ -97,7 +97,7 @@ const Chat: React.FC = () => {
 									<List className="justify-start items-start">
 										{Friends &&
 											(Friends.length !== 0 ?
-												Friends.reverse().map((friend: any) => {return <FriendList key={friend.privateChannelId} friendObj={friend} onSelect={handleUserSelect}/>})
+												Friends.map((friend: any) => {return <FriendList key={friend.privateChannelId} friendObj={friend} onSelect={handleUserSelect}/>})
 												:
 												<Typography variant="h3" className="justify-center self-center py-40 text-gray-500">No Friends</Typography>
 											) 
@@ -108,7 +108,7 @@ const Chat: React.FC = () => {
 									<List className="justify-start items-start">
 										{Channels &&
 											(Channels.length !== 0 ? 
-												Channels.reverse().map((channel: any) => {return <ChannelList key={channel.id} channel={channel} onSelect={handleChannelSelect}/>})
+												Channels.map((channel: any) => {return <ChannelList key={channel.id} channel={channel} onSelect={handleChannelSelect}/>})
 												:
 												<Typography variant="h3" className="justify-center self-center py-40 text-gray-500">No Channels</Typography>
 											)

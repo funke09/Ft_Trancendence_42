@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { MulterService } from './multer.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { ChannelService } from './channel.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
 	imports: [
@@ -20,6 +21,7 @@ import { ChannelService } from './channel.service';
 		PrismaService,
 		MulterService,
 		ChannelService,
+		JwtService,
 	],
 	exports: [
 		UserService,

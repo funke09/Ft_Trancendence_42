@@ -17,7 +17,6 @@ const ChannelButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatc
 	const [searchRes, setSearchRes] = useState([]);
 	const [selectedChannel, setSelectedChannel] = useState(null);
 
-	
 	const openHandler = () => setOpen(!open);
 
 	const handleChannelSelect = (channel: any) => {
@@ -51,12 +50,17 @@ const ChannelButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatc
 				if (res.status === 201) {
 					toast.success('Channel Created', {theme:'dark'})
 					chatSocket.emit('reconnect');
+					setOpen(!open);
 				}
 			})
 			.catch((err) => {
 				toast.error(err?.response?.data.message ?? "An Error Occured!", {theme: "dark"});
 			})
 	}
+
+	// if (selectedChannel) {
+	// 	api.post('user/joinChannel', selectedChannel)
+	// }
 
 	useEffect(() => {
 		if (channelQuery) {
