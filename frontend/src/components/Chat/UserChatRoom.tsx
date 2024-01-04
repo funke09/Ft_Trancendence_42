@@ -7,50 +7,51 @@ import { AnyMsgDto, PrivateMsgReq } from './types';
 import api from '@/api';
 import { useRouter } from 'next/router';
 
-const Message = ({ msg, user }: { msg: AnyMsgDto; user: any }) => {
-	const isCurrentUser = user.id === msg.senderId;
-	const bgColor = isCurrentUser ? 'bg-[#26b5c5]' : 'bg-[#155e66]';
-	const borderRadiusClass = isCurrentUser
-	  ? 'rounded-br-lg rounded-s-lg'
-	  : 'rounded-bl-lg rounded-e-lg';
+const Message = ({ msg, friend }: { msg: AnyMsgDto; friend: any }) => {
+	const isCurrentUser = friend.id === msg.fromId;
+    const bgColor = isCurrentUser ? 'bg-[#26b5c5]' : 'bg-[#155e66]';
+    const borderRadiusClass = isCurrentUser
+      ? 'rounded-br-lg rounded-s-lg'
+      : 'rounded-bl-lg rounded-e-lg';
   
-	return (
-	  <div className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
-		<div className={`px-2 ${bgColor} max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl ${borderRadiusClass}`}>
-		  <div className={`flex py-2 ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
-			<Typography className="text-[16px] text-white" variant="lead">
-			  {msg.text}
-			</Typography>
-		  </div>
-		</div>
-	  </div>
-	);
+    return (
+      <div className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
+        <div className={`px-2 ${bgColor} max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl ${borderRadiusClass}`}>
+          <div className={`flex py-2 ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
+            <Typography className="text-[16px] text-white" variant="lead">
+              {msg.text}
+            </Typography>
+          </div>
+        </div>
+      </div>
+    );
 };
 
-const UserChatRoom: React.FC<{user: any, setSelected: any, chat: any}> = ({ user, setSelected, chat }) => {
-    const [friend] = useState<any>(chat.otherUser);
+export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected: any, chat: any}) {
+	const friend = chat.otherUser;
 	const [messages, setMessages] = useState<any>([]);
+	const [msg, setMsg] = useState("");
+    const scrollRef = useRef<Readonly<HTMLDivElement> | null>(null);
 	const router = useRouter();
 
-	useEffect(() => {
+    useEffect(() => {
         if (!chatSocket.connected) chatSocket.connect();
 
-        store.getState().chat.PrivateChats.forEach((chat: any) => {
-            if (chat.privateChannelId == chat.privateChannelId) {
+        store.getState().chat.PrivateChats.forEach((chatt: any) => {
+            if (chatt.privateChannelId === chat.privateChannelId) {
                 setMessages(chat.chat);
             }
         });
 
         chatSocket.on("msg", (data: AnyMsgDto) => {
-            if (data.privateChannelId == chat.privateChannelId) {
+            if (data.privateChannelId === chat.privateChannelId) {
                 setMessages((prev: any) => [...prev, data]);
             }
         });
     }, []);
-
+	
+	
 	///////// SENDING MSG /////////
-	const [msg, setMsg] = useState("");
-    const scrollRef = useRef<Readonly<HTMLDivElement> | null>(null);
 
     const sendMessage = (msg: any) => {
 		msg.message = msg.message.trim();
@@ -66,12 +67,12 @@ const UserChatRoom: React.FC<{user: any, setSelected: any, chat: any}> = ({ user
         const newMessage: AnyMsgDto = {
             privateChannelId: chat.privateChannelId,
             createdAt: new Date(),
-            receiverId: friend.id,
-            senderId: user.id,
+            toId: friend.id,
+            fromId: user.id,
             text: msg.message,
             avatar: user.avatar,
-            senderUsername: user.username,
-            receiverUsername: friend.username,
+            fromUsername: user.username,
+            toUsername: friend.username,
             channelId: chat.channelId,
             channelName: chat.channelName,
             updatedAt: new Date(),
@@ -83,9 +84,7 @@ const UserChatRoom: React.FC<{user: any, setSelected: any, chat: any}> = ({ user
     };
 
 	useEffect(() => {
-        //get the last message
         const lastMessage = scrollRef.current?.lastElementChild;
-        // scroll to the last message
         lastMessage?.scrollIntoView();
     }, [messages]);
 
@@ -119,13 +118,13 @@ const UserChatRoom: React.FC<{user: any, setSelected: any, chat: any}> = ({ user
                 className="px-10 pt-3 flex-1 overflow-y-scroll notif"
                 ref={scrollRef}
             >
-                {messages.map((message: any) => {
-                    return (
-                        <div key={message.createdAt} className="mb-5">
-                            <Message msg={message} user={friend} />
-                        </div>
-                    );
-                })}
+			{messages.map((message: any, index: number) => {
+				return (
+					<div key={index} className="mb-5">
+						<Message msg={message} friend={friend} />
+					</div>
+				);
+			})}
             </div>
 
             {/* input */}
@@ -156,5 +155,3 @@ const UserChatRoom: React.FC<{user: any, setSelected: any, chat: any}> = ({ user
         </div>
 	);
 };
-
-export default UserChatRoom;

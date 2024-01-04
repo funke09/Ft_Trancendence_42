@@ -3,13 +3,7 @@ import { Nav } from "@/components/Layout/NavBar";
 import api from "@/api";
 import Loading from "@/components/Layout/Loading";
 import store, { setProfile } from "@/redux/store";
-import { IconButton, List, Tab, TabPanel, Tabs, TabsBody, TabsHeader, Typography } from "@material-tailwind/react";
-import FriendList from "@/components/Chat/FriendList";
-import AddButton from "@/components/Chat/AddButton";
-import ChannelButton from "@/components/Chat/ChannelButton";
-import ChannelList from "@/components/Chat/ChannelList";
-import ChatRoom from "@/components/Chat/ChatRoom";
-import UserChatRoom from "@/components/Chat/UserChatRoom";
+import {UserChatRoom} from "@/components/Chat/UserChatRoom";
 import ChannelChatRoom from "@/components/Chat/ChannelChatRoom";
 import ChatList from "@/components/Chat/ChatList";
 

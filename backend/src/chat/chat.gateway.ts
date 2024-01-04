@@ -81,7 +81,7 @@ export class ChatGateway {
         if (blocked) {
             const response: SocketResDto = {
                 status: HttpStatus.FORBIDDEN,
-                message: 'You are blocked from this user',
+                message: 'You are blocked by this user',
             };
             client.emit('msg', response);
 
@@ -94,7 +94,7 @@ export class ChatGateway {
             client.to(channelID).emit('privateJoined', userObj.username);
         }
 
-        const message = await this.chatService.savePrivateMsg({
+        await this.chatService.savePrivateMsg({
             msg: payload.text,
             from: userObj.username,
             channelId: channelID,
@@ -106,14 +106,14 @@ export class ChatGateway {
         let response: AnyMsgDto = {
             text: payload.text,
             avatar: userr.avatar,
-            senderUsername: userr.username,
+            fromUsername: userr.username,
             createdAt: new Date(),
             updatedAt: new Date(),
             channelName: null,
             channelId: null,
-            senderId: user.uid,
-            receiverId: receiver.id,
-            receiverUsername: receiver.username,
+            fromId: user.uid,
+            toId: receiver.id,
+            toUsername: receiver.username,
             privateChannelId: channelID,
         };
         client.to(channelID).emit('msg', response);
@@ -185,14 +185,14 @@ export class ChatGateway {
 		let res: AnyMsgDto = {
 			text: payload.text,
 			avatar: userObj.avatar,
-			senderUsername: userObj.username,
+			fromUsername: userObj.username,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 			channelName: channelName,
 			channelId: payload.id,
-			senderId: user.uid,
-			receiverId: null,
-			receiverUsername: null,
+			fromId: user.uid,
+			toId: null,
+			toUsername: null,
 			privateChannelId: null,
 		};
 		client.to(channelName).emit("PublicMsg", res);

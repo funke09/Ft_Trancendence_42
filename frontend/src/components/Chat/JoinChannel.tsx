@@ -14,7 +14,6 @@ const JoinChannel = ({channel, setOpen} : {channel: any, setOpen: any}) => {
 			channelID: channel.id,
 			password: password == "" ? null : password,
 		};
-		console.log(payload);
 		api.post('/user/joinChannel', payload)
 			.then((res: any) => {
 				if (res.status === 201) {

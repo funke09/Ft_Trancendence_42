@@ -20,11 +20,11 @@ export class AnyMsgDto {
   
 	privateChannelId: string | null;
   
-	senderUsername: string;
-	senderId: number;
+	fromUsername: string;
+	fromId: number;
   
-	receiverId: number | null;
-	receiverUsername: string | null;
+	toId: number | null;
+	toUsername: string | null;
 };
 
 export class DmDto {
