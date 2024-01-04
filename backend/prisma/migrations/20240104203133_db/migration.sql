@@ -1,24 +1,21 @@
-/*
-  Warnings:
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "email" TEXT,
+    "username" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "avatar" TEXT,
+    "isTwoFA" BOOLEAN NOT NULL DEFAULT false,
+    "otpTwoFA" TEXT,
+    "userStatus" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "Blocked" INTEGER[] DEFAULT ARRAY[]::INTEGER[],
+    "socketId" TEXT,
+    "privateChannels" TEXT[],
 
-  - Added the required column `friendID` to the `Friends` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `friendId` to the `Friends` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `userId` to the `Friends` table without a default value. This is not possible if the table is not empty.
-
-*/
--- DropForeignKey
-ALTER TABLE "Friends" DROP CONSTRAINT "Friends_fromId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Friends" DROP CONSTRAINT "Friends_toId_fkey";
-
--- AlterTable
-ALTER TABLE "Friends" ADD COLUMN     "friendID" INTEGER NOT NULL,
-ADD COLUMN     "friendId" INTEGER NOT NULL,
-ADD COLUMN     "userId" INTEGER NOT NULL;
-
--- AlterTable
-ALTER TABLE "User" ADD COLUMN     "privateChannels" TEXT[];
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Msg" (
@@ -30,6 +27,23 @@ CREATE TABLE "Msg" (
     "fromId" INTEGER NOT NULL,
 
     CONSTRAINT "Msg_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Notifs" (
+    "id" SERIAL NOT NULL,
+    "type" TEXT NOT NULL,
+    "from" TEXT NOT NULL,
+    "to" TEXT NOT NULL,
+    "status" TEXT NOT NULL,
+    "msg" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "avatar" TEXT NOT NULL DEFAULT 'http://localhost:3000/images/jesus.webp',
+    "friendId" INTEGER NOT NULL,
+
+    CONSTRAINT "Notifs_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -52,11 +66,66 @@ CREATE TABLE "Channel" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "type" TEXT,
     "password" TEXT,
-    "hash" TEXT,
     "ownerId" INTEGER NOT NULL,
     "adminsIds" INTEGER[],
 
     CONSTRAINT "Channel_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Stats" (
+    "id" SERIAL NOT NULL,
+    "wins" INTEGER NOT NULL DEFAULT 0,
+    "losses" INTEGER NOT NULL DEFAULT 0,
+    "rank" TEXT NOT NULL DEFAULT 'Unranked',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "userId" INTEGER NOT NULL,
+
+    CONSTRAINT "Stats_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Achievements" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "desc" TEXT NOT NULL,
+    "icon" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Achievements_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Friends" (
+    "id" SERIAL NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "fromId" INTEGER NOT NULL,
+    "toId" INTEGER NOT NULL,
+    "friendID" INTEGER NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'Pending',
+    "userId" INTEGER NOT NULL,
+    "friendId" INTEGER NOT NULL,
+
+    CONSTRAINT "Friends_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Game" (
+    "id" SERIAL NOT NULL,
+    "outcome" TEXT DEFAULT 'Undefined',
+    "p1Score" INTEGER NOT NULL DEFAULT 0,
+    "p2Score" INTEGER NOT NULL DEFAULT 0,
+    "p2Id" INTEGER NOT NULL,
+    "gameType" TEXT DEFAULT 'Undefined',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "userId" INTEGER NOT NULL,
+
+    CONSTRAINT "Game_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -88,6 +157,18 @@ CREATE TABLE "_Banned" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_otpTwoFA_key" ON "User"("otpTwoFA");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Stats_userId_key" ON "Stats"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_Member_AB_unique" ON "_Member"("A", "B");
@@ -126,16 +207,28 @@ ALTER TABLE "Msg" ADD CONSTRAINT "Msg_channelId_fkey" FOREIGN KEY ("channelId") 
 ALTER TABLE "Msg" ADD CONSTRAINT "Msg_fromId_fkey" FOREIGN KEY ("fromId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Notifs" ADD CONSTRAINT "Notifs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "DM" ADD CONSTRAINT "DM_fromId_fkey" FOREIGN KEY ("fromId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "DM" ADD CONSTRAINT "DM_toId_fkey" FOREIGN KEY ("toId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Stats" ADD CONSTRAINT "Stats_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Achievements" ADD CONSTRAINT "Achievements_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Stats"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Friends" ADD CONSTRAINT "Friends_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Friends" ADD CONSTRAINT "Friends_friendId_fkey" FOREIGN KEY ("friendId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Game" ADD CONSTRAINT "Game_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_Member" ADD CONSTRAINT "_Member_A_fkey" FOREIGN KEY ("A") REFERENCES "Channel"("id") ON DELETE CASCADE ON UPDATE CASCADE;

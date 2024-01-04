@@ -48,6 +48,10 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
                 setMessages((prev: any) => [...prev, data]);
             }
         });
+
+		return (() => {
+			setSelected(null);
+		})
     }, []);
 	
 	

@@ -52,7 +52,7 @@ const ChatList = () => {
 						<List className="justify-start items-start">
 							{Friends &&
 								(Friends.length !== 0 ?
-									[...Friends].reverse().map((friend: any) => {return <FriendList key={friend.privateChannelId} friendObj={friend}/>})
+									[...Friends].map((friend: any) => {return <FriendList key={friend.privateChannelId} friendObj={friend}/>})
 										:
 									<Typography variant="h3" className="justify-center self-center py-40 text-gray-500">No Friends</Typography>
 								)}
