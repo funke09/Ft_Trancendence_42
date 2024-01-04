@@ -17,9 +17,17 @@ export class AuthService {
 		let user = await this.findUserByEmail(profile.emails[0].value);
 
 		if (!user) {
+			let username = profile.username;
+			let existingUser = await this.prisma.user.findFirst({ where: { username: username } });
+	 
+			while (existingUser) {
+				username += "_";
+				existingUser = await this.prisma.user.findFirst({ where: { username: username } });
+			}
+
 			user = await this.createUser({
 				email: profile.emails[0].value,
-				username: profile.username,
+				username: username,
 				avatar: profile._json.image.link,
 				userStatus: 'Offline',
 				password: 'tmpPass',
