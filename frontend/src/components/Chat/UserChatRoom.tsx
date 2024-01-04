@@ -1,13 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import store, { addNewMsgToGroup } from "@/redux/store";
-import { Typography, Avatar, Button } from '@material-tailwind/react';
+import { Typography, Avatar, Button, IconButton, Input } from '@material-tailwind/react';
 import chatSocket from "@/sockets/chatSocket";
 import { addNewMsgToPrivate } from "@/redux/store";
 import { AnyMsgDto, PrivateMsgReq } from './types';
+import api from '@/api';
+import { useRouter } from 'next/router';
 
-const UserChatRoom: React.FC<{user: any, chat: any}> = ({ user, chat }) => {
-    const friend = chat.otherUser;
+const Message = ({ msg, user }: { msg: AnyMsgDto; user: any }) => {
+	const isCurrentUser = user.id === msg.senderId;
+	const bgColor = isCurrentUser ? 'bg-[#26b5c5]' : 'bg-[#155e66]';
+	const borderRadiusClass = isCurrentUser
+	  ? 'rounded-br-lg rounded-s-lg'
+	  : 'rounded-bl-lg rounded-e-lg';
+  
+	return (
+	  <div className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
+		<div className={`px-2 ${bgColor} max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl ${borderRadiusClass}`}>
+		  <div className={`flex py-2 ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
+			<Typography className="text-[16px] text-white" variant="lead">
+			  {msg.text}
+			</Typography>
+		  </div>
+		</div>
+	  </div>
+	);
+};
+
+const UserChatRoom: React.FC<{user: any, setSelected: any, chat: any}> = ({ user, setSelected, chat }) => {
+    const [friend] = useState<any>(chat.otherUser);
 	const [messages, setMessages] = useState<any>([]);
+	const router = useRouter();
 
 	useEffect(() => {
         if (!chatSocket.connected) chatSocket.connect();
@@ -25,10 +48,9 @@ const UserChatRoom: React.FC<{user: any, chat: any}> = ({ user, chat }) => {
         });
     }, []);
 
-	console.log(messages);
-
 	///////// SENDING MSG /////////
 	const [msg, setMsg] = useState("");
+    const scrollRef = useRef<Readonly<HTMLDivElement> | null>(null);
 
     const sendMessage = (msg: any) => {
 		msg.message = msg.message.trim();
@@ -60,33 +82,78 @@ const UserChatRoom: React.FC<{user: any, chat: any}> = ({ user, chat }) => {
         setMsg("");
     };
 
+	useEffect(() => {
+        //get the last message
+        const lastMessage = scrollRef.current?.lastElementChild;
+        // scroll to the last message
+        lastMessage?.scrollIntoView();
+    }, [messages]);
+
 	return (
-		<>
-			<header className="bg-gray-200 p-4 border-b border-gray-300">
-				<h2 className="text-lg font-bold">Chat Room</h2>
-			</header>
-			<section className="flex-grow overflow-auto p-4">
-				{messages.map((message: any, index: number) => (
-				   <div key={message.updatedAt ?? index} className="mb-4">
-					   <Typography variant="small">
-						   <strong>{message.senderUsername}:</strong> {message.text}
-					   </Typography>
-				   </div>
-				))}
-			</section>
-			<footer className="flex justify-between items-center p-4 border-t border-gray-300">
-				<input 
-					type="text" 
-					value={msg} 
-					onChange={(e) => setMsg(e.target.value)} 
-					placeholder="Type a message..." 
-					className="flex-grow mr-4 p-2 border rounded" 
-				/>
-				<Button onClick={() => sendMessage({message: msg})} color="blue">
-					Send
-				</Button>
-			</footer>
-		</>
+        <div className="h-full flex flex-col">
+            {/* header */}
+            <div className="w-full bg-[#0d4d53]">
+                <div className="flex flex-row justify-start items-center p-4 h-auto">
+                    <IconButton className='mr-5' variant='text' color='white' onClick={() => setSelected(null)}>
+                        <i className="fas fa-chevron-left"></i>
+                    </IconButton>
+                    {friend?.id && <Avatar onClick={() => {router.push(`/profile/${friend.id}`)}} src={friend.avatar} size="md" className='cursor-pointer'/>}
+                    <div className="flex justify-between items-center">
+                        <div
+                            className="ml-2 cursor-pointer"
+                            onClick={() => {
+                                router.push(`/profile/${friend.id}`);
+                            }}
+                        >
+                            <Typography variant="h4" color="white">
+                                {friend.username}
+                            </Typography>
+                        </div>
+                        {/* {isMobile || 1 ? <PrivateChatMenu user={friend} /> : null} */}
+                    </div>
+                </div>
+            </div>
+
+            {/* messages */}
+            <div
+                className="px-10 pt-3 flex-1 overflow-y-scroll notif"
+                ref={scrollRef}
+            >
+                {messages.map((message: any) => {
+                    return (
+                        <div key={message.createdAt} className="mb-5">
+                            <Message msg={message} user={friend} />
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* input */}
+            <div className="flex justify-center gap-2 items-center p-4">
+                <Input
+					className="w-full outline-none text-white"
+					placeholder="Type a Message..."
+					color='white'
+					value={msg}
+					onChange={(e) => setMsg(e.currentTarget.value)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") sendMessage({ message: msg, from: "me" });
+					}}
+					crossOrigin={undefined}/>
+                <IconButton
+                    color="pink"
+                    size="md"
+                    onClick={() => {
+                        sendMessage({
+                            message: msg,
+                            from: "me",
+                        });
+                    }}
+                >
+                	<i className="fa-solid fa-arrow-right fa-lg"/>
+                </IconButton>
+            </div>
+        </div>
 	);
 };
 

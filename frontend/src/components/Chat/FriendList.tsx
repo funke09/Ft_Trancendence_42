@@ -4,8 +4,8 @@ import Image from 'next/image';
 import store, { setCurrentChat, setCurrentChatGroup } from '@/redux/store';
 
 const FriendList = ({friendObj} : {friendObj: any}) => {
-
 	const friend = friendObj.otherUser;
+	
 	function getLastMsg() {
         if (friendObj.chat.length == 0) return "Let's Chat....";
         const lastMsg = friendObj.chat[friendObj.chat.length - 1];

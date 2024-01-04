@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ChannelChatRoom = ({channel} : {channel: any}) => {
+const ChannelChatRoom: React.FC<{user: any, setSelected: any, chat: any}> = ({ user, setSelected, chat }) => {
   return (
 	<div>ChannelChatRoom</div>
   )

@@ -276,7 +276,19 @@ export class UserService {
 		await this.prisma.friends.updateMany({
 			where: {userId: friend.id},
 			data: {status: 'Accepted'},
-		  })
+		})
+
+		// Recreate private channel
+		const privateChannelId = `__private__@${Math.min(user.id, friend.id)}+${Math.max(user.id, friend.id)}`;
+		await this.prisma.user.update({
+			where: { id: user.id },
+			data: { privateChannels: { push: privateChannelId } },
+		});
+		
+		await this.prisma.user.update({
+			where: { id: friend.id },
+			data: { privateChannels: { push: privateChannelId } },
+		});
 	  
 		return new HttpException('Friend Unblocked', HttpStatus.OK);
 	}

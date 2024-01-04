@@ -1,4 +1,3 @@
-import store, { setCurrentChatGroup, setCurrentChat } from '@/redux/store';
 import { ListItem, Tooltip, ListItemPrefix, avatar, Typography, Input, Dialog, Button, DialogBody } from '@material-tailwind/react';
 import React, { useState } from 'react'
 import { JoinChannelDto } from './types';
