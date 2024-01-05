@@ -38,7 +38,7 @@ function SigninForm() {
 		  else
 		  	toast.error("Signin Failed", {theme: 'dark'});
 		} catch (error: any) {
-			toast.error(error?.response.data.messages.toString(), {theme: 'dark'});
+			toast.error(error?.response?.data?.messages?.toString(), {theme: 'dark'});
 		}
 	  };
 	
