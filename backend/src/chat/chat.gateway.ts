@@ -155,7 +155,7 @@ export class ChatGateway {
     @MessageBody() payload: PublicMsgDto,
   ) {
     const user = await this.chatService.jwtDecoe(client);
-    if (user) {
+    if (!user) {
       const res: SocketResDto = {
         status: HttpStatus.NOT_FOUND,
         message: 'User not found',
@@ -233,86 +233,6 @@ export class ChatGateway {
       privateChannelId: null,
     };
     client.to(channelName).emit('PublicMsg', res);
-  }
-
-  @SubscribeMessage('userSearchQuery')
-  async userSearchQuery(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() payload: UserSearchDto,
-  ) {
-    const user = await this.chatService.jwtDecoe(client);
-    if (!user) {
-      const res: SocketResDto = {
-        status: HttpStatus.NOT_FOUND,
-        message: 'User not found',
-      };
-      client.emit('search', res);
-      client.disconnect();
-      return;
-    }
-
-    if (!payload || !payload.userQuery) {
-      const res: SocketResDto = {
-        status: HttpStatus.BAD_REQUEST,
-        message: 'No payload provided',
-      };
-      client.emit('search', res);
-      return;
-    }
-
-    const res = await this.chatService.userSearchQuery(
-      user.uid,
-      payload.userQuery,
-    );
-    if (!res) {
-      const res: SocketResDto = {
-        status: HttpStatus.NOT_FOUND,
-        message: 'No results',
-      };
-      client.emit('search', res);
-      return;
-    }
-    client.emit('search', res);
-  }
-
-  @SubscribeMessage('channelSearchQuery')
-  async channelSearchQuery(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() payload: ChannelSearchDto,
-  ) {
-    const user = await this.chatService.jwtDecoe(client);
-    if (!user) {
-      const res: SocketResDto = {
-        status: HttpStatus.NOT_FOUND,
-        message: 'User not found',
-      };
-      client.emit('search', res);
-      client.disconnect();
-      return;
-    }
-
-    if (!payload || !payload.channelQuery) {
-      const res: SocketResDto = {
-        status: HttpStatus.BAD_REQUEST,
-        message: 'No payload provided',
-      };
-      client.emit('search', res);
-      return;
-    }
-
-    const res = await this.chatService.channelSearchQuery(
-      user.uid,
-      payload.channelQuery,
-    );
-    if (!res) {
-      const res: SocketResDto = {
-        status: HttpStatus.NOT_FOUND,
-        message: 'No results',
-      };
-      client.emit('search', res);
-      return;
-    }
-    client.emit('search', res);
   }
 
   @SubscribeMessage('searchAllChannels')

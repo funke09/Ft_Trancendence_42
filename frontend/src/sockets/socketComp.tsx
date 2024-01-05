@@ -78,12 +78,12 @@ const SocketComp = () => {
 			const newMsg = {
 				text: data.text,
 				createdAt: new Date(),
-				senderId: data.senderId,
+				fromId: data.fromId,
 				user: {
 					avatar: data.avatar,
-					username: data.senderUsername,
+					username: data.fromUsername,
 				},
-				senderUsername: data.senderUsername,
+				fromUsername: data.fromUsername,
 				channelId: data.channelId,
 			};
 			store.dispatch(addNewMsgToGroup(newMsg));

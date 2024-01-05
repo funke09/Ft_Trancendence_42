@@ -4,7 +4,7 @@ import api from "@/api";
 import Loading from "@/components/Layout/Loading";
 import store, { setProfile } from "@/redux/store";
 import {UserChatRoom} from "@/components/Chat/UserChatRoom";
-import ChannelChatRoom from "@/components/Chat/ChannelChatRoom";
+import {ChannelChatRoom} from "@/components/Chat/ChannelChatRoom";
 import ChatList from "@/components/Chat/ChatList";
 
 const Chat: React.FC = () => {
@@ -66,7 +66,7 @@ const Chat: React.FC = () => {
 				</section>
 				<section className="w-3/4 max-h-[720px]">
 					{chat && <UserChatRoom user={user} setSelected={setChat} chat={chat} key={chat && chat.privateChannelId}/>}
-					{group && <ChannelChatRoom user={group} setSelected={setGroup} chat={group} key={group && group.id}/>}
+					{group && <ChannelChatRoom user={user} setSelected={setGroup} channel={group} key={group && group.id}/>}
 				</section>
 			</div>
 		</>
