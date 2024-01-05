@@ -16,7 +16,7 @@ export class GameService {
 	
 	private games = new Map<string, Game>();
 	private queue : { client: Socket, username: string, gameType: number }[] = [];
-	private readonly players = new Map<string, Socket>();
+	private players = new Map<string, Socket>();
 	private invits : InvGameDto[] = [];
 
 	async createGame(client: Socket, data: { gameType: number }) {
@@ -129,9 +129,9 @@ export class GameService {
 			type: data.gameType,
 		});
 	
-		setTimeout(() => {
-			this.invits = this.invits.filter((i) => i.from !== fromUsername && i.to !== data.username);
-		}, 15 * 1000);
+		// setTimeout(() => {
+		// 	this.invits = this.invits.filter((i) => i.from !== fromUsername && i.to !== data.username);
+		// }, 30 * 1000);
 	
 		const userId = (await this.getUser(fromClient)).uid;
 		const avatar = await this.prisma.user.findUnique({where: {id: userId}, select:{avatar: true}})
@@ -150,14 +150,14 @@ export class GameService {
 		const toUsername = this.getUsernameBySocket(toClient);
 	  
 		const invite = this.invits.find((i) => i.from === data.username && i.to === toUsername);
-		
+	  
 		if (!invite) {
 		  toClient.emit('error', `No invites from ${data.username}`);
 		  return;
 		}
 	  
 		this.invits.splice(this.invits.indexOf(invite), 1);
-	  
+		
 		fromClient.emit('invite-accepted', {});
 		toClient.emit('invite-accepted', {});
 	  
@@ -171,15 +171,21 @@ export class GameService {
 		  p1Id: (await this.getUser(fromClient)).uid,
 		  p2Id: (await this.getUser(toClient)).uid,
 		}, invite.type);
-
+	 
 		let p1 = (await this.getUser(fromClient)).uid;
 		let p2 = (await this.getUser(toClient)).uid;
-		this.setUserStatus(p1, p2, 'In-Game')
-	  
+	 
 		game.endGameCallback = this.stopGame;
 		this.games.set(id, game);
-		game.startGame();
-	}	  
+	 
+		try {
+			game.startGame();
+			this.setUserStatus(p1, p2, 'In-Game');
+		} catch (error) {
+			console.error('Failed to start game:', error);
+			this.games.delete(id);
+		}
+	}
 
 	cancelInvGame(client: Socket, data: { username: string }): void {
 		if (!data.username) return;

@@ -53,17 +53,17 @@ export class GameGateway {
 	this.gameService.leaveGame(client);
   }
 
-  async handleDisconnect(client: Socket) {
-	this.gameService.disconnectGame(client);
-  }
-
-  async handleConnection(@ConnectedSocket() client: Socket, ...arg: any[]) {
+  async handleConnection(@ConnectedSocket() client: Socket) {
 	const user = await this.gameService.getUser(client);
 	if (!user) {
 		client.disconnect();
 		return;
 	}
 	this.gameService.initGame(client, user.username);
+  }
+
+  async handleDisconnect(client: Socket) {
+	this.gameService.disconnectGame(client);
   }
 }
 

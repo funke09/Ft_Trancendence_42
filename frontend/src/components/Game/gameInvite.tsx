@@ -2,6 +2,8 @@ import gameSocket from '@/sockets/gameSocket';
 import { Button, Card, CardBody, CardFooter, Dialog, Typography } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+import store, { setOpp } from '@/redux/store';
 
 interface InviteData {
 	username: string;
@@ -12,6 +14,7 @@ interface InviteData {
 function Invite() {
 	const [open, setOpen] = useState(false);
 	const [invData, setInvData] = useState<InviteData>({username: "", id: 0, avatar: ""});
+	const router = useRouter();
 
 	const handleOpen = () => setOpen(!open);
 	
@@ -25,6 +28,10 @@ function Invite() {
 
 		gameSocket.on('invite-accepted', () => {
 			setOpen(false);
+			gameSocket.on("match", (data: any) => {
+				store.dispatch(setOpp(data));
+				router.push(`/game/${data.roomName}`);
+			  });
 		});
 
 		gameSocket.on('invite-canceled', () => {
@@ -49,7 +56,7 @@ function Invite() {
 					</div>
 				</CardBody>
 				<CardFooter className="flex flex-row justify-around">
-					<Button onClick={() => {gameSocket.emit('acceptGame', invData); setOpen(false)}} variant='gradient' color='green'>Accept</Button>
+					<Button onClick={() => gameSocket.emit('acceptGame', invData)} variant='gradient' color='green'>Accept</Button>
 					<Button onClick={() => {gameSocket.emit('rejectInvGame', invData); setOpen(false)}} variant='gradient' color='red'>Decline</Button>
 				</CardFooter>
 			</Card>
