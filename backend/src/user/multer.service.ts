@@ -1,7 +1,12 @@
-import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as path from 'path';
-import * as fs from 'fs/promises'
+import * as fs from 'fs/promises';
 
 @Injectable()
 export class MulterService {
@@ -38,7 +43,7 @@ export class MulterService {
         id: userId,
       },
       data: {
-        avatar: "http://localhost:5000/" + filePath,
+        avatar: 'http://localhost:5000/' + filePath,
       },
     });
   }

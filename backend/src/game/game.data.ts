@@ -1,71 +1,70 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "src/prisma/prisma.service";
-import { OutcomeDto } from "./dto/outcome.dto";
-import { AchievDto } from "./dto/achiev.dto";
-import { RankDto } from "./dto/rank.dto";
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { OutcomeDto } from './dto/outcome.dto';
+import { AchievDto } from './dto/achiev.dto';
+import { RankDto } from './dto/rank.dto';
 
 const RANKS: { [key: string]: RankDto } = {
-	"Bronze": {
-		name: 'Bronze',
-	},
-	"Silver": {
-		name: 'Silver',
-	},
-	"Gold": {
-		name: 'Gold',
-	},
-	"Platinum": {
-		name: 'Platinum',
-	},
-	"Diamond": {
-		name: 'Diamond',
-	},
-}
+  Bronze: {
+    name: 'Bronze',
+  },
+  Silver: {
+    name: 'Silver',
+  },
+  Gold: {
+    name: 'Gold',
+  },
+  Platinum: {
+    name: 'Platinum',
+  },
+  Diamond: {
+    name: 'Diamond',
+  },
+};
 
 const ACHIEV: { [key: string]: AchievDto } = {
-	"hot-shot": {
-		name: 'Hot Shot',
-		desc: 'Swift and decisive victory!',
-		icon: '/stats/hot-shot.jpg',
-	},
+  'hot-shot': {
+    name: 'Hot Shot',
+    desc: 'Swift and decisive victory!',
+    icon: '/stats/hot-shot.jpg',
+  },
 
-	"hat-trick": {
-		name: 'Hat-Trick Hero',
-		desc: 'Be 3 scores ahead of Opponent',
-		icon: '/stats/hat-trick.jpg',
-	},
+  'hat-trick': {
+    name: 'Hat-Trick Hero',
+    desc: 'Be 3 scores ahead of Opponent',
+    icon: '/stats/hat-trick.jpg',
+  },
 
-	"close-call": {
-		name: 'Close Call',
-		desc: 'Victory in a nail-biting match!',
-		icon: '/stats/close-call.jpg',
-	},
+  'close-call': {
+    name: 'Close Call',
+    desc: 'Victory in a nail-biting match!',
+    icon: '/stats/close-call.jpg',
+  },
 
-	"ace": {
-		name: 'Ace',
-		desc: 'Win a game in Hardcore mode!',
-		icon: '/stats/ace.jpg',
-	},
+  ace: {
+    name: 'Ace',
+    desc: 'Win a game in Hardcore mode!',
+    icon: '/stats/ace.jpg',
+  },
 
-	"conqueror": {
-		name: 'Conqueror',
-		desc: 'Win a game in Medium mode!',
-		icon: '/stats/conqueror.jpg',
-	},
+  conqueror: {
+    name: 'Conqueror',
+    desc: 'Win a game in Medium mode!',
+    icon: '/stats/conqueror.jpg',
+  },
 
-	"rookie": {
-		name: 'Rookie',
-		desc: 'Congrats on your first game',
-		icon: '/stats/rookie.jpg',
-	},
+  rookie: {
+    name: 'Rookie',
+    desc: 'Congrats on your first game',
+    icon: '/stats/rookie.jpg',
+  },
 
-	"elite": {
-		name: 'Elite',
-		desc: 'Attaining elite status after winning 10 games!',
-		icon: '/stats/elite.jpg',
-	},
-
-}
+  elite: {
+    name: 'Elite',
+    desc: 'Attaining elite status after winning 10 games!',
+    icon: '/stats/elite.jpg',
+  },
+};
 
 @Injectable()
 export class GameData {
@@ -74,21 +73,23 @@ export class GameData {
   constructor() {}
 
   private async getUserStatsByUsername(username: string) {
-    return (await this.prisma.user.findUnique({
-      where: { username },
-      select: {
-        id: true,
-        userStats: {
-          select: {
-            id: true,
-            achievements: true,
-            wins: true,
-            losses: true,
-            rank: true,
+    return (
+      await this.prisma.user.findUnique({
+        where: { username },
+        select: {
+          id: true,
+          userStats: {
+            select: {
+              id: true,
+              achievements: true,
+              wins: true,
+              losses: true,
+              rank: true,
+            },
           },
         },
-      },
-    })).userStats;
+      })
+    ).userStats;
   }
 
   private async updateUserRank(userId: number, rank: string, client?: any) {
@@ -102,7 +103,7 @@ export class GameData {
   private async saveAchievement(username: string, client: any, achiev: string) {
     if (!ACHIEV[achiev]) return;
 
-    const stats = (await this.getUserStatsByUsername(username));
+    const stats = await this.getUserStatsByUsername(username);
     const userAchiev = stats.achievements;
 
     if (userAchiev.find((a) => a.name === ACHIEV[achiev].name)) return;
@@ -145,9 +146,12 @@ export class GameData {
       await this.saveAchievement(res.winner, res.wClient, 'conqueror');
     }
 
-    if (wStats.wins + wStats.losses === 0 || lStats.wins + lStats.losses === 0) {
+    if (
+      wStats.wins + wStats.losses === 0 ||
+      lStats.wins + lStats.losses === 0
+    ) {
       await this.saveAchievement(res.winner, res.wClient, 'rookie');
-	  await this.saveAchievement(res.loser, res.lClient, 'rookie');
+      await this.saveAchievement(res.loser, res.lClient, 'rookie');
     }
   }
 
@@ -173,7 +177,7 @@ export class GameData {
   private async createStats(userId: number) {
     await this.prisma.stats.create({
       data: {
-        rank: "Unranked",
+        rank: 'Unranked',
         user: {
           connect: { id: userId },
         },
@@ -182,75 +186,73 @@ export class GameData {
   }
 
   async handleRankUpdates(userId: number, wins: number) {
-	const rankThresholds = [3, 5, 10, 20, 30];
-	const ranks = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond'];
-  
-	for (let i = 0; i < rankThresholds.length; i++) {
-	  if (wins === rankThresholds[i]) {
-		await this.updateUserRank(userId, ranks[i]);
-		break;
-	  }
-	}
+    const rankThresholds = [3, 5, 10, 20, 30];
+    const ranks = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond'];
+
+    for (let i = 0; i < rankThresholds.length; i++) {
+      if (wins === rankThresholds[i]) {
+        await this.updateUserRank(userId, ranks[i]);
+        break;
+      }
+    }
   }
-  
+
   async saveGame(res: OutcomeDto) {
-	try {
-	  const wUser = await this.getUserByUsername(res.winner);
-	  const lUser = await this.getUserByUsername(res.loser);
-	  const wStats = await this.getUserStatsByUsername(res.winner);
-  
-	  await this.createStatsIfNull(wUser.id);
-	  await this.createStatsIfNull(lUser.id);
-  
-	  await this.handleAchievements(res);
-  
-	  await this.prisma.game.create({
-		data: {
-		  outcome: "WIN",
-		  p1Score: res.score.winner,
-		  p2Score: res.score.loser,
-		  gameType: res.mode,
-		  p2Id: lUser.id,
-		  user: {
-			connect: {
-			  id: wUser.id,
-			},
-		  },
-		},
-	  });
-  
-	  await this.prisma.game.create({
-		data: {
-		  outcome: 'LOSE',
-		  p1Score: res.score.loser,
-		  p2Score: res.score.winner,
-		  gameType: res.mode,
-		  p2Id: wUser.id,
-		  user: {
-			connect: {
-			  id: lUser.id,
-			},
-		  },
-		},
-	  });
+    try {
+      const wUser = await this.getUserByUsername(res.winner);
+      const lUser = await this.getUserByUsername(res.loser);
 
-	  const updatedWStats = await this.getUserStatsByUsername(res.winner);
-	  const updatedLStats = await this.getUserStatsByUsername(res.loser);
+      await this.createStatsIfNull(wUser.id);
+      await this.createStatsIfNull(lUser.id);
 
-	  await this.prisma.stats.update({
-		where: { userId: wUser.id },
-		data: { wins: updatedWStats.wins },
-	  });
+      await this.handleAchievements(res);
 
-	  await this.prisma.stats.update({
-		where: { userId: lUser.id },
-		data: { losses: updatedLStats.losses },
-	  });
+      await this.prisma.game.create({
+        data: {
+          outcome: 'WIN',
+          p1Score: res.score.winner,
+          p2Score: res.score.loser,
+          gameType: res.mode,
+          p2Id: lUser.id,
+          user: {
+            connect: {
+              id: wUser.id,
+            },
+          },
+        },
+      });
 
-	  await this.handleRankUpdates(wUser.id, updatedWStats.wins);
+      await this.prisma.game.create({
+        data: {
+          outcome: 'LOSE',
+          p1Score: res.score.loser,
+          p2Score: res.score.winner,
+          gameType: res.mode,
+          p2Id: wUser.id,
+          user: {
+            connect: {
+              id: lUser.id,
+            },
+          },
+        },
+      });
 
-	} catch (error) {
-	  console.error("Error:", error);
-	}
+      const updatedWStats = await this.getUserStatsByUsername(res.winner);
+      const updatedLStats = await this.getUserStatsByUsername(res.loser);
+
+      await this.prisma.stats.update({
+        where: { userId: wUser.id },
+        data: { wins: updatedWStats.wins },
+      });
+
+      await this.prisma.stats.update({
+        where: { userId: lUser.id },
+        data: { losses: updatedLStats.losses },
+      });
+
+      await this.handleRankUpdates(wUser.id, updatedWStats.wins);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
 }

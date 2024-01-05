@@ -9,23 +9,20 @@ import { ChannelService } from './channel.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
-	imports: [
-		AuthModule,
-		MulterModule.register({
-			dest: './uploads',
-		})
-	],
-	controllers: [UserController],
-	providers: [
-		UserService,
-		PrismaService,
-		MulterService,
-		ChannelService,
-		JwtService,
-	],
-	exports: [
-		UserService,
-		MulterService,
-	],
+  imports: [
+    AuthModule,
+    MulterModule.register({
+      dest: './uploads',
+    }),
+  ],
+  controllers: [UserController],
+  providers: [
+    UserService,
+    PrismaService,
+    MulterService,
+    ChannelService,
+    JwtService,
+  ],
+  exports: [UserService, MulterService],
 })
 export class UserModule {}

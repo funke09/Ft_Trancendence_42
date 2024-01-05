@@ -1,463 +1,537 @@
-import { HttpStatus } from "@nestjs/common";
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
-import { User } from "@prisma/client";
-import { Server, Socket } from "socket.io";
-import { AcceptFriendDto, AddFriendDto, AnyMsgDto, ChannelSearchDto, MsgPrivateReqDto, PublicMsgDto, SetChannelMsgDto, SocketResDto, UserSearchDto } from "./dto/chat.dto";
-import { ChatService } from "./chat.service";
-import { ChannelService } from "./channel.service";
-import { ChatHistory } from "./chat.history";
+import { HttpStatus } from '@nestjs/common';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { User } from '@prisma/client';
+import { Server, Socket } from 'socket.io';
+import {
+  AcceptFriendDto,
+  AddFriendDto,
+  AnyMsgDto,
+  ChannelSearchDto,
+  MsgPrivateReqDto,
+  PublicMsgDto,
+  SetChannelMsgDto,
+  SocketResDto,
+  UserSearchDto,
+} from './dto/chat.dto';
+import { ChatService } from './chat.service';
+import { ChannelService } from './channel.service';
+import { ChatHistory } from './chat.history';
 
-@WebSocketGateway({ cors: {origin: 'http://localhost:3000', credentials: true} , namespace: 'chat'})
-
+@WebSocketGateway({
+  cors: { origin: 'http://localhost:3000', credentials: true },
+  namespace: 'chat',
+})
 export class ChatGateway {
-	constructor(
-		private readonly chatService: ChatService,
-		private readonly channelService: ChannelService,
-		private readonly chatHistory: ChatHistory,
-	) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly channelService: ChannelService,
+    private readonly chatHistory: ChatHistory,
+  ) {}
 
-	private onlineClients: Map<string, Socket> = new Map<string, Socket>();
-	
-	@WebSocketServer() server: Server;
+  private onlineClients: Map<string, Socket> = new Map<string, Socket>();
 
-	@SubscribeMessage('msg')
-	async privateMsg(@ConnectedSocket() client: Socket, @MessageBody() payload: MsgPrivateReqDto) {
-		const user = await this.chatService.jwtDecoe(client);
-		if (!user) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'User not found',
-			};
-			client.emit('msg', res);
-			return;
-		}
-		if (!payload || !user.uid || !payload.text || !payload.toId) {
-			const res: SocketResDto = {
-				status: HttpStatus.BAD_REQUEST,
-				message: 'No payload provided',
-			};
-			client.emit('msg', res);
-			return;
-		}
-		const userObj: User = await this.channelService.getUserById(user.uid);
-        if (!userObj) {
-            const response: SocketResDto = {
-                status: HttpStatus.NOT_FOUND,
-                message: 'User not found',
-            };
-            client.emit('msg', response);
-            return;
-        }
-        if (user.uid === payload.toId) {
-            const response: SocketResDto = {
-                status: HttpStatus.BAD_REQUEST,
-                message: 'You sending a message to yourself... lonely much?',
-            };
-            client.emit('msg', response);
-            return;
-        }
+  @WebSocketServer() server: Server;
 
-        const channelID = await this.chatService.setChannelId(userObj.username, payload.toId);
+  @SubscribeMessage('msg')
+  async privateMsg(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: MsgPrivateReqDto,
+  ) {
+    const user = await this.chatService.jwtDecoe(client);
+    if (!user) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+      };
+      client.emit('msg', res);
+      return;
+    }
+    if (!payload || !user.uid || !payload.text || !payload.toId) {
+      const res: SocketResDto = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'No payload provided',
+      };
+      client.emit('msg', res);
+      return;
+    }
+    const userObj: User = await this.channelService.getUserById(user.uid);
+    if (!userObj) {
+      const response: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+      };
+      client.emit('msg', response);
+      return;
+    }
+    if (user.uid === payload.toId) {
+      const response: SocketResDto = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'You sending a message to yourself... lonely much?',
+      };
+      client.emit('msg', response);
+      return;
+    }
 
-        if (!channelID) {
-            const response: SocketResDto = {
-                status: HttpStatus.BAD_REQUEST,
-                message: 'Payload is not valid',
-            };
-            client.emit('msg', response);
-            return;
-        }
+    const channelID = await this.chatService.setChannelId(
+      userObj.username,
+      payload.toId,
+    );
 
-        const verifyChannel = await this.chatService.isChannelExist(userObj.username, channelID);
-        if (!verifyChannel) {
-            await this.chatService.createChannel(
-                userObj.username,
-                payload.toId,
-                channelID,
-            );
-        }
+    if (!channelID) {
+      const response: SocketResDto = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'Payload is not valid',
+      };
+      client.emit('msg', response);
+      return;
+    }
 
-        const blocked = await this.chatService.isUserBlocked(userObj.username, payload.toId);
-        if (blocked) {
-            const response: SocketResDto = {
-                status: HttpStatus.FORBIDDEN,
-                message: 'You are blocked by this user',
-            };
-            client.emit('msg', response);
+    const verifyChannel = await this.chatService.isChannelExist(
+      userObj.username,
+      channelID,
+    );
+    if (!verifyChannel) {
+      await this.chatService.createChannel(
+        userObj.username,
+        payload.toId,
+        channelID,
+      );
+    }
 
-            return;
-        }
+    const blocked = await this.chatService.isUserBlocked(
+      userObj.username,
+      payload.toId,
+    );
+    if (blocked) {
+      const response: SocketResDto = {
+        status: HttpStatus.FORBIDDEN,
+        message: 'You are blocked by this user',
+      };
+      client.emit('msg', response);
 
-        const inChannel = client.rooms.has(channelID);
-        if (!inChannel) {
-            client.join(channelID);
-            client.to(channelID).emit('privateJoined', userObj.username);
-        }
+      return;
+    }
 
-        await this.chatService.savePrivateMsg({
-            msg: payload.text,
-            from: userObj.username,
-            channelId: channelID,
-            toID: payload.toId,
-        });
+    const inChannel = client.rooms.has(channelID);
+    if (!inChannel) {
+      client.join(channelID);
+      client.to(channelID).emit('privateJoined', userObj.username);
+    }
 
-        const userr: User = await this.channelService.getUserById(user.uid);
-        const receiver: User = await this.channelService.getUserById(payload.toId);
-        let response: AnyMsgDto = {
-            text: payload.text,
-            avatar: userr.avatar,
-            fromUsername: userr.username,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            channelName: null,
-            channelId: null,
-            fromId: user.uid,
-            toId: receiver.id,
-            toUsername: receiver.username,
-            privateChannelId: channelID,
-        };
-        client.to(channelID).emit('msg', response);
-	}
+    await this.chatService.savePrivateMsg({
+      msg: payload.text,
+      from: userObj.username,
+      channelId: channelID,
+      toID: payload.toId,
+    });
 
-	@SubscribeMessage("PublicMsg")
-	async PublicMsg(@ConnectedSocket() client: Socket, @MessageBody() payload: PublicMsgDto) {
-		const user = await this.chatService.jwtDecoe(client);
-		if (user) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'User not found',
-			};
-			client.emit("PublicMsg", res);
-			return ;
-		}
-		if (!payload || !user.uid || !payload.text || !payload.id) {
-			const res: SocketResDto = {
-				status: HttpStatus.BAD_REQUEST,
-				message: 'No payload provided',
-			};
-			client.emit('PublicMsg', res);
-			return;
-		}
+    const userr: User = await this.channelService.getUserById(user.uid);
+    const receiver: User = await this.channelService.getUserById(payload.toId);
+    const response: AnyMsgDto = {
+      text: payload.text,
+      avatar: userr.avatar,
+      fromUsername: userr.username,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      channelName: null,
+      channelId: null,
+      fromId: user.uid,
+      toId: receiver.id,
+      toUsername: receiver.username,
+      privateChannelId: channelID,
+    };
+    client.to(channelID).emit('msg', response);
+  }
 
-		const userObj: User = await this.channelService.getUserById(user.uid);
-        if (!userObj) {
-            const response: SocketResDto = {
-                status: HttpStatus.NOT_FOUND,
-                message: 'User not found',
-            };
-            client.emit('PublicMsg', response);
-            return;
-        }
+  @SubscribeMessage('PublicMsg')
+  async PublicMsg(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: PublicMsgDto,
+  ) {
+    const user = await this.chatService.jwtDecoe(client);
+    if (user) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+      };
+      client.emit('PublicMsg', res);
+      return;
+    }
+    if (!payload || !user.uid || !payload.text || !payload.id) {
+      const res: SocketResDto = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'No payload provided',
+      };
+      client.emit('PublicMsg', res);
+      return;
+    }
 
-		const channelName = await this.channelService.getChannelNameById(payload.id);
-		if (!channelName) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'Channel not found',
-			};
-			client.emit("PublicMsg", res);
-			return;
-		}
+    const userObj: User = await this.channelService.getUserById(user.uid);
+    if (!userObj) {
+      const response: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+      };
+      client.emit('PublicMsg', response);
+      return;
+    }
 
-		const isUserFlagged = await this.channelService.isUserFlagged(payload.id, user.uid);
-		if (isUserFlagged) {
-			const res: SocketResDto = {
-				status: HttpStatus.FORBIDDEN,
-				message: 'Not Authorized to send a message here',
-			};
-			client.emit("PublicMsg", res);
-			return ;
-		}
+    const channelName = await this.channelService.getChannelNameById(
+      payload.id,
+    );
+    if (!channelName) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'Channel not found',
+      };
+      client.emit('PublicMsg', res);
+      return;
+    }
 
-		const isInChannel = client.rooms.has(channelName);
-		if (!isInChannel)
-			client.join(channelName);
+    const isUserFlagged = await this.channelService.isUserFlagged(
+      payload.id,
+      user.uid,
+    );
+    if (isUserFlagged) {
+      const res: SocketResDto = {
+        status: HttpStatus.FORBIDDEN,
+        message: 'Not Authorized to send a message here',
+      };
+      client.emit('PublicMsg', res);
+      return;
+    }
 
-		const setPayload: SetChannelMsgDto = {
-			text: payload.text,
-			fromId: userObj.id,
-			channelId: payload.id,
-			fromAvatar: userObj.avatar,
-		};
+    const isInChannel = client.rooms.has(channelName);
+    if (!isInChannel) client.join(channelName);
 
-		await this.channelService.setPrivateMsg(setPayload);
+    const setPayload: SetChannelMsgDto = {
+      text: payload.text,
+      fromId: userObj.id,
+      channelId: payload.id,
+      fromAvatar: userObj.avatar,
+    };
 
-		let res: AnyMsgDto = {
-			text: payload.text,
-			avatar: userObj.avatar,
-			fromUsername: userObj.username,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			channelName: channelName,
-			channelId: payload.id,
-			fromId: user.uid,
-			toId: null,
-			toUsername: null,
-			privateChannelId: null,
-		};
-		client.to(channelName).emit("PublicMsg", res);
-	}
+    await this.channelService.setPrivateMsg(setPayload);
 
-	@SubscribeMessage('userSearchQuery')
-	async userSearchQuery(@ConnectedSocket() client: Socket, @MessageBody() payload: UserSearchDto) {
-		let user = await this.chatService.jwtDecoe(client);
-		if (!user) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'User not found',
-			};
-			client.emit('search', res);
-			client.disconnect();
-			return;
-		}
+    const res: AnyMsgDto = {
+      text: payload.text,
+      avatar: userObj.avatar,
+      fromUsername: userObj.username,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      channelName: channelName,
+      channelId: payload.id,
+      fromId: user.uid,
+      toId: null,
+      toUsername: null,
+      privateChannelId: null,
+    };
+    client.to(channelName).emit('PublicMsg', res);
+  }
 
-		if (!payload || !payload.userQuery) {
-			const res: SocketResDto = {
-				status: HttpStatus.BAD_REQUEST,
-				message: 'No payload provided',
-			};
-			client.emit('search', res);
-			return;
-		}
+  @SubscribeMessage('userSearchQuery')
+  async userSearchQuery(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: UserSearchDto,
+  ) {
+    const user = await this.chatService.jwtDecoe(client);
+    if (!user) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+      };
+      client.emit('search', res);
+      client.disconnect();
+      return;
+    }
 
-		const res = await this.chatService.userSearchQuery(user.uid, payload.userQuery);
-		if (!res) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'No results',
-			};
-			client.emit('search', res);
-			return;
-		}
-		client.emit('search', res);
-	}
+    if (!payload || !payload.userQuery) {
+      const res: SocketResDto = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'No payload provided',
+      };
+      client.emit('search', res);
+      return;
+    }
 
-	@SubscribeMessage('channelSearchQuery')
-	async channelSearchQuery(@ConnectedSocket() client: Socket, @MessageBody() payload: ChannelSearchDto) {
-		let user = await this.chatService.jwtDecoe(client);
-		if (!user) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'User not found',
-			};
-			client.emit('search', res);
-			client.disconnect();
-			return;
-		}
+    const res = await this.chatService.userSearchQuery(
+      user.uid,
+      payload.userQuery,
+    );
+    if (!res) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'No results',
+      };
+      client.emit('search', res);
+      return;
+    }
+    client.emit('search', res);
+  }
 
-		if (!payload || !payload.channelQuery) {
-			const res: SocketResDto = {
-				status: HttpStatus.BAD_REQUEST,
-				message: 'No payload provided',
-			};
-			client.emit('search', res);
-			return;
-		}
+  @SubscribeMessage('channelSearchQuery')
+  async channelSearchQuery(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: ChannelSearchDto,
+  ) {
+    const user = await this.chatService.jwtDecoe(client);
+    if (!user) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+      };
+      client.emit('search', res);
+      client.disconnect();
+      return;
+    }
 
-		const res = await this.chatService.channelSearchQuery(user.uid, payload.channelQuery);
-		if (!res) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'No results',
-			};
-			client.emit('search', res);
-			return;
-		}
-		client.emit('search', res);
-	}
+    if (!payload || !payload.channelQuery) {
+      const res: SocketResDto = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'No payload provided',
+      };
+      client.emit('search', res);
+      return;
+    }
 
-	@SubscribeMessage('searchAllChannels')
-	async searchAllChannels(@ConnectedSocket() client: Socket, @MessageBody() payload: ChannelSearchDto) {
-		let user = await this.chatService.jwtDecoe(client);
-		if (!user) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'User not found',
-			};
-			client.emit('search', res);
-			client.disconnect();
-			return;
-		}
+    const res = await this.chatService.channelSearchQuery(
+      user.uid,
+      payload.channelQuery,
+    );
+    if (!res) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'No results',
+      };
+      client.emit('search', res);
+      return;
+    }
+    client.emit('search', res);
+  }
 
-		if (!payload || !payload.channelQuery) {
-			const res: SocketResDto = {
-				status: HttpStatus.BAD_REQUEST,
-				message: 'No payload provided',
-			};
-			client.emit('search', res);
-			return;
-		}
+  @SubscribeMessage('searchAllChannels')
+  async searchAllChannels(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: ChannelSearchDto,
+  ) {
+    const user = await this.chatService.jwtDecoe(client);
+    if (!user) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+      };
+      client.emit('search', res);
+      client.disconnect();
+      return;
+    }
 
-		const res = await this.chatService.searchAllChannels(user.uid, payload.channelQuery);
-		if (!res) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'No results',
-			};
-			client.emit('search', res);
-			return;
-		}
-		client.emit('search', res);
-	}
+    if (!payload || !payload.channelQuery) {
+      const res: SocketResDto = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'No payload provided',
+      };
+      client.emit('search', res);
+      return;
+    }
 
-	@SubscribeMessage("reconnect")
-	async reconnect(@ConnectedSocket() client: Socket) {
-		let user = await this.chatService.jwtDecoe(client);
-		if (!user) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'User not found',
-			};
-			client.emit('reconnect', res);
-			client.disconnect();
-			return;
-		}
-		await this.chatService.setUserOnline(user.uid);
-		await this.chatService.joinChannelsBack(user.uid, client);
-		this.chatService.setUserSocketId(client.id, user.uid);
+    const res = await this.chatService.searchAllChannels(
+      user.uid,
+      payload.channelQuery,
+    );
+    if (!res) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'No results',
+      };
+      client.emit('search', res);
+      return;
+    }
+    client.emit('search', res);
+  }
 
-		const publicChat = await this.chatHistory.getUserPublicChatHistory(user.uid);
-		const privateChat = await this.chatHistory.getUserPrivateChatHistory(user.uid, 0);
-		const userNotif = await this.chatService.loadUserNotif(user.uid)
+  @SubscribeMessage('reconnect')
+  async reconnect(@ConnectedSocket() client: Socket) {
+    const user = await this.chatService.jwtDecoe(client);
+    if (!user) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+      };
+      client.emit('reconnect', res);
+      client.disconnect();
+      return;
+    }
+    await this.chatService.setUserOnline(user.uid);
+    await this.chatService.joinChannelsBack(user.uid, client);
+    this.chatService.setUserSocketId(client.id, user.uid);
 
-		client.emit('publicChat', publicChat);
-		client.emit('privateChat', privateChat);
-		client.emit('notifs', userNotif);
-	}
+    const publicChat = await this.chatHistory.getUserPublicChatHistory(
+      user.uid,
+    );
+    const privateChat = await this.chatHistory.getUserPrivateChatHistory(
+      user.uid,
+      0,
+    );
+    const userNotif = await this.chatService.loadUserNotif(user.uid);
 
-	@SubscribeMessage("getRecentChannels")
-	async getRecentChannels(@ConnectedSocket() client: Socket) {
-		let user = await this.chatService.jwtDecoe(client);
-		if (!user) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'User not found',
-			};
-			client.emit('getRecentChannels', res);
-			client.disconnect();
-			return;
-		}
+    client.emit('publicChat', publicChat);
+    client.emit('privateChat', privateChat);
+    client.emit('notifs', userNotif);
+  }
 
-		const res = await this.channelService.recentChannels(user.uid);
-		client.emit('recentChannels', res)
-	}
+  @SubscribeMessage('getRecentChannels')
+  async getRecentChannels(@ConnectedSocket() client: Socket) {
+    const user = await this.chatService.jwtDecoe(client);
+    if (!user) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+      };
+      client.emit('getRecentChannels', res);
+      client.disconnect();
+      return;
+    }
 
-	@SubscribeMessage("addFriend")
-	async addFriend(@ConnectedSocket () client: Socket, @MessageBody() payload: AddFriendDto) {
-		let user = await this.chatService.jwtDecoe(client);
-		if (!user) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'User not Authorized',
-			};
-			client.emit('addFriend', res);
-			client.disconnect();
-			return;
-		}
+    const res = await this.channelService.recentChannels(user.uid);
+    client.emit('recentChannels', res);
+  }
 
-		if (!payload || !payload.id) {
-			const res: SocketResDto = {
-				status: HttpStatus.BAD_REQUEST,
-				message: 'No payload provided',
-			};
-			client.emit('addFriend', res);
-			return;
-		}
+  @SubscribeMessage('addFriend')
+  async addFriend(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: AddFriendDto,
+  ) {
+    const user = await this.chatService.jwtDecoe(client);
+    if (!user) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not Authorized',
+      };
+      client.emit('addFriend', res);
+      client.disconnect();
+      return;
+    }
 
-		const friendObj: User = await this.channelService.getUserById(payload.id);
-        if (!friendObj) {
-            const response: SocketResDto = {
-                status: HttpStatus.NOT_FOUND,
-                message: 'User not found',
-            };
-            client.emit('addFriend', response);
-            return;
-        }
-		await this.chatService.addFriend(user.uid, friendObj.username, this.server);
-	}
+    if (!payload || !payload.id) {
+      const res: SocketResDto = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'No payload provided',
+      };
+      client.emit('addFriend', res);
+      return;
+    }
 
-	@SubscribeMessage("acceptFriend")
-	async acceptFriend(@ConnectedSocket() client: Socket, @MessageBody() payload: AcceptFriendDto) {
-		let user = await this.chatService.jwtDecoe(client);
-		if (!user) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'User not Authorized',
-			};
-			client.emit('acceptFriend', res);
-			client.disconnect();
-			return;
-		}
+    const friendObj: User = await this.channelService.getUserById(payload.id);
+    if (!friendObj) {
+      const response: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+      };
+      client.emit('addFriend', response);
+      return;
+    }
+    await this.chatService.addFriend(user.uid, friendObj.username, this.server);
+  }
 
-		if (!payload || !payload.id) {
-			const res: SocketResDto = {
-				status: HttpStatus.BAD_REQUEST,
-				message: 'No payload provided',
-			};
-			client.emit('acceptFriend', res);
-			return;
-		}
+  @SubscribeMessage('acceptFriend')
+  async acceptFriend(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: AcceptFriendDto,
+  ) {
+    const user = await this.chatService.jwtDecoe(client);
+    if (!user) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not Authorized',
+      };
+      client.emit('acceptFriend', res);
+      client.disconnect();
+      return;
+    }
 
-		const friendObj: User = await this.channelService.getUserById(payload.id);
-        if (!friendObj) {
-            const response: SocketResDto = {
-                status: HttpStatus.NOT_FOUND,
-                message: 'User not found',
-            };
-            client.emit('acceptFriend', response);
-            return;
-        }
+    if (!payload || !payload.id) {
+      const res: SocketResDto = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'No payload provided',
+      };
+      client.emit('acceptFriend', res);
+      return;
+    }
 
-		const res = await this.chatService.acceptFriend(user.uid, friendObj.username, this.onlineClients);
-		if (res == false) {
-			const res: SocketResDto = {
-				status: HttpStatus.NOT_FOUND,
-				message: 'User/Friend not found',
-			};
-			client.emit('acceptFriend', res);
-			return ;
-		}
-		client.emit('acceptFriend', res);
-	}
+    const friendObj: User = await this.channelService.getUserById(payload.id);
+    if (!friendObj) {
+      const response: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+      };
+      client.emit('acceptFriend', response);
+      return;
+    }
 
-	////////
-	async handleConnection(@ConnectedSocket() client: Socket, ...args: any[]) {
-		let user = await this.chatService.jwtDecoe(client);
-		if (!user) {
-			client.emit('error', 'Unauthorized connection');
-			client.disconnect();
-			return;
-		}
-		this.onlineClients.set(user.username, client);
+    const res = await this.chatService.acceptFriend(
+      user.uid,
+      friendObj.username,
+      this.onlineClients,
+    );
+    if (res == false) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User/Friend not found',
+      };
+      client.emit('acceptFriend', res);
+      return;
+    }
+    client.emit('acceptFriend', res);
+  }
 
+  ////////
+  async handleConnection(@ConnectedSocket() client: Socket) {
+    const user = await this.chatService.jwtDecoe(client);
+    if (!user) {
+      client.emit('error', 'Unauthorized connection');
+      client.disconnect();
+      return;
+    }
+    this.onlineClients.set(user.username, client);
 
-		await this.chatService.setUserOnline(user.uid);
-		await this.chatService.setUserSocketId(client.id, user.uid);
-		await this.chatService.joinChannelsBack(user.uid, client);
+    await this.chatService.setUserOnline(user.uid);
+    await this.chatService.setUserSocketId(client.id, user.uid);
+    await this.chatService.joinChannelsBack(user.uid, client);
 
-		const publicChat = await this.chatHistory.getUserPublicChatHistory(user.uid);
-		const privateChat = await this.chatHistory.getUserPrivateChatHistory(user.uid, 0);
-		const userNotif = await this.chatService.loadUserNotif(user.uid)
+    const publicChat = await this.chatHistory.getUserPublicChatHistory(
+      user.uid,
+    );
+    const privateChat = await this.chatHistory.getUserPrivateChatHistory(
+      user.uid,
+      0,
+    );
+    const userNotif = await this.chatService.loadUserNotif(user.uid);
 
-		client.emit('publicChat', publicChat);
-		client.emit('privateChat', privateChat);
-		client.emit('notifs', userNotif);
-	}
+    client.emit('publicChat', publicChat);
+    client.emit('privateChat', privateChat);
+    client.emit('notifs', userNotif);
+  }
 
-	async handleDisconnect(@ConnectedSocket() client: Socket) {
-		let user = await this.chatService.jwtDecoe(client);
-		if (!user) {
-			client.emit('error', 'Unauthorized connection');
-			client.disconnect();
-			return;
-		}
-		this.chatService.setUserSocketId(null, user.uid);
-		this.onlineClients.delete(user.username);
-		await this.chatService.setUserOffline(user.uid);
-	}
+  async handleDisconnect(@ConnectedSocket() client: Socket) {
+    const user = await this.chatService.jwtDecoe(client);
+    if (!user) {
+      client.emit('error', 'Unauthorized connection');
+      client.disconnect();
+      return;
+    }
+    this.chatService.setUserSocketId(null, user.uid);
+    this.onlineClients.delete(user.username);
+    await this.chatService.setUserOffline(user.uid);
+  }
 
-	emitToUser(socketID: string, event: string, payload: any) {
-		if (socketID == null) return null;
-		this.server.to(socketID).emit(event, payload);
-	}
+  emitToUser(socketID: string, event: string, payload: any) {
+    if (socketID == null) return null;
+    this.server.to(socketID).emit(event, payload);
+  }
 }

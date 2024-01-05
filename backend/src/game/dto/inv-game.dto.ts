@@ -1,6 +1,6 @@
 export class InvGameDto {
-	from: string;
-	to: string;
-	time: Date;
-	type: number;
-};
+  from: string;
+  to: string;
+  time: Date;
+  type: number;
+}
