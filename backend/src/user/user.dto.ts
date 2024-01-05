@@ -1,9 +1,9 @@
 import {
-  IsAlphanumeric,
   IsEmail,
   IsNotEmpty,
   IsNumber,
   IsString,
+  MaxLength,
   MinLength,
 } from 'class-validator';
 
@@ -14,7 +14,7 @@ export class SetEmailDto {
 
 export class setUsernameDto {
   @IsString()
-  @IsAlphanumeric()
+  @MaxLength(12)
   username: string;
 }
 
