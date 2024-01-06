@@ -77,10 +77,10 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 					<List className='notif overflow-y-auto max-h-[300px]'>
 						<Typography variant='h5' className='text-white/50 text-center' >Members</Typography>
 						<hr className='m-auto w-32 rounded-full opacity-30'/>	
-						<ChannelMembers manager={manager} members={members}/>
+						<ChannelMembers manager={manager} members={members} channel={chat}/>
 					</List>
 				}
-				{manager && // INVITE USER
+				{manager &&
 					<div className="absolute bottom-12 right-8 z-[20] transition-all duration-300 hover:rotate-180">
 						<IconButton color="pink" className="rounded-full">
 							<i className="fa-solid fa-plus fa-lg"/>
