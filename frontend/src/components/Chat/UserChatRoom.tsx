@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import store, { addNewMsgToGroup, setCurrentChat } from "@/redux/store";
-import { Typography, Avatar, Button, IconButton, Input, Drawer, Dialog, ButtonGroup } from '@material-tailwind/react';
+import { Typography, Avatar, Button, IconButton, Input, Drawer, Dialog, ButtonGroup, Menu, MenuHandler, MenuList, MenuItem } from '@material-tailwind/react';
 import chatSocket from "@/sockets/chatSocket";
 import { addNewMsgToPrivate } from "@/redux/store";
 import { AnyMsgDto, PrivateMsgReq } from './types';
@@ -9,6 +9,8 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
 import { BlockFriend } from '../User/types';
+import gameSocket from '@/sockets/gameSocket';
+import QueueModal from '../Game/findGame';
 
 const Message = ({ msg, friend }: { msg: AnyMsgDto; friend: any }) => {
 	const isCurrentUser = friend.id === msg.fromId;
@@ -33,7 +35,6 @@ const Message = ({ msg, friend }: { msg: AnyMsgDto; friend: any }) => {
 export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected: any, chat: any}) {
 	const [friend, setFriend] = useState<any>(chat.otherUser);
 	const [messages, setMessages] = useState<any>([]);
-	const [isBlocked, setIsBlocked] = useState(false);
 	const [msg, setMsg] = useState("");
     const scrollRef = useRef<Readonly<HTMLDivElement> | null>(null);
 	const router = useRouter();
@@ -56,7 +57,6 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
 		api.get('/user/' + chat.otherUser.username)
 			.then((res: any) => {
 				setFriend(res.data);
-				setIsBlocked(res.data.Blocked.includes(user.id));
 			})
 			.catch((err: any) => {
 				toast.error(err?.response?.data.message ?? "An Error Occured!", {theme: "dark"});
@@ -106,9 +106,12 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
 
 	////////////////// SIDEBAR /////////////////////
 	const [open, setOpen] = useState(false);
+	const [isInvite, setIsInvite] = useState(false);
 
 	const handleOpen = () => setOpen(!open);
+	const handleInvOpen = () => setIsInvite(!isInvite);
 
+	//----- BLOCK BUTTON -----//
 	const block = () => {
 		handleOpen();
 		store.dispatch(setCurrentChat(null));
@@ -123,7 +126,27 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
 			})
 	}
 
-	console.log('isBlocked:', isBlocked);
+	//----- PLAY BUTTON -----//
+	const play = (type: number) => {
+		setIsInvite(true);
+		gameSocket.emit('invGame', {
+			username: friend.username,
+			gameType: type,
+		});
+	}
+
+	const handleCancel = () => {
+		setIsInvite(false);
+		gameSocket.emit("cancelInvGame", { username: friend.username});
+	
+	};
+
+	useEffect(() => {
+		gameSocket.on("invite-canceled", () => {
+			setIsInvite(false);
+		});
+	})
+
 	return (
         <div className="h-full flex flex-col">
             {/* header */}
@@ -154,15 +177,29 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
 							<Typography variant='h6' className='text-gray-500'>{friend.email}</Typography>
 							<hr className='m-auto w-48 rounded-full opacity-30'/>
 							<div className='flex flex-row justify-between gap-x-20'>
-								<Button onClick={() => {block()}} color='red' variant='text' className='flex flex-row text-[16px] transition-all bg-red-500/10 hover:bg-red-500/20 justify-between items-center gap-x-2'>
+								<Button onClick={block} color='red' variant='text' className='flex flex-row text-[16px] transition-all bg-red-500/10 hover:bg-red-500/20 justify-between items-center gap-x-2'>
 									<i className="fa-solid fa-ban fa-lg"></i>
 									<h1>BLOCK</h1>
 								</Button>
-								<Button color='pink' variant='text' className='flex flex-row text-[16px] bg-pink-500/10 hover:bg-pink-500/20 justify-between items-center gap-x-2'>
-									<i className="fa-solid fa-gamepad fa-lg"/>
-									<h1>PLAY</h1>
-								</Button>
+								<Menu>
+									<MenuHandler>
+										<Button color='pink' variant='text' className='flex flex-row text-[16px] bg-pink-500/10 hover:bg-pink-500/20 justify-between items-center gap-x-2'>
+											<i className="fa-solid fa-gamepad fa-lg"/>
+											<h1>PLAY</h1>
+										</Button>
+									</MenuHandler>
+									<MenuList className='z-[99999] bg-primary1 text-center border-none text-white'>
+										<MenuItem onClick={() => play(1)}>CLASSIC</MenuItem>
+										<MenuItem onClick={() => play(2)}>MEDIUM</MenuItem>
+										<MenuItem onClick={() => play(3)}>HARDCORE</MenuItem>
+									</MenuList>
+								</Menu>
 							</div>
+							{ isInvite && 
+							<Dialog size="xs" className="bg-[#382A39] p-5 rounded-[30px]" open={isInvite} handler={handleInvOpen}>
+								<QueueModal type={"invite"} onCancel={handleCancel}/>
+							</Dialog>
+							}
 						</div>
 					</Dialog>
 				</div>
@@ -189,7 +226,6 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
 					placeholder="Type a Message..."
 					color='white'
 					value={msg}
-					disabled={isBlocked}
 					onChange={(e) => setMsg(e.currentTarget.value)}
 					onKeyDown={(e) => {
 						if (e.key === "Enter") sendMessage({ message: msg, from: "me" });
@@ -198,7 +234,6 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
                 <IconButton
                     color="pink"
                     size="md"
-					disabled={isBlocked}
                     onClick={() => {
                         sendMessage({
                             message: msg,
