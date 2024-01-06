@@ -18,6 +18,7 @@ import {
   List,
   ListItem,
   ListItemPrefix,
+  DialogHeader,
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
