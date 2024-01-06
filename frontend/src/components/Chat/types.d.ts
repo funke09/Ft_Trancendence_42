@@ -45,3 +45,7 @@ export class JoinChannelDto {
 	channelID: number;
 	password: string | null;
 };
+
+export class LeaveChannelDto {
+	channelID: number;
+}

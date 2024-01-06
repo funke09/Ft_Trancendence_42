@@ -1,13 +1,16 @@
 import store, { addNewMsgToGroup } from '@/redux/store';
 import chatSocket from '@/sockets/chatSocket';
-import { IconButton, Avatar, Typography, Input } from '@material-tailwind/react';
+import { IconButton, Avatar, Typography, Input, Dialog, Card, List, ListItem, ListItemPrefix, Tooltip, Badge, Button } from '@material-tailwind/react';
 import router from 'next/router';
 import React, { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify';
 import { AnyMsgDto } from './types';
+import Image from 'next/image';
+import ChannelMembers from './ChannelMembers';
+import Loading from '../Layout/Loading';
+import ChannelInfo from './ChannelInfo';
 
 function Message({ msg, user }: { msg: any, user: any }) {
-	console.log(msg);
 	const isCurrentUser = user.id !== msg.fromId;
     const bgColor = isCurrentUser ? 'bg-[#26b5c5]' : 'bg-[#155e66]';
     const borderRadiusClass = isCurrentUser
@@ -64,7 +67,6 @@ export function ChannelChatRoom({user, setSelected, channel} : {user: any, setSe
 
 			if (data?.channelId === chat?.id)
 				setMessages((prev: any) => [...prev, newMsg]);
-			console.log('msg:', newMsg);
 		});
 
 
@@ -104,23 +106,41 @@ export function ChannelChatRoom({user, setSelected, channel} : {user: any, setSe
 			toUsername: user.username,
 			channelId: chat.id,
 		};
-		console.log('send msg:', newMsg);
 		setMessages((prev: any) => [...prev, newMsg]);
 		store.dispatch(addNewMsgToGroup(newMsg));
 		setMsg("");
 	};
 
+	//////////// SIDEBAR //////////////
+	const [open, setOpen] = useState(false);
+	const manager: boolean = (user.id === chat.ownerId || chat.adminsIds.includes(user.id))
+
+	const handleOpen = () => setOpen(!open);
+
 	return (
 		<div className="flex flex-col h-full">
 			{/* header */}
-			<div className="flex justify-start items-center p-4 bg-[#0d4d53]">
-				<IconButton className='mr-5' variant="text" color="white" onClick={() => setSelected(null)}>
-					<i className="fas fa-chevron-left"/>
-				</IconButton>
-				<Avatar src={channelAvatar} size="md" className="mr-4" />
-				<Typography variant="h5" color="white">
-					{chat.name}
-				</Typography>
+			<div className="w-full bg-[#0d4d53]">
+				<div className='flex flex-row items-center justify-between p-4 h-auto'>
+					{/* Left-aligned elements */}
+					<div className='flex flex-row items-center'>
+						<IconButton className='mr-5' variant="text" color="white" onClick={() => setSelected(null)}>
+							<i className="fas fa-chevron-left"/>
+						</IconButton>
+						<Avatar src={channelAvatar} size="md" className="mr-4" />
+						<Typography variant="h5" color="white">
+							{chat.name}
+						</Typography>
+					</div>
+					{/* Right-aligned bars icon */}
+					<IconButton
+						variant='text' onClick={handleOpen} color='white' className='sidebar justify-end text-[1.2rem]'>
+						<i className="fa-solid fa-circle-info fa-lg"></i>
+					</IconButton>
+					<Dialog size='sm' className='bg-primary1 rounded-[15px]' open={open} handler={handleOpen}>
+						<ChannelInfo chat={chat} channelAvatar={channelAvatar} manager={manager}/>
+					</Dialog>
+				</div>
 			</div>
 
 			{/* messages */}

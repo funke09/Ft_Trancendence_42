@@ -160,7 +160,7 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
 						{friend?.id && (
 							<Avatar onClick={() => {router.push(`/profile/${friend.id}`)}} src={friend.avatar} size="md" className='cursor-pointer mr-2'/>
 						)}
-						<Typography variant="h4" color="white" className="cursor-pointer" onClick={() => {router.push(`/profile/${friend.id}`)}}>
+						<Typography variant="h5" color="white" className="cursor-pointer" onClick={() => {router.push(`/profile/${friend.id}`)}}>
 							{friend.username}
 						</Typography>
 					</div>
@@ -170,8 +170,8 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
 						variant='text' onClick={handleOpen} color='white' className='sidebar justify-end text-[1.2rem]'>
 						<i className="fa-solid fa-circle-info fa-lg"></i>
 					</IconButton>
-					<Dialog size='sm' className='bg-primary1 rounded-[15px]' open={open} handler={handleOpen}>
-						<div className='flex flex-col items-center my-10 gap-y-4'>
+					<Dialog size='xs' className='bg-primary1 rounded-[15px]' open={open} handler={handleOpen}>
+						<div className='flex flex-col items-center my-5 gap-y-4'>
 							<Image className='rounded-full' src={friend.avatar} alt='avatar' width={100} height={100}/>
 							<Typography variant='h3' color='white'>{friend.username}</Typography>
 							<Typography variant='h6' className='text-gray-500'>{friend.email}</Typography>
