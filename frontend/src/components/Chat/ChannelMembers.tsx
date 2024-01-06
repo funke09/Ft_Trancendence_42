@@ -1,9 +1,13 @@
-import { Avatar, IconButton, ListItem, ListItemPrefix, ListItemSuffix, Tooltip, Typography } from '@material-tailwind/react'
-import React from 'react'
+import { Avatar, Button, Dialog, DialogBody, IconButton, ListItem, ListItemPrefix, ListItemSuffix, Menu, MenuHandler, MenuList, Tooltip, Typography } from '@material-tailwind/react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
+import api from '@/api';
+import store from '@/redux/store';
+import MemberManage from './MemberManage';
 
-const ChannelMembers = ({manager, members} : {manager: boolean, members: any}) => {
+const ChannelMembers = ({manager, members, channel} : {manager: boolean, members: any, channel: any}) => {
 	const router = useRouter();
+	const user = store.getState().profile.user;
 	
 	return (
 		<>
@@ -16,11 +20,16 @@ const ChannelMembers = ({manager, members} : {manager: boolean, members: any}) =
 							</ListItemPrefix>
 							<Typography color='white' variant='h6'>{member.username}</Typography>
 						</div>
-						{manager &&
+						{(manager && member.id != user.id && channel.ownerId != member.id) &&
 							<ListItemSuffix>
-								<IconButton className='rounded-full text-[16px]' variant='text' color='pink'>
-									<i className="fa-solid fa-ellipsis fa-lg"/>
-								</IconButton>
+								<Menu>
+									<MenuHandler>
+										<IconButton className='rounded-full text-[16px]' variant='text' color='pink'>
+											<i className="fa-solid fa-ellipsis fa-lg"/>
+										</IconButton>
+									</MenuHandler>
+									<MemberManage member={member} channel={channel}/>
+								</Menu>
 							</ListItemSuffix>
 						}
 					</ListItem>
