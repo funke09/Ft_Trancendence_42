@@ -174,7 +174,7 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
 						<div className='flex flex-col items-center my-5 gap-y-4'>
 							<Image className='rounded-full' src={friend.avatar} alt='avatar' width={100} height={100}/>
 							<Typography variant='h3' color='white'>{friend.username}</Typography>
-							<Typography variant='h6' className='text-gray-500'>{friend.email}</Typography>
+							<Typography variant='h6' className='text-gray-500'>{friend.email ?? ''}</Typography>
 							<hr className='m-auto w-48 rounded-full opacity-30'/>
 							<div className='flex flex-row justify-between gap-x-20'>
 								<Button onClick={block} color='red' variant='text' className='flex flex-row text-[16px] transition-all bg-red-500/10 hover:bg-red-500/20 justify-between items-center gap-x-2'>

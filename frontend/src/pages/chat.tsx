@@ -35,6 +35,10 @@ const Chat: React.FC = () => {
 				setGroup(null);
 			}
 		})
+
+		return (() => {
+
+		})
 	}, [])
 	
     useEffect(() => {
@@ -56,6 +60,9 @@ const Chat: React.FC = () => {
 	if (loading) {
 		return(<Loading/>);
 	}
+
+	console.log('chat:', chat);
+	console.log('group:', group);
 
     return (
         <>
