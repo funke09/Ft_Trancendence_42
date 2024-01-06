@@ -35,6 +35,10 @@ const Chat: React.FC = () => {
 				setGroup(null);
 			}
 		})
+
+		return (() => {
+
+		})
 	}, [])
 	
     useEffect(() => {
@@ -60,7 +64,7 @@ const Chat: React.FC = () => {
     return (
         <>
 		<Nav/>
-			<div className="flex m-auto w-[1200px] h-[720px] bg-gradient-to-t from-[#137882] to-[#146871] opacity-75 rounded-[15px] shadow-md">
+			<div className="flex m-auto max-w-[1200px] h-[720px] bg-gradient-to-t from-[#137882] to-[#146871] opacity-75 rounded-[15px] shadow-md">
 				<section className="w-1/4 h-full bg-primary1 rounded-s-[15px]">
 					<ChatList/>
 				</section>

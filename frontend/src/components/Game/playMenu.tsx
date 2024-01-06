@@ -32,7 +32,7 @@ export function PlayModal() {
 		gameSocket.emit("cancelGame", { msg: "cancel" });
 		gameSocket.emit("cancelInvGame", { username: username});
 	
-	  };
+	};
 	
 	const handleOpen = () => setIsFindGame(!isFindGame);
 	const handleInvOpen = () => setIsInvite(!isInvite);

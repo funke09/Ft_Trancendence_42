@@ -25,6 +25,7 @@ import {
   BlockFriendDto,
   CreateChannelDto,
   JoinChannelDto,
+  LeaveChannelDto,
   UnblockFriendDto,
   pinDto,
   setPasswordDto,
@@ -184,6 +185,8 @@ export class UserController {
     return this.userService.unfriend(req.user.id, body.friendID);
   }
 
+  //////// CHANNEL MANAGEMENT ////////
+
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
   @Post('/createChannel')
@@ -203,5 +206,26 @@ export class UserController {
       payload.channelID,
       payload.password,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/channelMembers/:channelID')
+  async channelMembers(@Req() req: any, @Param('channelID', ParseIntPipe) channelID: number) {
+	if (!channelID) throw new NotFoundException('Channel ID not provided');
+	return this.channelService.channelMembers(req.user.id, channelID);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(ValidationPipe)
+  @Post('/leaveChannel')
+  async leaveChannel(@Req() req: any, @Body() body: LeaveChannelDto) {
+	return this.channelService.leaveChannel(req.user.id, body.channelID)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/removeChannel/:channelID')
+  async removeChannel(@Req() req: any, @Param('channelID', ParseIntPipe) channelID: number) {
+	if (!channelID) throw new BadRequestException("Channel ID not valid");
+	return this.channelService.removeChannel(req.user.id, channelID);
   }
 }

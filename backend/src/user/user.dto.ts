@@ -1,7 +1,9 @@
 import {
   IsEmail,
+  IsInt,
   IsNotEmpty,
   IsNumber,
+  IsPositive,
   IsString,
   MaxLength,
   MinLength,
@@ -67,4 +69,12 @@ export class CreateChannelDto {
 export class JoinChannelDto {
   channelID: number;
   password: string | null;
+}
+
+export class LeaveChannelDto {
+	@IsNotEmpty()
+	@IsNumber()
+	@IsPositive()
+	@IsInt()
+	channelID: number;
 }

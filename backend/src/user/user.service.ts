@@ -277,7 +277,7 @@ export class UserService {
         where: { userId: friend.id },
         data: { status: 'Blocked' },
       });
-
+	  
       this.removePrivateChannel(id, friendID);
     }
     return new HttpException('Friend Blocked', HttpStatus.OK);

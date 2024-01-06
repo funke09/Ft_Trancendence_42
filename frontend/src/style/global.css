@@ -230,6 +230,24 @@ body::before {
     }
 }
 
+.custom-sidebar {
+    position: absolute;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    background-color: #0d4d53;
+    transition: right 0.3s ease-in-out;
+    z-index: 10;
+}
+
+.slide-in {
+    right: 0;
+}
+
+.slide-out {
+    right: -300px;
+}
+
 
 .custom-chat-style {
     height: 60rem; /* 697.5px / 16px = 43.59375rem */
@@ -365,4 +383,102 @@ body::before {
     display: block;
     margin: -40px auto 0 8px;
     padding: auto;
+}
+
+
+.card {
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease;
+	width: 200px;
+  	margin: 0 10px;
+}
+
+.card:hover {
+	box-shadow: 0 8px 16px 0 rgba(8, 238, 246, 0.464);
+    transform: translateY(-5px);
+}
+
+.card-image img {
+    width: 100%;
+    height: auto;
+}
+
+.card-content {
+    padding: 15px;
+}
+
+.github-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+
+.features-container {
+    background-color: #372938;
+    
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    margin: 0 auto;
+    margin-top: 8rem;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.features-header {
+    background-color: #C73988;
+	
+    text-align: center;
+    padding: 10px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: 0px 8px 15px rgba(8, 238, 246, 0.464);
+}
+
+.features-header h1 {
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.features-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.feature-card {
+	height: 200px;
+	width: 500px;
+    background-color: #282828;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 20px rgba(8, 238, 246, 0.464);
+}
+
+.feature-text h3, .feature-text p {
+    color: white;
+}
+.feature-card img {
+	margin: 0 auto;
+  }
+
+@media (max-width: 768px) {
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
 }
