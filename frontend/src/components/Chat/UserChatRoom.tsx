@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import store, { addNewMsgToGroup } from "@/redux/store";
-import { Typography, Avatar, Button, IconButton, Input } from '@material-tailwind/react';
+import store, { addNewMsgToGroup, setCurrentChat } from "@/redux/store";
+import { Typography, Avatar, Button, IconButton, Input, Drawer, Dialog, ButtonGroup } from '@material-tailwind/react';
 import chatSocket from "@/sockets/chatSocket";
 import { addNewMsgToPrivate } from "@/redux/store";
 import { AnyMsgDto, PrivateMsgReq } from './types';
 import api from '@/api';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+import { toast } from 'react-toastify';
+import { BlockFriend } from '../User/types';
 
 const Message = ({ msg, friend }: { msg: AnyMsgDto; friend: any }) => {
 	const isCurrentUser = friend.id === msg.fromId;
@@ -28,8 +31,9 @@ const Message = ({ msg, friend }: { msg: AnyMsgDto; friend: any }) => {
 };
 
 export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected: any, chat: any}) {
-	const friend = chat.otherUser;
+	const [friend, setFriend] = useState<any>(chat.otherUser);
 	const [messages, setMessages] = useState<any>([]);
+	const [isBlocked, setIsBlocked] = useState(false);
 	const [msg, setMsg] = useState("");
     const scrollRef = useRef<Readonly<HTMLDivElement> | null>(null);
 	const router = useRouter();
@@ -49,6 +53,15 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
             }
         });
 
+		api.get('/user/' + chat.otherUser.username)
+			.then((res: any) => {
+				setFriend(res.data);
+				setIsBlocked(res.data.Blocked.includes(user.id));
+			})
+			.catch((err: any) => {
+				toast.error(err?.response?.data.message ?? "An Error Occured!", {theme: "dark"});
+			})
+
 		return (() => {
 			setSelected(null);
 		})
@@ -56,7 +69,6 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
 	
 	
 	///////// SENDING MSG /////////
-
     const sendMessage = (msg: any) => {
 		msg.message = msg.message.trim();
         if (!msg || msg.message === "") return;
@@ -92,30 +104,69 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
         lastMessage?.scrollIntoView();
     }, [messages]);
 
+	////////////////// SIDEBAR /////////////////////
+	const [open, setOpen] = useState(false);
+
+	const handleOpen = () => setOpen(!open);
+
+	const block = () => {
+		handleOpen();
+		store.dispatch(setCurrentChat(null));
+		let body: BlockFriend = {friendID: friend.id}
+		api.post('/user/blockFriend', body)
+			.then((res: any) => {
+				chatSocket.emit("reconnect");
+				toast.success(`${friend.username} has been Blocked`, {theme: 'dark'})
+			})
+			.catch((err: any) => {
+				toast.error(err?.response?.data?.messages?.toString(), {theme: 'dark'});
+			})
+	}
+
+	console.log('isBlocked:', isBlocked);
 	return (
         <div className="h-full flex flex-col">
             {/* header */}
-            <div className="w-full bg-[#0d4d53]">
-                <div className="flex flex-row justify-start items-center p-4 h-auto">
-                    <IconButton className='mr-5' variant='text' color='white' onClick={() => setSelected(null)}>
-                        <i className="fas fa-chevron-left"></i>
-                    </IconButton>
-                    {friend?.id && <Avatar onClick={() => {router.push(`/profile/${friend.id}`)}} src={friend.avatar} size="md" className='cursor-pointer'/>}
-                    <div className="flex justify-between items-center">
-                        <div
-                            className="ml-2 cursor-pointer"
-                            onClick={() => {
-                                router.push(`/profile/${friend.id}`);
-                            }}
-                        >
-                            <Typography variant="h4" color="white">
-                                {friend.username}
-                            </Typography>
-                        </div>
-                        {/* {isMobile || 1 ? <PrivateChatMenu user={friend} /> : null} */}
-                    </div>
-                </div>
-            </div>
+			<div className="w-full bg-[#0d4d53]">
+				<div className="flex flex-row items-center justify-between p-4 h-auto">
+					{/* Left-aligned elements */}
+					<div className="flex flex-row items-center">
+						<IconButton className='mr-5 justify-start' variant='text' color='white' onClick={() => setSelected(null)}>
+							<i className="fas fa-chevron-left"></i>
+						</IconButton>
+						{friend?.id && (
+							<Avatar onClick={() => {router.push(`/profile/${friend.id}`)}} src={friend.avatar} size="md" className='cursor-pointer mr-2'/>
+						)}
+						<Typography variant="h4" color="white" className="cursor-pointer" onClick={() => {router.push(`/profile/${friend.id}`)}}>
+							{friend.username}
+						</Typography>
+					</div>
+
+					{/* Right-aligned bars icon */}
+					<IconButton
+						variant='text' onClick={handleOpen} color='white' className='sidebar justify-end text-[1.2rem]'>
+						<i className="fa-solid fa-circle-info fa-lg"></i>
+					</IconButton>
+					<Dialog size='sm' className='bg-primary1 rounded-[15px]' open={open} handler={handleOpen}>
+						<div className='flex flex-col items-center my-10 gap-y-4'>
+							<Image className='rounded-full' src={friend.avatar} alt='avatar' width={100} height={100}/>
+							<Typography variant='h3' color='white'>{friend.username}</Typography>
+							<Typography variant='h6' className='text-gray-500'>{friend.email}</Typography>
+							<hr className='m-auto w-48 rounded-full opacity-30'/>
+							<div className='flex flex-row justify-between gap-x-20'>
+								<Button onClick={() => {block()}} color='red' variant='text' className='flex flex-row text-[16px] transition-all bg-red-500/10 hover:bg-red-500/20 justify-between items-center gap-x-2'>
+									<i className="fa-solid fa-ban fa-lg"></i>
+									<h1>BLOCK</h1>
+								</Button>
+								<Button color='pink' variant='text' className='flex flex-row text-[16px] bg-pink-500/10 hover:bg-pink-500/20 justify-between items-center gap-x-2'>
+									<i className="fa-solid fa-gamepad fa-lg"/>
+									<h1>PLAY</h1>
+								</Button>
+							</div>
+						</div>
+					</Dialog>
+				</div>
+			</div>
 
             {/* messages */}
             <div
@@ -138,6 +189,7 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
 					placeholder="Type a Message..."
 					color='white'
 					value={msg}
+					disabled={isBlocked}
 					onChange={(e) => setMsg(e.currentTarget.value)}
 					onKeyDown={(e) => {
 						if (e.key === "Enter") sendMessage({ message: msg, from: "me" });
@@ -146,6 +198,7 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
                 <IconButton
                     color="pink"
                     size="md"
+					disabled={isBlocked}
                     onClick={() => {
                         sendMessage({
                             message: msg,

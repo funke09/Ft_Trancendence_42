@@ -115,7 +115,7 @@ export function ChannelChatRoom({user, setSelected, channel} : {user: any, setSe
 			{/* header */}
 			<div className="flex justify-start items-center p-4 bg-[#0d4d53]">
 				<IconButton className='mr-5' variant="text" color="white" onClick={() => setSelected(null)}>
-					<i className="fas fa-chevron-left"></i>
+					<i className="fas fa-chevron-left"/>
 				</IconButton>
 				<Avatar src={channelAvatar} size="md" className="mr-4" />
 				<Typography variant="h5" color="white">

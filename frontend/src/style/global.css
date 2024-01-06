@@ -230,6 +230,24 @@ body::before {
     }
 }
 
+.custom-sidebar {
+    position: absolute;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    background-color: #0d4d53;
+    transition: right 0.3s ease-in-out;
+    z-index: 10;
+}
+
+.slide-in {
+    right: 0;
+}
+
+.slide-out {
+    right: -300px;
+}
+
 
 .custom-chat-style {
     height: 60rem; /* 697.5px / 16px = 43.59375rem */
