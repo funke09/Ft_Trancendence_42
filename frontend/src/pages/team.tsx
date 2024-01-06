@@ -45,7 +45,9 @@ const Team: React.FC = () => {
         <div className="text-white">
             <Nav/>
             <div className="text-center my-8">
-                <h1 className="text-3xl">Our Team</h1>     
+                <h1 className="text-3xl team-h  p-3 ">Our Team
+                <hr className="border-1 border-[#5CD0D7] shadow-xl opacity-60 p-2 m-4 max-width[1200px] rounded-full" />
+                </h1>     
                 <div className="flex flex-wrap justify-center mt-4">
                     {teamMembers.map((member) => (
                         <div key={member.id} className="card m-4">

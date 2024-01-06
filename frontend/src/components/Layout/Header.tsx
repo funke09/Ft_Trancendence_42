@@ -17,7 +17,7 @@ const Header: React.FC = () => {
 		<div className="flex-col justify-center inline-flex items-center">
 		  <div className="bg-[#A4357580] shadow-md rounded-[15px] p-6 m-8">
 			<h1 className="text-[#5CD0D7] text-3xl font-bold tracking-wider mb-4 text-center">
-			  Neon Pong
+				Pong Online: Classic game with Friends
 			<hr className="border-1 border-[#5CD0D7] shadow-xl opacity-60 m-4 rounded-full" />
 			</h1>
 			<div style={{
@@ -29,9 +29,8 @@ const Header: React.FC = () => {
 				marginBottom: '1rem',
 				fontFamily: 'Press Start 2P'
 				}}>
-				Enjoy the timeless thrill of <br />
-				bouncing balls and <br />
-				competitive fun. <br />
+				Challenge friends in this fast-paced, <br/>
+				Fun game, and perfect for quick online matches!
 			</div>
 		  </div>
 			<Button 
