@@ -1,6 +1,6 @@
 import store from '@/redux/store';
 import React, { useEffect, useState } from 'react'
-import ChannelChatRoom from './ChannelChatRoom';
+import {ChannelChatRoom} from './ChannelChatRoom';
 import {UserChatRoom} from './UserChatRoom';
 
 const ChatRoom = () => {

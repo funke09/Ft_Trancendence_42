@@ -286,8 +286,8 @@ const Auth: React.FC = () => {
 							color={activeTab === 'signup' ? "pink" : "gray"}
 							className={`nav-button w-[7rem] h-[3rem] rounded-3xl hover:bg-primary1  ${
 							activeTab === 'signup'
-							? 'shadow-md font-semibold text-white text-[1rem]'
-							: 'shadow-md font-semibold text-[#342938] text-[1rem] transition-all'
+							? 'shadow-md font-semibold text-white text-[0.2rem]'
+							: 'shadow-md font-semibold text-[#342938] text-[0.2rem] transition-all'
 							} ease-in`}
 							onClick={switchToSignUp}
 						>
@@ -299,7 +299,7 @@ const Auth: React.FC = () => {
 							activeTab === 'login'
 							? 'shadow-md font-semibold text-white text-[1rem]'
 							: 'shadow-md font-semibold text-[#342938] text-[1rem] transition-all'
-							} ease-in`}
+							}  ease-in`}
 							onClick={switchToLogin}
 						>
 						LOGIN
