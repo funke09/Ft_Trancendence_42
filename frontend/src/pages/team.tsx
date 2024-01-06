@@ -5,10 +5,10 @@ import { Nav } from "@/components/Layout/NavBar";
 
 const Team: React.FC = () => {
     const teamMembers = [
-        { id: 1, name: "Funke09", githubUsername: "funke09", role: "Full-Stack Developer" },
+        { id: 1, name: "Funke09", githubUsername: "funke09", role: "Software Engineer" },
         { id: 2, name: "haytham10", githubUsername: "haytham10", role: "Full-Stack Engineer" },
         { id: 3, name: "Oussamazz", githubUsername: "Oussamazz", role: "DevOps enthusiast" },
-        { id: 4, name: "0xPacman", githubUsername: "0xPacman", role: "Infra & Cloud Engineer" },
+        { id: 4, name: "0xPacman", githubUsername: "0xPacman", role: "Infra & Cloud Specialist" },
         { id: 5, name: "YOPll", githubUsername: "YOPll", role: "Infra & System Specialist" },
     ];
 
