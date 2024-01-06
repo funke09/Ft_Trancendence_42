@@ -388,7 +388,7 @@ body::before {
 
 .card {
     background-color: #fff;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     overflow: hidden;
     text-align: center;
@@ -398,6 +398,7 @@ body::before {
 }
 
 .card:hover {
+	box-shadow: 0 8px 16px 0 rgba(8, 238, 246, 0.464);
     transform: translateY(-5px);
 }
 
