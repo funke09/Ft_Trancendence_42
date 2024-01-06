@@ -6,7 +6,6 @@ import {
   ListItem,
   Button,
   Input,
-  Alert,
 } from "@material-tailwind/react";
 import Image from "next/image";
 import QueueModal from "./findGame";
@@ -14,8 +13,8 @@ import api from "@/api";
 import store, { setOpp } from "@/redux/store";
 import { useRouter } from "next/router";
 import gameSocket from "@/sockets/gameSocket";
-import { ToastContainer, toast } from "react-toastify";
-import chatSocket from "@/sockets/chatSocket";
+import { ToastContainer } from "react-toastify";
+import { useSelector } from "react-redux";
  
 export function PlayModal() {
 	const [selected, setSelected] = useState(1);
@@ -33,12 +32,12 @@ export function PlayModal() {
 		gameSocket.emit("cancelGame", { msg: "cancel" });
 		gameSocket.emit("cancelInvGame", { username: username});
 	
-	  };
+	};
 	
 	const handleOpen = () => setIsFindGame(!isFindGame);
 	const handleInvOpen = () => setIsInvite(!isInvite);
 
-	const currentUser = store.getState().profile.user;
+	const currentUser = useSelector((state: any) => state.profile.user);
 
 	const clickFindGame = () => {
 		gameSocket.emit("createGame", { gameType: selected });
@@ -62,31 +61,29 @@ export function PlayModal() {
 	const router = useRouter();
 		
 	useEffect(() => {
-        if (!chatSocket.connected) chatSocket.connect();
-        if (!gameSocket.connected) gameSocket.connect();
-
 		gameSocket.on("match", (data) => {
-			store.dispatch(setOpp(data));
-			router.push(`/game/${data.roomName}`);
+		  store.dispatch(setOpp(data));
+		  router.push(`/game/${data.roomName}`);
 		});
-		
+	
 		gameSocket.on("cancelGame", () => {
-			setIsFindGame(false);
-			setIsInvite(false);
+		  setIsFindGame(false);
+		  setIsInvite(false);
 		});
-
-        gameSocket.on("invite-canceled", () => {
-            setIsInvite(false);
-        });
-
+	
+		gameSocket.on("invite-canceled", () => {
+		  setIsInvite(false);
+		});
+	
 		return () => {
-			setIsInvite(false);
-		}
+		  gameSocket.off("match");
+		  gameSocket.off("cancelGame");
+		  gameSocket.off("invite-canceled");
+		};
 	}, []);
 	
 	return (
 		<div className="flex-col justify-center m-auto p-6">
-			<ToastContainer/>
 			<Typography color="white" className="m-auto text-2xl p-2 font-bold flex justify-center">Chose a Mode</Typography>
 			<hr className="m-auto max-w-[220px] border-1 opacity-70 rounded-full"/>
 			<List className="m-auto pt-8 gap-8 flex-row justify-between">
@@ -163,6 +160,7 @@ export function PlayModal() {
 					<QueueModal type={"invite"} onCancel={handleCancel}/>
 				</Dialog>
 			}
+		<ToastContainer/>
 	</div>
   );
 }

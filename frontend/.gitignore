@@ -6,6 +6,8 @@ node_modules/
 
 /.env
 
+backend/prisma/migrations/*
+
 # Runtime data
 pids
 *.pid

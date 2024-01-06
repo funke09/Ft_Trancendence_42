@@ -9,7 +9,8 @@ const Loading: React.FC = () => {
 			alt='loading'
 			width={80}
 			height={80}
-			className='shadow-md pb-4'
+			className='pb-4'
+			priority={true}
 		/>
 		<p className='font-bold text-[25px] text-gray-300 animate-bounce transition-all'>Loading...</p>
 	</main>

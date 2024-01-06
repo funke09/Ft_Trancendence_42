@@ -3,16 +3,15 @@ import store, { setProfile } from '@/redux/store';
 import { Button, Dialog, DialogBody, Spinner, Typography } from '@material-tailwind/react';
 import { useEffect, useRef, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import { refreshPage } from '../User/EditProfile';
 
-function EnableTwoFA() {
+function EnableTwoFA({ setShow } : {setShow: React.Dispatch<React.SetStateAction<boolean>>}) {
 	const [phase, setPhase] = useState(1);
-	const [open, setOpen] = useState(true);
+	const [open] = useState(true);
 	const [qrCode, setQrCode] = useState('');
 	const [pin, setPin] = useState(['', '', '', '', '', '']);
 	const inputRefs = useRef<(HTMLInputElement | null)[]>(pin.map(() => null));
 
-	const openHandler = () => setOpen(!open);
+	const openHandler = () => setShow(!open);
 	const nextPhase = () => setPhase(2);
 	const prevPhase = () => setPhase(1);
 
@@ -59,9 +58,8 @@ function EnableTwoFA() {
 			api.post('/user/verifyTwoFA', {pin: pin.join('')})
 				.then((res: any) => {
 					if (res.status == 201) {
-						store.dispatch(setProfile({ isTwoFA: true }));
-						toast.success("2FA Enabeled", {theme:'dark', toastId: "tId"});
-						refreshPage();
+						toast.success("2FA Enabeled", {theme:'dark'});
+						setShow(!open);
 					}
 				})
 				.catch((err: any) => {

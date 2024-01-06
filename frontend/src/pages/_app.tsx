@@ -24,10 +24,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
 	return (
 		<Provider store={store}>
-			<ToastContainer limit={1}/>
 			<ThemeProvider>
 			<SocketComp />
 			<Invite/>
+			<ToastContainer/>
 			<main>
 				<Component {...pageProps} />
 			</main>

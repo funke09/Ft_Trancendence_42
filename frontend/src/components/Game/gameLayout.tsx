@@ -78,9 +78,9 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
 
     if (gameSocket.connected) {
 		gameSocket.on('gameState', handleGameState);
-	  } else {
+	} else {
 		console.error('Socket not connected');
-	  }
+	}
     gameSocket.on('gameMsg', handleGameMsg);
 
     setOppInfo(store.getState().game.opp);
@@ -102,21 +102,13 @@ export function GameLayout({ gameID }: { gameID: string | string[] | undefined }
 	  gameType: game.gameType,
     };
 
-	window.addEventListener('beforeunload', handleBeforeUnload);
-
     return () => {
       gameMsg = '';
-	  window.removeEventListener('beforeunload', handleBeforeUnload);
       gameSocket.emit('leaveGame', { room: gameID });
       gameSocket.off('gameState', handleGameState);
       gameSocket.off('gameMsg', handleGameMsg);
     };
   }, [gameID]);
-
-  function handleBeforeUnload() {
-    // Notify the server that the user is leaving the game
-    gameSocket.emit('leaveGame', { room: gameID });
-  }
 
   useEffect(() => {
     if (cvsRef.current) {

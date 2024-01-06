@@ -1,3 +1,3 @@
 export class CreateGameDto {
-	username: string;
+  username: string;
 }

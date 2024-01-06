@@ -39,6 +39,16 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+prerequisites:
+
+- docker
+- docker-compose
+```bash
+brew install nvm
+source $(brew --prefix nvm)/nvm.sh
+nvm install 18.19.0
+```
+
 First, run the development server:
 
 ```bash

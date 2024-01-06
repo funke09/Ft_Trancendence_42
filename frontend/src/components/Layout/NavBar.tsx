@@ -21,14 +21,15 @@ import {
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
-import store, { removeFriend } from "@/redux/store";
+import store, { removeFriend, setProfile } from "@/redux/store";
 import { UserType } from "@/redux/profile";
 import { PlayModal } from "../Game/playMenu";
 import api from "@/api";
 import { toast } from "react-toastify";
 import chatSocket from "@/sockets/chatSocket";
 import { AddFriend } from "../User/types";
-import { NotifType, SocketRes } from "@/sockets/types";
+import { SocketRes } from "@/sockets/types";
+import { useSelector } from "react-redux";
  
 
 export function Nav() {
@@ -38,7 +39,7 @@ export function Nav() {
  
   const handleOpen = () => setOpen(!open);
 
-  const user: UserType = store.getState().profile.user;
+  const user: UserType = useSelector((state: any) => state.profile.user);
 
   function clickLogout() {
 	api.post('/auth/logout')
@@ -79,9 +80,8 @@ function NotificationsMenu() {
 				store.dispatch(removeFriend(notifID));
 				chatSocket.emit("reconnect");
 			} else {
-				if (data?.status) {
+				if (data?.status)
 					toast.error(data.message, {theme: "dark"});
-				}
 			}
 		});
 	};
@@ -91,7 +91,7 @@ function NotificationsMenu() {
 			friendUsername: username,
 		})
 			.then((res: any) => {
-				toast.warn(res.data.message ?? `You decliend ${username}'s friend request`, {theme: "dark"});
+				toast.info(res.data.message ?? `You decliend ${username}'s friend request`, {theme: "dark"});
 			})
 			.catch((err: any) => {
 				toast.error(err?.response?.data.message ?? "An Error Occured!", {theme: "dark"});
@@ -229,7 +229,7 @@ const navList = (
         as="li"
         variant="small"
 		color="white"
-        className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
+        className="flex items-center opacity-70 rounded-md font-medium transition-all hover:scale-105"
       >
 		<Link href="/chat" className="flex items-center gap-x-2 p-1">
         <svg
@@ -254,7 +254,7 @@ const navList = (
         as="li"
         variant="small"
         color="white"
-		className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
+		className="flex items-center opacity-70 rounded-md font-medium transition-all hover:scale-105"
       >
 		<Link href="/features" className="flex items-center gap-x-2 p-1">
         <svg
@@ -289,7 +289,7 @@ const navList = (
         as="li"
         variant="small"
         color="white"
-        className="flex items-center opacity-70 rounded-md font-medium transition ease-in-out delay-150 hover:scale-110 hover:shadow-md hover:opacity-100 duration-300 "
+        className="flex items-center opacity-70 rounded-md font-medium transition-all hover:scale-105"
 		>
 		<Link href="/team" className="flex items-center gap-x-2 p-1">
         <Image
@@ -301,6 +301,29 @@ const navList = (
           Our Team
         </Link>
       </Typography>
+	  {openNav &&
+		<Typography
+        as="li"
+        variant="small"
+		color="white"
+        className="flex items-center opacity-70 rounded-md font-medium transition-all hover:scale-105"
+      >
+		<Link href="/profile" className="flex items-center gap-x-2 p-1">
+		<svg
+			width="24"
+			height="24"
+			viewBox="0 0 25 25"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg">
+			<path
+			fillRule="evenodd"
+			clipRule="evenodd"
+			d="M12.5 2.5C10.751 2.49968 9.03241 2.95811 7.5159 3.82953C5.99939 4.70096 4.73797 5.95489 3.85753 7.46619C2.97709 8.97748 2.50844 10.6933 2.49834 12.4423C2.48825 14.1913 2.93707 15.9124 3.80001 17.4337C4.38327 16.6757 5.13305 16.062 5.99136 15.64C6.84968 15.218 7.79355 14.999 8.75 15H16.25C17.2064 14.999 18.1503 15.218 19.0086 15.64C19.867 16.062 20.6167 16.6757 21.2 17.4337C22.0629 15.9124 22.5117 14.1913 22.5017 12.4423C22.4916 10.6933 22.0229 8.97748 21.1425 7.46619C20.262 5.95489 19.0006 4.70096 17.4841 3.82953C15.9676 2.95811 14.249 2.49968 12.5 2.5ZM22.4287 20.095C24.1 17.9162 25.004 15.2459 25 12.5C25 5.59625 19.4037 0 12.5 0C5.59626 0 1.40665e-05 5.59625 1.40665e-05 12.5C-0.00411273 15.246 0.899895 17.9162 2.57126 20.095L2.56501 20.1175L3.00876 20.6337C4.18112 22.0044 5.63674 23.1045 7.2753 23.8583C8.91385 24.6121 10.6964 25.0016 12.5 25C15.0342 25.0046 17.5092 24.2349 19.5937 22.7937C20.4824 22.1797 21.2882 21.4538 21.9912 20.6337L22.435 20.1175L22.4287 20.095ZM12.5 5C11.5054 5 10.5516 5.39508 9.84835 6.09834C9.14509 6.80161 8.75 7.75543 8.75 8.74999C8.75 9.74455 9.14509 10.6984 9.84835 11.4016C10.5516 12.1049 11.5054 12.5 12.5 12.5C13.4946 12.5 14.4484 12.1049 15.1516 11.4016C15.8549 10.6984 16.25 9.74455 16.25 8.74999C16.25 7.75543 15.8549 6.80161 15.1516 6.09834C14.4484 5.39508 13.4946 5 12.5 5Z" fill="#90A4AE"/>
+		</svg>
+          Profile
+        </Link>
+      </Typography>
+	  }
     </ul>
   );
   
@@ -392,11 +415,9 @@ const navList = (
 			>
             PLAY
           </Button>
-		  <Link href={'/profile'}>
-			<Button variant="gradient" size="md" color="indigo">
-				Profile
-			</Button>
-			</Link>
+		  <Button onClick={clickLogout} variant="gradient" size="md" color="red">
+			Sign Out
+		  </Button>
 		  </div>
         </div>
       </Collapse>

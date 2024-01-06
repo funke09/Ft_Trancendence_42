@@ -25,13 +25,13 @@ export function GameInfo({ children, oppInfo } : { children?: React.ReactNode; o
 	useEffect(() => {
 		if (oppInfo?.oppId) {
 		  // Fetch opponent's avatar when oppId changes
-		  fetchOpponentAvatar(oppInfo.oppId);
+		  fetchOpponentAvatar(oppInfo);
 		}
 	  }, [oppInfo?.oppId]);
 	
-	const fetchOpponentAvatar = async (oppId: number) => {
+	const fetchOpponentAvatar = async (oppp: any) => {
 		try {
-		  const response = await api.get(`/user/${oppInfo.oppName}`);
+		  const response = await api.get(`/user/${oppp.oppName}`);
 		  const opponentAvatar = response.data.avatar || '';
 		  setOppAvatar(opponentAvatar);
 		} catch (error) {
@@ -44,13 +44,13 @@ export function GameInfo({ children, oppInfo } : { children?: React.ReactNode; o
 		      {info && (
 				<div className="flex flex-row m-auto p-5 gap-6 justify-between">
 					<div className="flex flex-row items-center gap-4">
-						<Image
+						<img
 						src={oppInfo?.player === 2 ? oppAvatar : user.avatar}
 						alt="p1"
 						width={60}
 						height={60}
 						className="rounded-full h-[60px] w-[60px] bg-white flex justify-center items-center shadow-md"
-						></Image>
+						/>
 						<p className="font-semibold Manrope text-[24px] text-white">{oppInfo?.player === 2 ? oppInfo?.oppName : "You"}</p>
 					</div>
 
@@ -60,13 +60,13 @@ export function GameInfo({ children, oppInfo } : { children?: React.ReactNode; o
 
 					<div className="flex flex-row items-center gap-4">
 						<p className="font-semibold Manrope text-[24px] text-white">{oppInfo?.player === 1 ? oppInfo?.oppName : "You"}</p>
-						<Image
+						<img
 						src={oppInfo?.player === 1 ? oppAvatar : user.avatar}
 						alt="p2"
 						width={60}
 						height={60}
 						className="rounded-full h-[60px] w-[60px] bg-white flex justify-center items-center shadow-md"
-						></Image>
+						/>
 					</div>
 				</div>
 			)}
