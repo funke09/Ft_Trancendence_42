@@ -13,25 +13,24 @@ const Header: React.FC = () => {
 
 	const isAuth: boolean = store.getState().profile.user.email ? true : false;
 	return (
-	  <div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex max-w-[1200px] pb-4">
+	  <div className="hom-page  bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex max-w-[1200px] pb-4">
 		<div className="flex-col justify-center inline-flex items-center">
 		  <div className="bg-[#A4357580] shadow-md rounded-[15px] p-6 m-8">
 			<h1 className="text-[#5CD0D7] text-3xl font-bold tracking-wider mb-4 text-center">
-			  Neon Pong
+				Pong Online: Classic game with Friends
 			<hr className="border-1 border-[#5CD0D7] shadow-xl opacity-60 m-4 rounded-full" />
 			</h1>
 			<div style={{
 				color: '#ffffff',
 				textAlign: 'center',
-				fontSize: '2em',
+				fontSize: '1em',
 				fontWeight: 'bold',
 				letterSpacing: 'wide',
 				marginBottom: '1rem',
 				fontFamily: 'Press Start 2P'
 				}}>
-				Enjoy the timeless thrill of <br />
-				bouncing balls and <br />
-				competitive fun. <br />
+				Challenge friends in this fast-paced, <br/>
+				Fun game, and perfect for quick online matches!
 			</div>
 		  </div>
 			<Button 
@@ -50,7 +49,7 @@ const Header: React.FC = () => {
 				}
 		</div>
   
-		<div className="m-4 flex flex-grow justify-end min-[0px]:hidden sm:hidden md:flex">
+		<div className="m-4 flex flex-grow justify-end min-[0px]:hidden sm:hidden lg:flex">
 		  <Image
 			src="/images/gameboy.svg"
 			alt="gameboy Image"

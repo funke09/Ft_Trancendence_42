@@ -13,7 +13,7 @@ import api from "@/api";
 import store, { setOpp } from "@/redux/store";
 import { useRouter } from "next/router";
 import gameSocket from "@/sockets/gameSocket";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
  
 export function PlayModal() {
@@ -50,6 +50,9 @@ export function PlayModal() {
 			if (!res.data || res.data.id == currentUser.id || res.data.userStatus != "Online") {
 				setIsInvite(false);	
 			}
+		})
+		.catch((err: any) => {
+			toast.error(err?.response?.data.message ?? "An Error Occurred!", { theme: "dark" });
 		})
 		setIsInvite(true);
 		gameSocket.emit('invGame', {

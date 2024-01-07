@@ -1,5 +1,5 @@
 import gameSocket from '@/sockets/gameSocket';
-import { Button, Card, CardBody, CardFooter, Dialog, Typography } from '@material-tailwind/react';
+import { Button, Card, CardBody, CardFooter, Dialog, DialogHeader, IconButton, Typography } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -44,7 +44,7 @@ function Invite() {
 	}, []);
 
 	return (
-		<Dialog className='focus:outline-none rounded-[15px]' size='xs' open={open} handler={handleOpen}>
+		<Dialog className='focus:outline-none rounded-[15px]' size='xs' dismiss={{ outsidePress: false }} open={open} handler={handleOpen}>
 			<Card className='bg-[#3b2a3d] text-gray-50'>
 				<CardBody className='gap-y-5'>
 					<Typography variant="h5" color="white" className="mb-2 text-center">

@@ -22,15 +22,22 @@ import { JwtAuthGuard } from 'src/auth/utils/Guards';
 import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
 import {
+	BanUserDto,
+  UnBanUserDto,
   BlockFriendDto,
   CreateChannelDto,
   JoinChannelDto,
   LeaveChannelDto,
+  MakeAdminDto,
   UnblockFriendDto,
+  UserMuteDto,
+  addChannelMemberDto,
   pinDto,
   setPasswordDto,
   setUsernameDto,
   userIdDto,
+  KickUserDto,
+  UpdatePasswordDto,
 } from './user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterService } from './multer.service';
@@ -227,5 +234,80 @@ export class UserController {
   async removeChannel(@Req() req: any, @Param('channelID', ParseIntPipe) channelID: number) {
 	if (!channelID) throw new BadRequestException("Channel ID not valid");
 	return this.channelService.removeChannel(req.user.id, channelID);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/muteUser')
+  async muteUser(@Req() req: any, @Body() body: UserMuteDto) {
+	if (!body || !body.channelID) throw new BadRequestException("Channel ID not valid");
+	if (!body || !body.userID) throw new BadRequestException("User ID not valid");
+	return this.channelService.muteUser(req.user.id, body.userID, body.channelID);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/makeAdmin')
+  async makeAdmin(@Req() req: any, @Body() body: MakeAdminDto) {
+    if (!body || !body.channelID) throw new BadRequestException("Channel ID not valid");
+    if (!body || !body.userID) throw new BadRequestException("User ID not valid");
+
+    return this.channelService.makeAdmin(req.user.id, body.userID, body.channelID);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/addChannelMember')
+  async addChannelMember(@Req() req: any, @Body() body: addChannelMemberDto) {
+    if (!body || !body.channelID) throw new BadRequestException("Channel ID not valid");
+    if (!body || !body.username) throw new BadRequestException("Username not valid");
+
+    return this.channelService.addChannelMember(req.user.id, body.username, body.channelID);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/isFlagged/:channelID')
+  async isFlagged(@Req() req: any, @Param('channelID', ParseIntPipe) channelID: number) {
+	if (!channelID) throw new NotFoundException("Channel ID not valid");
+	return this.channelService.isFlagged(req.user.id, channelID);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/banUser')
+  async banUser(@Req() req: any, @Body() body: BanUserDto) {
+	if (body.channelID && body.userID)
+		return this.channelService.banUser(req.user.id, body.userID, body.channelID);
+	else
+		throw new BadRequestException("Channel ID or User ID not valid");
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/unbanUser')
+  async unbanUser(@Req() req: any, @Body() body: UnBanUserDto) {
+	if (body.channelID && body.userID)
+		return this.channelService.unbanUser(req.user.id, body.userID, body.channelID);
+	else
+		throw new BadRequestException("Channel ID or User ID not valid");
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/kickUser')
+  async kickUser(@Req() req: any, @Body() body: KickUserDto) {
+	if (body.channelID && body.userID)
+		return this.channelService.kickUser(req.user.id, body.userID, body.channelID);
+	else
+		throw new BadRequestException("Channel ID or User ID not valid");
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/channelPassword')
+  async updatePassword(@Req() req: any, @Body() body: UpdatePasswordDto) {
+    if (!body || !body.channelId) throw new NotFoundException("Channels ID not valid");
+    return await this.channelService.updatePassword(req.user.id, body.channelId, body.newPassword)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/isBanned/:memberId/:channelId')
+  async isBanned( @Param('memberId', ParseIntPipe) memberId: number, @Param('channelId', ParseIntPipe) channelId: number) {
+	if (!memberId || !channelId) throw new BadRequestException("Member ID or Channel ID not valid");
+	const res = await this.channelService.isBanned(memberId, channelId);
+	return res;
   }
 }

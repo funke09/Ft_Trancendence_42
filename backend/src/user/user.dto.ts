@@ -78,3 +78,42 @@ export class LeaveChannelDto {
 	@IsInt()
 	channelID: number;
 }
+
+export class UserMuteDto {
+	userID: number;
+	channelID: number;
+}
+
+export class MakeAdminDto {
+	userID: number;
+	channelID: number;
+}
+
+export class addChannelMemberDto {
+	username : string;
+	channelID: number;
+}
+
+export class BanUserDto {
+	userID: number;
+	channelID: number;
+}
+
+export class UnBanUserDto {
+	userID: number;
+	channelID: number;
+}
+
+export class KickUserDto {
+	userID: number;
+	channelID: number;
+}
+
+export class UpdatePasswordDto {
+	@IsNotEmpty()
+	@IsNumber()
+	@IsPositive()
+	@IsInt()
+	channelId: number;
+	newPassword: string | null;
+  }

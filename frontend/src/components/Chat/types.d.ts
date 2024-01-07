@@ -49,3 +49,32 @@ export class JoinChannelDto {
 export class LeaveChannelDto {
 	channelID: number;
 }
+
+export class UserMuteDto {
+	userID: number;
+	channelID: number;
+}
+
+export class MakeAdminDto {
+	userID: number;
+	channelID: number;
+}
+export class addChannelMemberDto {
+	username : string;
+	channelID: number;
+}
+
+export class IsFlaggedDto {
+	userID: number;
+	channelID: number;
+}
+
+export class KickUserDto {
+	userID: number;
+	channelID: number;
+}
+
+export class UpdatePasswordDto {
+	channelId: number;
+	newPassword: string;
+};

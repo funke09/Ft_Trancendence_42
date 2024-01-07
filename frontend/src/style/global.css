@@ -392,14 +392,24 @@ body::before {
     border-radius: 8px;
     overflow: hidden;
     text-align: center;
-    transition: transform 0.3s ease;
+    transition: transform 0.1s ease;
 	width: 200px;
   	margin: 0 10px;
+	max-width: 1200px;
 }
 
+.border-1 {
+	max-width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+	
+}
+.team-h{
+	font-family: fantasy;
+}
 .card:hover {
 	box-shadow: 0 8px 16px 0 rgba(8, 238, 246, 0.464);
-    transform: translateY(-5px);
+    transform: translateY(-4px);
 }
 
 .card-image img {
@@ -420,10 +430,10 @@ body::before {
 
 .features-container {
     background-color: #372938;
-    
+	max-width:  1200px;
+	margin: auto;
 	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-    margin: 0 auto;
-    margin-top: 8rem;
+    /* margin-top: 8rem; */
     border-radius: 1rem;
     display: flex;
     flex-direction: column;
@@ -433,7 +443,7 @@ body::before {
 
 .features-header {
     background-color: #ae1d6c;
-	
+
     text-align: center;
     padding: 10px;
     border-bottom-left-radius: 20px;
@@ -462,7 +472,7 @@ body::before {
     border-radius: 10px;
     padding: 15px;
     text-align: center;
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
 }
 
 .feature-card:hover {
@@ -481,4 +491,21 @@ body::before {
     .features-grid {
         grid-template-columns: 1fr;
     }
+}
+.hom-page {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Sur tous types d'écran, quand la largeur de la fenêtre est comprise entre 1024px et 1280px */
+@media all and (min-width: 1024px) and (max-width: 1280px)
+{
+	.home-page {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
 }

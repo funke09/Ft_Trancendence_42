@@ -114,6 +114,16 @@ export class GameService {
     const fromUsername = this.getUsernameBySocket(fromClient);
     if (!fromUsername) return;
 
+	// check if username is a a valid user
+	const user = await this.prisma.user.findUnique({
+		where: { username: data.username },
+	});
+	if (!user) {
+		fromClient.emit('error', `${data.username} is not a valid user`);
+		fromClient.emit('invite-canceled', {});
+		return;
+	}
+
     if (this.isInGame(data.username)) {
       fromClient.emit('error', `${data.username} is Already in a game`);
       fromClient.emit('invite-canceled', {});
@@ -140,9 +150,9 @@ export class GameService {
       type: data.gameType,
     });
 
-    // setTimeout(() => {
-    // 	this.invits = this.invits.filter((i) => i.from !== fromUsername && i.to !== data.username);
-    // }, 30 * 1000);
+    setTimeout(() => {
+    	this.invits = this.invits.filter((i) => i.from !== fromUsername && i.to !== data.username);
+    }, 20 * 1000);
 
     const userId = (await this.getUser(fromClient)).uid;
     const avatar = await this.prisma.user.findUnique({
@@ -313,6 +323,7 @@ export class GameService {
       console.warn(`Game '${id}' cannot be stopped`);
       return;
     }
+	this.setUserStatus(game.p1Id, game.p2Id, 'Online');
     this.games.delete(id);
   };
 
@@ -338,7 +349,6 @@ export class GameService {
         game = value;
     });
     if (!game) return;
-    this.setUserStatus(game.p1Id, game.p2Id, 'Online');
     game.afkGame(username);
   }
 }

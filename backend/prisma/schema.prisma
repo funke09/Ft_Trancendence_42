@@ -35,10 +35,24 @@ model User {
   invitedTo		  Channel[] @relation("Invited")
   kickedFrom	  Channel[] @relation("Kicked")
   bannedFrom	  Channel[] @relation("Banned")
+  mutedFrom		  Channel[] @relation("Muted")
+  channelMutes    ChannelUserMute[]
   sentMsgs		  DM[]		@relation("sentMsgs")
   receivedMsgs	  DM[]		@relation("receivedMsgs")
   msgs			  Msg[]		@relation("UserMsgs")
   notifs		  Notifs[]	@relation("UserNotifs")
+}
+
+model ChannelUserMute {
+  id         Int      @id @default(autoincrement())
+  channelId  Int
+  userId     Int
+  muteExpiry DateTime
+
+  channel    Channel @relation(fields: [channelId], references: [id])
+  user       User    @relation(fields: [userId], references: [id])
+
+  @@unique([channelId, userId])
 }
 
 model Msg {
@@ -104,6 +118,8 @@ model Channel {
 	invited		User[]	@relation("Invited")
 	kicked		User[]	@relation("Kicked")
 	banned		User[]	@relation("Banned")
+	muted		User[]  @relation("Muted")
+	userMutes   ChannelUserMute[]
 	msgs		Msg[]
 }
 

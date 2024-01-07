@@ -18,6 +18,7 @@ import {
   List,
   ListItem,
   ListItemPrefix,
+  DialogHeader,
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -229,7 +230,7 @@ const navList = (
         as="li"
         variant="small"
 		color="white"
-        className="flex items-center opacity-70 rounded-md font-medium transition-all hover:scale-105"
+        className="flex items-center ml-3 opacity-70 rounded-md font-medium transition-all hover:scale-105"
       >
 		<Link href="/chat" className="flex items-center gap-x-2 p-1">
         <svg
@@ -254,7 +255,7 @@ const navList = (
         as="li"
         variant="small"
         color="white"
-		className="flex items-center opacity-70 rounded-md font-medium transition-all hover:scale-105"
+		className="flex items-center ml-3 opacity-70 rounded-md font-medium transition-all hover:scale-105"
       >
 		<Link href="/features" className="flex items-center gap-x-2 p-1">
         <svg
@@ -289,7 +290,7 @@ const navList = (
         as="li"
         variant="small"
         color="white"
-        className="flex items-center opacity-70 rounded-md font-medium transition-all hover:scale-105"
+        className="flex items-center ml-3 opacity-70 rounded-md font-medium transition-all hover:scale-105"
 		>
 		<Link href="/team" className="flex items-center gap-x-2 p-1">
         <Image
@@ -306,7 +307,7 @@ const navList = (
         as="li"
         variant="small"
 		color="white"
-        className="flex items-center opacity-70 rounded-md font-medium transition-all hover:scale-105"
+        className="flex items-center ml-3 opacity-70 rounded-md font-medium transition-all hover:scale-105"
       >
 		<Link href="/profile" className="flex items-center gap-x-2 p-1">
 		<svg

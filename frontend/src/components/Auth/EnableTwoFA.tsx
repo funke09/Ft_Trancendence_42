@@ -60,6 +60,11 @@ function EnableTwoFA({ setShow } : {setShow: React.Dispatch<React.SetStateAction
 					if (res.status == 201) {
 						toast.success("2FA Enabeled", {theme:'dark'});
 						setShow(!open);
+						api.post('/auth/logout')
+						.then((res: any) => {
+							if (res.status == 201)
+								window.location.href = '/login';
+						})
 					}
 				})
 				.catch((err: any) => {

@@ -29,11 +29,14 @@ const ChannelButton = ({ open, setOpen } : {open: boolean, setOpen:React.Dispatc
 		setType('protected');
 		if (!event.target.checked) {
 			setPassword("");
+			setType('public');
 		  }
 	}
 	const handleIsPrivate = (event: any) => {
 		setIsPrivate(event.target.checked);
 		setType('private');
+		if (!event.target.checked)
+			setType('public');
 	}
 
 	const handleChannelName = (event: any) => {
