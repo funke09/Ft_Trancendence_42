@@ -7,19 +7,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import { MakeAdminDto, UserMuteDto } from './types';
 
 const MemberManage = ({member, channel} : {member: any, channel: any}) => {
-	const [isMuted, setIsMuted] = useState<boolean>(false);
-
-	useEffect(() => {
-		setIsMuted(member.isMuted);
-	}, [member]);
-
-	useEffect(() => {
-		const unsubscribe = store.subscribe(() => {
-			setIsMuted(member.isMuted);
-		});
-
-		return unsubscribe;
-	}, [channel]);
 
 	function kick(member: any) {
 		// api.post(`/user/kickFromChannel`)

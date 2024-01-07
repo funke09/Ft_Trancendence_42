@@ -257,4 +257,11 @@ export class UserController {
 
     return this.channelService.addChannelMember(req.user.id, body.username, body.channelID);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/isFlagged/:channelID')
+  async isFlagged(@Req() req: any, @Param('channelID', ParseIntPipe) channelID: number) {
+	if (!channelID) throw new NotFoundException("Channel ID not valid");
+	return this.channelService.isFlagged(req.user.id, channelID);
+  }
 }

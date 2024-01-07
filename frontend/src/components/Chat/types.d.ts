@@ -63,3 +63,8 @@ export class addChannelMemberDto {
 	username : string;
 	channelID: number;
 }
+
+export class IsFlaggedDto {
+	userID: number;
+	channelID: number;
+}

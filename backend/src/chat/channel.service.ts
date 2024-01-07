@@ -45,7 +45,29 @@ export class ChannelService {
 	  });
   
 	  if (muteRecord && new Date() < new Date(muteRecord.muteExpiry)) {
-		return true; // User is muted and mute period is still active
+		return true;
+	  }
+	  else {
+		await this.prisma.channelUserMute.delete({
+		  where: {
+			channelId_userId: {
+			  channelId: channelId,
+			  userId: userId
+			}
+		  }
+		});
+
+		await this.prisma.channel.update({
+		  where: { id: channelId },
+		  data: {
+			muted: {
+			  disconnect: {
+				id: userId
+			  }
+			}
+		  }
+		});
+		return false;
 	  }
 	}
   

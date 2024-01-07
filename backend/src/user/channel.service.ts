@@ -332,6 +332,16 @@ export class ChannelService {
 	const muteExpiry = new Date(new Date().getTime() + 5 * 60000); // 5 minutes in milliseconds
 	console.log('mute period:', muteExpiry);
 
+	// connect this user to muted relation in channel
+	await this.prisma.channel.update({
+	  where: { id: channelId },
+	  data: {
+		muted: {
+		  connect: { id: targetUserId },
+		},
+	  },
+	});
+
 	const tab = await this.prisma.channelUserMute.create({
 	  data: {
 		channelId: channelId,
@@ -339,7 +349,65 @@ export class ChannelService {
 		muteExpiry: muteExpiry
 	  }
 	});
+	console.log("mute tab:",tab);
 	return HttpStatus.ACCEPTED;
+  }
+
+  async isFlagged(userId: number, channelId: number): Promise<boolean> {
+	const channel = await this.prisma.channel.findUnique({
+	  where: { id: channelId },
+	  include: {
+		banned: true,
+		kicked: true,
+		muted: true,
+	  },
+	});
+  
+	if (!channel) return true;
+  
+	// Check if user is banned
+	if (channel.banned.some((user) => user.id === userId)) return true;
+  
+	// Check if user is kicked
+	if (channel.kicked.some((user) => user.id === userId)) return true;
+  
+	// Check if user is muted. If so, check the mute expiry
+	if (channel.muted.some((user) => user.id === userId)) {
+	  const muteRecord = await this.prisma.channelUserMute.findFirst({
+		where: {
+		  channelId: channelId,
+		  userId: userId
+		}
+	  });
+  
+	  if (muteRecord && new Date() < new Date(muteRecord.muteExpiry)) {
+		return true;
+	  }
+	  else {
+		await this.prisma.channelUserMute.delete({
+		  where: {
+			channelId_userId: {
+			  channelId: channelId,
+			  userId: userId
+			}
+		  }
+		});
+
+		await this.prisma.channel.update({
+		  where: { id: channelId },
+		  data: {
+			muted: {
+			  disconnect: {
+				id: userId
+			  }
+			}
+		  }
+		});
+		return false;
+	  }
+	}
+
+	return false;
   }
   
   
