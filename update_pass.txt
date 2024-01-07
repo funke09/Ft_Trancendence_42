@@ -1,0 +1,54 @@
+// user.dto
+
+export class UpdatePasswordDto {
+  channelId: number;
+  newPassword: string;
+}
+
+
+// user.controller
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/channelPassword')
+  async updatePassword(@Req() req: any, @Body() body: UpdatePasswordDto) {
+    if (!body || !body.channelId) throw new NotFoundException("Channels ID not valid");
+    await this.channelService.updatePassword(req.user.id, body.channelId, body.newPassword)
+  }
+
+// channel.service.ts
+
+  async updatePassword(id: number, channelId: number, newPassword: string): Promise<void> {
+ 
+    // Verify the old password
+    const channel = await this.prisma.channel.findUnique({
+      where: { id: channelId },
+    });
+
+    const user = await this.prisma.user.findUnique({
+      where: {id: id},
+    })
+    if (!user) throw new NotFoundException("User not found");
+
+    if (channel.ownerId !== id) throw new BadRequestException("User is not Owner of channel");
+
+    const pwMatches = await argon.verify(channel.password, newPassword);
+    if (pwMatches)
+      throw new BadRequestException('This Password is already in use');
+
+    const hash = await argon.hash(newPassword);
+   
+    // Update the channel type and password
+    if (!newPassword) {
+      await this.prisma.channel.update({
+        where: { id: channelId },
+        data: { type: 'public', password: '' },
+      });
+    } else if (newPassword.length > 7){
+      await this.prisma.channel.update({
+        where: { id: channelId },
+        data: { type: 'protected', password: hash },
+      });
+    }
+ }
+
+ 
