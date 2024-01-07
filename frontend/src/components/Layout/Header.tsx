@@ -55,8 +55,7 @@ const Header: React.FC = () => {
 			alt="gameboy Image"
 			width={500}
 			height={500}
-			priority={true}
-		  ></Image>
+		  />
 		</div>
 	  </div>
 	);

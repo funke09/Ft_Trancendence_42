@@ -269,13 +269,13 @@ const Auth: React.FC = () => {
 			{side &&
 				<section className="w-1/4 relative min-[0px] flex bg-[#382A39] bg-opacity-75">
 					<div className="absolute flex-grow top-4 left-4 opacity-95">
-						<img src="/images/egypt.png" alt="pyramid" width={200} height={200}></Image>
+						<img src="/images/egypt.png" alt="pyramid" width={200} height={200}/>
 					</div>
 					<div className="flex-grow flex items-center justify-center">
-						<img src="/images/controller.png" alt="controller" width={500} height={500}></Image>
+						<img src="/images/controller.png" alt="controller" width={500} height={500}/>
 					</div>
 					<div className="absolute bottom-4 right-4 opacity-75">
-						<img src="/images/no9at.png" alt="no9at" width={200} height={100}></Image>
+						<img src="/images/no9at.png" alt="no9at" width={200} height={100}/>
 					</div>
 				</section>
 			}

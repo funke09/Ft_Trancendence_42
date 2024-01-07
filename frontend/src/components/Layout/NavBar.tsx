@@ -339,9 +339,8 @@ const navList = (
 				height={50}
 				alt="logo"
 				src="/images/logo.svg"
-				priority
 				style={{ width: '170px', height: '50px' }}
-			></Image>
+			/>
 			</Link>
         </Typography>
         <div className="hidden lg:block ">{navList}</div>
