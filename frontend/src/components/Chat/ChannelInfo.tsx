@@ -1,13 +1,41 @@
 import chat from '@/pages/chat';
 import chatSocket from '@/sockets/chatSocket';
-import { Badge, Typography, Card, List, IconButton, Button, Dialog, Input } from '@material-tailwind/react';
+import { Badge, Typography, Card, List, IconButton, Button, Dialog, DialogBody, Input } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react'
 import Loading from '../Layout/Loading';
 import ChannelMembers from './ChannelMembers';
-import api from '@/api';
-import { ToastContainer, toast } from 'react-toastify';
-import { LeaveChannelDto, addChannelMemberDto } from './types';
+import api from '@/api'; 
+import { toast } from 'react-toastify';
+import { LeaveChannelDto, addChannelMemberDto} from './types';
 import store, { setCurrentChatGroup } from '@/redux/store';
+
+const ChangeChannelPasswordDialog = ({ show, onClose, channelId }: { show: boolean; onClose: () => void; channelId: string }) => {
+	const [password, setPassword] = useState('');
+   
+	const handleChangePassword = async () => {
+	  try {
+		const res = await api.post('/channel/changePassword', { channelId, password });
+		if (res.status === 200) {
+		  toast.success('Password changed successfully', { theme: 'dark' });
+		  onClose(); // Close the dialog
+		}
+	  } catch (error: any) {
+		toast.error(error?.response?.data?.messages?.toString(), { theme: 'dark' });
+	  }
+	};
+   
+	if (!show) return null;
+   
+	return (   
+	  <Dialog open={show} handler={onClose}>
+		<DialogBody>
+		  <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="New Password" crossOrigin={undefined} />
+		  <Button onClick={handleChangePassword}>Change Password</Button>
+		</DialogBody>
+	  </Dialog>
+	);
+   };
+   
 
 const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar: string, manager: boolean}) => {
 	const [loading, setLoading] = useState(false);
@@ -16,6 +44,12 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 	const [owner, setOwner] = useState<any>(null);
 	const [refresh, setRefresh] = useState<boolean>(false);
 
+	// Function to open the change password dialog
+	const [showChangePassword, setShowChangePassword] = useState(false);
+	const openChangePasswordDialog = () => {
+		setShowChangePassword(!showChangePassword);
+	};
+	
 	useEffect(() => {
 		getMembers();
 		chatSocket.emit('reconnect');
@@ -60,6 +94,7 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 			})
 	}
 
+
 	const [open, setOpen] = useState(false);
 	const [username, setUsername] = useState("");
 	const onChange = ({ target }: any) => setUsername(target.value);
@@ -88,13 +123,23 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 
 	return (
 		<div className='flex flex-col items-center w-full my-5 gap-y-2'>
+			<div className="flex justify-end  w-full mr-3.5 ">
+				<IconButton color="pink" className="rounded-full" onClick={openChangePasswordDialog}>
+					<i className="fa-solid fa-cog fa-lg "/>
+				</IconButton>
+			</div>
+			<ChangeChannelPasswordDialog show={showChangePassword} onClose={openChangePasswordDialog} channelId={chat.id} />
 			<Badge className='bg-white/10' placement='bottom-end' content={
-				<i className={`fa-solid ${
-					chat.type === 'protected' ? 'fa-lock' :
-					chat.type === 'private' ? 'fa-eye-slash' :
-					chat.type === 'public' ? 'fa-globe' : ''
-				}`} />
-			}>
+				<div> {/* Wrap the content inside a single parent element */}
+					<Typography variant='h3' color='white'>{chat?.name}</Typography>
+					<i className={`fa-solid ${
+						chat.type === 'protected' ? 'fa-lock' :
+						chat.type === 'private' ? 'fa-eye-slash' :
+						chat.type === 'public' ? 'fa-globe' : ''
+					}`} />
+				</div>
+				}>
+				
 				<img src={channelAvatar} width={100} height={100} alt='channel' className='rounded-full'/>
 			</Badge>
 			<Typography variant='h3' color='white'>{chat?.name}</Typography>
@@ -131,6 +176,9 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 						}
 					</div>
 				}
+				<div className="absolute bottom-12 left-8 z-[20] transition-all duration-300 hover:rotate-180">
+				<ChangeChannelPasswordDialog show={showChangePassword} onClose={() => openChangePasswordDialog()} channelId={chat.id} />
+				</div>
 			</Card>
 			<div className='flex flex-row w-[75%] justify-around items-center mt-2'>
 				<Button onClick={leaveChannel} color='red' variant='text' className='flex flex-row text-[16px] transition-all bg-red-500/10 hover:bg-red-500/20 justify-between items-center gap-x-2'>
@@ -145,7 +193,6 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 				}
 			</div>
 		</div>
-	)
+	);
 }
-
-export default ChannelInfo
+export default ChannelInfo;
