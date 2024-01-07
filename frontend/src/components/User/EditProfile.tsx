@@ -107,7 +107,7 @@ function EditProfile({ user, updateProfile, setEdit, setShowEnableTwoFA} : {user
 	return (
 		<Dialog className="bg-[#382A39] rounded-[30px]" open={open} handler={openHandler}>
 			<DialogBody className="flex-col items-center justify-center p-6 focus:outline">
-				<Image className="gap-2 flex m-auto justify-center rounded-full shadow-md mb-4" alt="a" width={200} height={200} src={avatar}/>
+				<img className="gap-2 flex m-auto justify-center rounded-full shadow-md mb-4" alt="a" width={200} height={200} src={avatar}/>
 				{file ? <Button variant="gradient" size="sm" color="green" className="flex justify-center m-auto shadow-md" onClick={saveAvatar}>Upload</Button> :
 				<Button size="sm" onClick={() => document.getElementById("avatar-input")?.click()} className="flex justify-center m-auto shadow-md">
 					<i className="fa-solid fa-camera flex justify-center" />

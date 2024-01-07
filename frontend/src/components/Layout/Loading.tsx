@@ -4,7 +4,7 @@ import React from "react"
 const Loading: React.FC = () => {
 	return (
 		<main className='flex flex-col m-auto justify-center items-center h-screen z-1'>
-		<Image
+		<img
 			src='/images/loading.gif'
 			alt='loading'
 			width={80}

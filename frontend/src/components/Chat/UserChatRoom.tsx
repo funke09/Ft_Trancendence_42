@@ -172,7 +172,7 @@ export function UserChatRoom({user, setSelected, chat} : {user: any, setSelected
 					</IconButton>
 					<Dialog size='xs' className='bg-primary1 rounded-[15px]' open={open} handler={handleOpen}>
 						<div className='flex flex-col items-center my-5 gap-y-4'>
-							<Image className='rounded-full' src={friend.avatar} alt='avatar' width={100} height={100}/>
+							<img className='rounded-full' src={friend.avatar} alt='avatar' width={100} height={100}/>
 							<Typography variant='h3' color='white'>{friend.username}</Typography>
 							<Typography variant='h6' className='text-gray-500'>{friend.email ?? ''}</Typography>
 							<hr className='m-auto w-48 rounded-full opacity-30'/>

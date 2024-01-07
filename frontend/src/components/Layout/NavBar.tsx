@@ -135,7 +135,7 @@ function NotificationsMenu() {
 				{notifs.map((notif) => (
 					<ListItem key={notif.id} className="hover:bg-opacity-100 focus:bg-transparent focus:outline-none hover:bg-transparent active:bg-transparent">
 						<ListItemPrefix>
-						<Image src={notif.avatar} width={45} height={45} alt="avatar" className="rounded-full" />
+						<img src={notif.avatar} width={45} height={45} alt="avatar" className="rounded-full" />
 						</ListItemPrefix>
 						<div>
 						<Typography variant="small" color="white">
@@ -173,7 +173,7 @@ const ProfileMenu = (
 			<MenuList className="bg-[#382A39] border-none hidden samwil:flex focus:outline-none rounded-[15px]" >
 				<div className="min-w-[240px] min-h-[257px] p-4 focus:outline-none flex-col justify-center">
 					<div className=" gap-2 flex justify-center">
-						<Image
+						<img
 							src={user.avatar}
 							alt="avatar"
 							width={70}
@@ -293,7 +293,7 @@ const navList = (
         className="flex items-center ml-3 opacity-70 rounded-md font-medium transition-all hover:scale-105"
 		>
 		<Link href="/team" className="flex items-center gap-x-2 p-1">
-        <Image
+        <img
 			src="/images/team.png"
 			alt="team"
 			width={24}
@@ -334,7 +334,7 @@ const navList = (
         <Typography
           className="mr-4 cursor-pointer py-1.5 content-start font-medium">
 			<Link href={'/'}>
-			<Image
+			<img
 				width={170}
 				height={50}
 				alt="logo"

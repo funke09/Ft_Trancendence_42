@@ -20,7 +20,7 @@ const FriendList = ({friendObj} : {friendObj: any}) => {
 			<ListItemPrefix>
 				<Badge invisible={getLastMsg() !== "Let's Chat...."} content={'new'} color='green'>
 					<Tooltip content={friend.userStatus} className={'bg-opacity-50'}>
-						<Image
+						<img
 							src={friend.avatar}
 							height={60}
 							width={60}

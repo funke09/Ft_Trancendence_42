@@ -37,7 +37,7 @@ const Features: React.FC = () => {
                 <div className="features-grid">
                     {featureData.map((feature, index) => (
                         <div key={index} className="feature-card">
-                            <Image
+                            <img
                                 src={feature.image}
                                 alt={feature.alt}
                                 width={70}

@@ -50,7 +50,7 @@ const Header: React.FC = () => {
 		</div>
   
 		<div className="m-4 flex flex-grow justify-end min-[0px]:hidden sm:hidden lg:flex">
-		  <Image
+		  <img
 			src="/images/gameboy.svg"
 			alt="gameboy Image"
 			width={500}

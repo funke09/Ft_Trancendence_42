@@ -54,7 +54,7 @@ function MatchHistory({ games, p1 } : {games: any, p1: any}) {
             <List key={game.id} className="w-[85%] bg-[#643461] rounded-[30px] shadow-lg relative mx-auto my-4 transition-all hover:bg-[#965792] hover:bg-opacity-80">
               <div className="flex flex-row mx-2 p-1 gap-6 justify-between items-center">
                 <div className="flex flex-row items-center gap-4">
-                  <Image
+                  <img
                     src={p1.avatar}
                     alt="p1"
                     width={50}
@@ -69,7 +69,7 @@ function MatchHistory({ games, p1 } : {games: any, p1: any}) {
                 <div className="flex flex-row items-center gap-4">
                   <Typography className="font-semibold Manrope text-[24px] text-white flex-shrink-0">{opp?.username}</Typography>
                   <Link href={"/profile/" + game.p2Id}>
-                    <Image
+                    <img
                       src={opp?.avatar}
                       alt="p2"
                       width={50}

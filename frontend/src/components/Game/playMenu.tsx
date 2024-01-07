@@ -91,7 +91,7 @@ export function PlayModal() {
 			<hr className="m-auto max-w-[220px] border-1 opacity-70 rounded-full"/>
 			<List className="m-auto pt-8 gap-8 flex-row justify-between">
 				<ListItem className="flex-col rounded-xl hover:text-[#382A39] text-[#B3B3B3] active:text-[#382A39] gap-y-2" selected={selected === 1} onClick={() => setSelectedItem(1)}>
-					<Image
+					<img
 						src="/images/classicPrev.svg"
 						alt="classic"
 						width={200}
@@ -101,7 +101,7 @@ export function PlayModal() {
 					<Typography variant="h5" className="font-bold opacity-80">CLASSIC</Typography>
 				</ListItem>
 				<ListItem className="flex-col rounded-xl hover:text-[#382A39] text-[#B3B3B3] active:text-[#382A39] gap-y-2" selected={selected === 2} onClick={() => setSelectedItem(2)}>
-					<Image
+					<img
 						src="/images/mediumPrev.svg"
 						alt="medium"
 						width={200}
@@ -111,7 +111,7 @@ export function PlayModal() {
 					<Typography variant="h5" className="font-bold opacity-80">MEDIUM</Typography>
 				</ListItem>
 				<ListItem className="flex-col rounded-xl hover:text-[#382A39] text-[#B3B3B3] active:text-[#382A39] gap-y-2" selected={selected === 3} onClick={() => setSelectedItem(3)}>
-					<Image
+					<img
 						src="/images/hardcorePrev.svg"
 						alt="hardcore"
 						width={200}

@@ -11,10 +11,6 @@ services:
       - warper-network
     ports:
       - "5432:5432"
-    volumes:
-      - ./database/:/var/lib/postgresql/data
-    environment:
-      - PGDATA=/var/lib/postgresql/custom-data
     restart: always
 
   backend:
@@ -27,8 +23,6 @@ services:
     ports:
       - "5000:5000"
       - "5555:5555"
-    volumes:
-      - ./backend:/app
     restart: unless-stopped
     depends_on:
       - postgres  
@@ -42,8 +36,6 @@ services:
       - warper-network
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
     depends_on:
       - postgres  
     restart: unless-stopped

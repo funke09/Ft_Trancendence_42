@@ -17,7 +17,7 @@ function Achievements({ stats } : { stats: any }) {
             <Tooltip key={achiev.id} className="bg-gray-700 bg-opacity-80" content={achiev.desc} placement="top" animate={{mount: { scale: 1, x: 0 }, unmount: { scale: 0, x: -25 },}}>
               <ListItem className="p-1 text-white hover:text-[#472C45]">
                 <ListItemPrefix>
-                  <Image src={achiev.icon} width={50} height={50} alt={achiev.name} className="rounded-full"/>
+                  <img src={achiev.icon} width={50} height={50} alt={achiev.name} className="rounded-full"/>
                 </ListItemPrefix>
                 <Typography variant="h6">{achiev.name}</Typography>
               </ListItem>

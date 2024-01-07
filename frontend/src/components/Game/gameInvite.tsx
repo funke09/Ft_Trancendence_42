@@ -51,7 +51,7 @@ function Invite() {
 						Invited by
 					</Typography>
 					<div className='flex flex-col m-auto justify-center items-center gap-y-5'>
-						<Image className='rounded-full' src={invData.avatar} width={100} height={100} alt='avatar'/>
+						<img className='rounded-full' src={invData.avatar} width={100} height={100} alt='avatar'/>
 						<Typography variant='h5'>{invData.username}</Typography>
 					</div>
 				</CardBody>
