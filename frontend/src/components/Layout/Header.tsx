@@ -13,7 +13,7 @@ const Header: React.FC = () => {
 
 	const isAuth: boolean = store.getState().profile.user.email ? true : false;
 	return (
-	  <div className="bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex max-w-[1200px] pb-4">
+	  <div className="hom-page  bg-[#372938] opacity-75 shadow-md m-auto rounded-[15px] flex max-w-[1200px] pb-4">
 		<div className="flex-col justify-center inline-flex items-center">
 		  <div className="bg-[#A4357580] shadow-md rounded-[15px] p-6 m-8">
 			<h1 className="text-[#5CD0D7] text-3xl font-bold tracking-wider mb-4 text-center">
@@ -23,7 +23,7 @@ const Header: React.FC = () => {
 			<div style={{
 				color: '#ffffff',
 				textAlign: 'center',
-				fontSize: '2em',
+				fontSize: '1em',
 				fontWeight: 'bold',
 				letterSpacing: 'wide',
 				marginBottom: '1rem',
@@ -49,7 +49,7 @@ const Header: React.FC = () => {
 				}
 		</div>
   
-		<div className="m-4 flex flex-grow justify-end min-[0px]:hidden sm:hidden md:flex">
+		<div className="m-4 flex flex-grow justify-end min-[0px]:hidden sm:hidden lg:flex">
 		  <Image
 			src="/images/gameboy.svg"
 			alt="gameboy Image"
