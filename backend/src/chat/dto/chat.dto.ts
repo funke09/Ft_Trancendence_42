@@ -82,3 +82,7 @@ export class setPrivateMsgDto {
   channelId: number;
   fromAvatar: string;
 }
+
+export class RemoveChannelDto {
+	channelID: number;
+}

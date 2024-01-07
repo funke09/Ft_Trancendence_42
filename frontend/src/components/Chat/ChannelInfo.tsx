@@ -108,6 +108,10 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 	}
 
 	function removeChannel() {
+		let body = {
+			channelID: chat.id,
+		};
+		chatSocket.emit('channelRemoved', body)
 		api.post(`/user/removeChannel/${chat.id}`)
 			.then(() => {
 				toast.success(`${chat.name} was Deleted`, {theme: 'dark'});

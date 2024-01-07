@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react"
 import gameSocket from "./gameSocket";
-import store, { addFriend, addNewMsgToGroup, addNewMsgToPrivate, setGame, setGroupChat, setNotif, setPrivateChat, setSocket } from "@/redux/store";
+import store, { addFriend, addNewMsgToGroup, addNewMsgToPrivate, setCurrentChat, setCurrentChatGroup, setGame, setGroupChat, setNotif, setPrivateChat, setSocket } from "@/redux/store";
 import { AchievDto, NotifType, RankDto, SocketRes } from "./types";
 import chatSocket from "./chatSocket";
 import { ToastContainer, toast } from "react-toastify";
@@ -52,19 +52,15 @@ const SocketComp = () => {
 		});
 		
 		gameSocket.on("connect", () => {
-		console.log("/game: Connected to server");
 		})
 
 		gameSocket.on("disconnect", () => {
-			console.log("/game: Disconnected from server");
 		})
 
 		chatSocket.on("connect", () => {
-			console.log('/chat: Connected to server');
 		})
 
 		chatSocket.on("disconnect", () => {
-			console.log('/chat: Disconnected from server')
 		})
 
 		chatSocket.on("msg", (data: any) => {
@@ -108,6 +104,15 @@ const SocketComp = () => {
 		chatSocket.on('publicChat', (data) => {
 			store.dispatch(setGroupChat(data));
 		});
+
+		chatSocket.on('channelRemoved', (data: any) => {
+			const current: any = store.getState().chat.currentChatGroup;
+			
+			if (current && current.id === data) {
+				store.dispatch(setCurrentChatGroup(null));				
+				store.dispatch(setGroupChat(store.getState().chat.GroupChats.filter((c: any) => c.id !== data)))
+			}
+		})
 
 		return () => {
 			gameSocket.disconnect();

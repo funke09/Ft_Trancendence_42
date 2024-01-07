@@ -86,12 +86,11 @@ export function ChannelChatRoom({user, setSelected, channel} : {user: any, setSe
 		lastMsg?.scrollIntoView();
 	}, [messages]);
 
-	if (!chat) return null;
-
-
+	
+	
 	///////////// SEND MSG ///////////////
 	const [msg, setMsg] = useState("");
-
+	
 	const sendMsg = (msg: any) => {
 		if (!flagged) {
 			msg.message = msg.message.trim();
@@ -118,14 +117,15 @@ export function ChannelChatRoom({user, setSelected, channel} : {user: any, setSe
 			setMsg("");
 		}
 	};
-
+	
 	//////////// SIDEBAR //////////////
 	const [open, setOpen] = useState(false);
 	const manager: boolean = (user.id === chat.ownerId || chat.adminsIds.includes(user.id))
-
+	
 	const handleOpen = () => setOpen(!open);
 
-
+	if (!chat) return null;
+	
 	return (
 		<div className="flex flex-col h-full">
 			{/* header */}

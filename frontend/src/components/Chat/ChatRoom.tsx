@@ -34,7 +34,7 @@ const ChatRoom = () => {
   return (
 	<>
 		{chat && <UserChatRoom user={chat} setSelected={setChat} chat={chat} key={chat && chat.privateChannelId}/>}
-		{group && <ChannelChatRoom user={group} setSelected={setGroup} chat={group} key={group && group.id}/>}
+		{group && <ChannelChatRoom user={group} setSelected={setGroup} channel={group} key={group && group.id}/>}
 	</>
   )
 }

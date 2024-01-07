@@ -15,6 +15,7 @@ import {
   ChannelSearchDto,
   MsgPrivateReqDto,
   PublicMsgDto,
+  RemoveChannelDto,
   SetChannelMsgDto,
   SocketResDto,
 } from './dto/chat.dto';
@@ -412,6 +413,24 @@ export class ChatGateway {
     }
     client.emit('acceptFriend', res);
   }
+
+  @SubscribeMessage("channelRemoved")
+  async channelRemoved( 
+	@ConnectedSocket() client: Socket,
+  	@MessageBody() payload: RemoveChannelDto,
+	) {
+	const user = await this.chatService.jwtDecoe(client);
+    if (!user) {
+      const res: SocketResDto = {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not Authorized',
+      };
+      client.emit('channelRemoved', res);
+      client.disconnect();
+      return;
+    }
+	this.server.emit('channelRemoved', payload.channelID);
+	}
 
   ////////
   async handleConnection(@ConnectedSocket() client: Socket) {
