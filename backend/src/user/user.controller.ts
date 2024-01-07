@@ -26,8 +26,10 @@ import {
   CreateChannelDto,
   JoinChannelDto,
   LeaveChannelDto,
+  MakeAdminDto,
   UnblockFriendDto,
   UserMuteDto,
+  addChannelMemberDto,
   pinDto,
   setPasswordDto,
   setUsernameDto,
@@ -233,9 +235,26 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Post('/muteUser')
   async muteUser(@Req() req: any, @Body() body: UserMuteDto) {
-	if (!body || body.channelID) throw new BadRequestException("Channel ID not valid");
-	if (!body || body.userID) throw new BadRequestException("User ID not valid");
-	
+	if (!body || !body.channelID) throw new BadRequestException("Channel ID not valid");
+	if (!body || !body.userID) throw new BadRequestException("User ID not valid");
 	return this.channelService.muteUser(req.user.id, body.userID, body.channelID);
-}
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/makeAdmin')
+  async makeAdmin(@Req() req: any, @Body() body: MakeAdminDto) {
+    if (!body || !body.channelID) throw new BadRequestException("Channel ID not valid");
+    if (!body || !body.userID) throw new BadRequestException("User ID not valid");
+
+    return this.channelService.makeAdmin(req.user.id, body.userID, body.channelID);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/addChannelMember')
+  async addChannelMember(@Req() req: any, @Body() body: addChannelMemberDto) {
+    if (!body || !body.channelID) throw new BadRequestException("Channel ID not valid");
+    if (!body || !body.username) throw new BadRequestException("Username not valid");
+
+    return this.channelService.addChannelMember(req.user.id, body.username, body.channelID);
+  }
 }

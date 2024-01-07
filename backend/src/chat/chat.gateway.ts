@@ -17,7 +17,6 @@ import {
   PublicMsgDto,
   SetChannelMsgDto,
   SocketResDto,
-  UserSearchDto,
 } from './dto/chat.dto';
 import { ChatService } from './chat.service';
 import { ChannelService } from './channel.service';

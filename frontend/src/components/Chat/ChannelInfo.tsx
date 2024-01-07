@@ -1,12 +1,12 @@
 import chat from '@/pages/chat';
 import chatSocket from '@/sockets/chatSocket';
-import { Badge, Typography, Card, List, IconButton, Button } from '@material-tailwind/react';
+import { Badge, Typography, Card, List, IconButton, Button, Dialog, Input } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react'
 import Loading from '../Layout/Loading';
 import ChannelMembers from './ChannelMembers';
 import api from '@/api';
-import { toast } from 'react-toastify';
-import { LeaveChannelDto } from './types';
+import { ToastContainer, toast } from 'react-toastify';
+import { LeaveChannelDto, addChannelMemberDto } from './types';
 import store, { setCurrentChatGroup } from '@/redux/store';
 
 const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar: string, manager: boolean}) => {
@@ -60,6 +60,32 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 			})
 	}
 
+	const [open, setOpen] = useState(false);
+	const [username, setUsername] = useState("");
+	const onChange = ({ target }: any) => setUsername(target.value);
+
+	function addMember() {
+		let body: addChannelMemberDto = {
+			username: username,
+			channelID: chat.id,
+		};
+
+		api.post('/user/addChannelMember', body)
+			.then((res) => {
+				toast.success(`${username} has been added to ${chat.name}`, {theme: 'dark'});
+	
+				// Update members state to include the new member
+				setMembers([...members, res.data.userToAdd]);
+	
+				// Reset the username input and close the dialog
+				setUsername("");
+				setOpen(false);
+			})
+			.catch((err) => {
+				toast.error(err?.response?.data?.messages?.toString(), {theme: 'dark'});
+			});
+	}
+
 	return (
 		<div className='flex flex-col items-center w-full my-5 gap-y-2'>
 			<Badge className='bg-white/10' placement='bottom-end' content={
@@ -81,10 +107,28 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 					</List>
 				}
 				{manager &&
-					<div className="absolute bottom-12 right-8 z-[20] transition-all duration-300 hover:rotate-180">
-						<IconButton color="pink" className="rounded-full">
-							<i className="fa-solid fa-plus fa-lg"/>
-						</IconButton>	
+					<div className="absolute top-2 right-8 z-[20] transition-all duration-300 hover:rotate-180">
+						<IconButton color="pink" size= "sm" className="rounded-full" onClick={() => setOpen(!open)}>
+							<i className="fa-solid fa-plus"/>
+						</IconButton>
+						{open &&
+							<Dialog size="xs" open={open} handler={() => setOpen(!open)} className='bg-primary1 h-[300px] rounded-[15px] border-none focus:outline-none'>
+								<ToastContainer/>
+								<div className='flex w-1/2 flex-col p-4 items-center m-auto my-[2.5rem] gap-y-10'>
+									<Typography variant='h4' color='white'>Add to channel: </Typography>
+										<Input
+											type="text"
+											label="Username"
+											value={username}
+											onChange={onChange}
+											color="white"
+											containerProps={{
+											className: "min-w-0",
+										}} crossOrigin={undefined}/>
+									<Button disabled={!username} onClick={addMember} variant='gradient' color='pink' className='opacity-80 hover:opacity-100 transition-all hover:scale-105'>ADD</Button>
+								</div>
+							</Dialog>
+						}
 					</div>
 				}
 			</Card>

@@ -17,21 +17,41 @@ export class ChannelService {
   }
 
   async isUserFlagged(channelId: number, userId: number): Promise<boolean> {
-    const channel = await this.prisma.channel.findUnique({
-      where: { id: channelId },
-      include: {
-        banned: true,
-        kicked: true,
-      },
-    });
-
-    if (!channel) return true;
-
-    if (channel.banned.some((user) => user.id === userId)) return true;
-    if (channel.kicked.some((user) => user.id === userId)) return true;
-
-    return false;
+	const channel = await this.prisma.channel.findUnique({
+	  where: { id: channelId },
+	  include: {
+		banned: true,
+		kicked: true,
+		// Include muted relation is not enough to get mute expiry, but needed to check if user is muted
+		muted: true,
+	  },
+	});
+  
+	if (!channel) return true;
+  
+	// Check if user is banned
+	if (channel.banned.some((user) => user.id === userId)) return true;
+  
+	// Check if user is kicked
+	if (channel.kicked.some((user) => user.id === userId)) return true;
+  
+	// Check if user is muted. If so, check the mute expiry
+	if (channel.muted.some((user) => user.id === userId)) {
+	  const muteRecord = await this.prisma.channelUserMute.findFirst({
+		where: {
+		  channelId: channelId,
+		  userId: userId
+		}
+	  });
+  
+	  if (muteRecord && new Date() < new Date(muteRecord.muteExpiry)) {
+		return true; // User is muted and mute period is still active
+	  }
+	}
+  
+	return false;
   }
+  
 
   async setPrivateMsg(payload: setPrivateMsgDto): Promise<void> {
     await this.prisma.msg.create({

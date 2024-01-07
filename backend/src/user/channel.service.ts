@@ -1,8 +1,10 @@
 import {
   BadRequestException,
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -204,59 +206,141 @@ export class ChannelService {
 	throw new HttpException('You left the channel', HttpStatus.OK);
   }
 
-  async removeChannel(id: number, channelID: number) : Promise<any> {
-	const channel = await this.prisma.channel.findUnique({where: {id: channelID}});
-	if (!channel) throw new NotFoundException("Channel not found");
-
-	if (channel.ownerId != id) throw new BadRequestException("User not Owner of channel");
-
-	const msgs = await this.prisma.msg.findMany({where: {channelId: channelID}});
-	for (const msg of msgs) {
-		await this.prisma.msg.delete({
-			where: {id: msg.id}
-		});
-	}
-
-	const members = await this.prisma.channel.findUnique({
-		where: {id: channelID},
-		select: {
-			member: {
-				select: {
-					id: true,
-				},
-			},
-		},
+  async removeChannel(id: number, channelID: number): Promise<any> {
+	return this.prisma.$transaction(async prisma => {
+	  const channel = await prisma.channel.findUnique({ where: { id: channelID } });
+	  if (!channel) throw new NotFoundException("Channel not found");
+  
+	  if (channel.ownerId != id) throw new BadRequestException("User not Owner of channel");
+  
+	  // Bulk delete messages
+	  await prisma.msg.deleteMany({ where: { channelId: channelID } });
+  
+	  // Bulk delete ChannelUserMute records associated with the channel
+	  await prisma.channelUserMute.deleteMany({ where: { channelId: channelID } });
+  
+	  // Disconnect all members and admins in one operation
+	  await prisma.channel.update({
+		where: { id: channelID },
+		data: {
+		  member: { set: [] },
+		  admins: { set: [] }
+		}
+	  });
+  
+	  // Delete the channel
+	  await prisma.channel.delete({ where: { id: channelID } });
+  
+	  return HttpStatus.ACCEPTED;
+	}).catch(error => {
+	  throw new InternalServerErrorException("Error removing channel", error.message);
 	});
-	for (const member of members.member) {
-		await this.prisma.channel.update({
-			where: {id: channelID},
-			data: {
-				member: {
-					disconnect: {id: member.id}
-				},
-				admins: {
-					disconnect: {id: member.id}
-				},
-			},
-		});
+  }
+  
+  async makeAdmin(id: number, targetID: number, channelID: number) : Promise<any> {
+    const channel = await this.prisma.channel.findUnique({
+      where: { id: channelID },
+    });
+    if (!channel) throw new NotFoundException('Channel not found');
+  
+    const user = await this.prisma.user.findUnique({
+      where: { id: targetID },
+    });
+    if (!user) throw new NotFoundException('User not found');
+  
+    if (!channel.adminsIds.includes(id))
+      throw new BadRequestException('You are not the admin of this channel');
+  
+    if (channel.adminsIds.includes(targetID))
+      throw new BadRequestException('User is already an admin');
+  
+    channel.adminsIds.push(targetID);
+  
+    await this.prisma.channel.update({
+      where: { id: channelID },
+      data: {
+        adminsIds: channel.adminsIds,
+        admins: {
+          connect: { id: targetID },
+        },
+      },
+    });
+  
+    return HttpStatus.ACCEPTED;
+
+  }
+
+  async addChannelMember(id: number, username: string, channelID: number): Promise<any> {
+    const channel = await this.prisma.channel.findUnique({
+      where: { id: channelID },
+    });
+    if (!channel) throw new NotFoundException('Channel not found');
+  
+    const userToAdd = await this.prisma.user.findUnique({
+      where: { username: username },
+    });
+    if (!userToAdd) throw new NotFoundException('User not found');
+  
+    if (userToAdd.id === id)
+      throw new BadRequestException('You cannot add yourself');
+  
+    const isOwner = channel.ownerId === id;
+    if (!isOwner)
+      throw new BadRequestException('You are not the owner of this channel');
+  
+    const isAlreadyMember = await this.prisma.channel.findFirst({
+      where: {
+        id: channelID,
+        member: {
+          some: {
+            id: userToAdd.id,
+          },
+        },
+      },
+    });
+  
+    if (isAlreadyMember)
+      throw new BadRequestException('User is already a member of this channel');
+  
+    await this.prisma.channel.update({
+      where: { id: channelID },
+      data: {
+        member: {
+          connect: { id: userToAdd.id },
+        },
+      },
+    });
+  
+    return { userToAdd : userToAdd, status: HttpStatus.ACCEPTED };
+  }
+
+  async muteUser(adminId: number, targetUserId: number, channelId: number): Promise<any> {
+	const channel = await this.prisma.channel.findUnique({ where: { id: channelId } });
+	if (!channel) {
+	  throw new Error("Channel not found");
 	}
+  
+	if (!channel.adminsIds.includes(adminId)) {
+	  throw new Error("You do not have the authority to mute users in this channel");
+	}
+  
+	const targetUser = await this.prisma.user.findUnique({ where: { id: targetUserId }, include: {channels: true} });
+	if (!targetUser || !targetUser.channels.some(c => c.id === channelId)) {
+	  throw new Error("Target user not found in the channel");
+	}
+  
+	const muteExpiry = new Date(new Date().getTime() + 5 * 60000); // 5 minutes in milliseconds
+	console.log('mute period:', muteExpiry);
 
-	await this.prisma.channel.delete({where: {id: channelID}});
-
+	const tab = await this.prisma.channelUserMute.create({
+	  data: {
+		channelId: channelId,
+		userId: targetUserId,
+		muteExpiry: muteExpiry
+	  }
+	});
 	return HttpStatus.ACCEPTED;
   }
-
-  async muteUser(id: number, targetID: number, channelID: number) : Promise<any> {
-	const channel = await this.prisma.channel.findUnique({where: {id: channelID}});
-	if (!channel) throw new NotFoundException("Channel not found");
-
-	// check if user id exist
-	// check if user id is in adminsIds of channel
-
-	// check if targetID user is a member
-
-	// if all checks out, connect target user to muted [] in db
-
-	// 
-  }
+  
+  
 }

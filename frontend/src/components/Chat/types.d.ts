@@ -54,3 +54,12 @@ export class UserMuteDto {
 	userID: number;
 	channelID: number;
 }
+
+export class MakeAdminDto {
+	userID: number;
+	channelID: number;
+}
+export class addChannelMemberDto {
+	username : string;
+	channelID: number;
+}
