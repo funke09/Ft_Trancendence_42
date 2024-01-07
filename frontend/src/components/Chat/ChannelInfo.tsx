@@ -88,6 +88,11 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 
 	return (
 		<div className='flex flex-col items-center w-full my-5 gap-y-2'>
+			<div className='absolute right-3 z-[20] transition-all duration-300 hover:scale-110'>
+				<IconButton color='white' variant='text' className='rounded-full text-[14px] bg-white/10 hover:bg-white/20'>
+					<i className="fa-solid fa-gear fa-lg"></i>
+				</IconButton>
+			</div>
 			<Badge className='bg-white/10' placement='bottom-end' content={
 				<i className={`fa-solid ${
 					chat.type === 'protected' ? 'fa-lock' :
@@ -107,7 +112,7 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 					</List>
 				}
 				{manager &&
-					<div className="absolute top-2 right-8 z-[20] transition-all duration-300 hover:rotate-180">
+					<div className="absolute top-2 right-3 z-[20] transition-all duration-300 hover:rotate-180">
 						<IconButton color="pink" size= "sm" className="rounded-full" onClick={() => setOpen(!open)}>
 							<i className="fa-solid fa-plus"/>
 						</IconButton>

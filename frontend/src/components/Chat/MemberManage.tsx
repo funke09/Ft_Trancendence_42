@@ -8,12 +8,21 @@ import { MakeAdminDto, UserMuteDto } from './types';
 
 const MemberManage = ({member, channel} : {member: any, channel: any}) => {
 
-	function kick(member: any) {
+	const kick = () => {
 		// api.post(`/user/kickFromChannel`)
 	}
 
-	function ban() {
-
+	const ban = () => {
+		api.post('/user/banUser', {
+			userID: member.id,
+			channelID: channel.id,
+		})
+		.then((res: any) => {
+			toast.success(`${member.username} was banned`, {theme: 'dark'});
+		})
+		.catch((err: any) => {
+			toast.error(err?.response?.data.message ?? "An Error Occurred!", { theme: "dark" });
+		})
 	}
 
 	const handleMute = () => {
@@ -50,8 +59,8 @@ const MemberManage = ({member, channel} : {member: any, channel: any}) => {
 		<div className="focus:outline-none flex flex-col gap-y-2 justify-center m-auto">
 			{!channel.adminsIds.includes(member.id) && <Button onClick={makeAdmin} className="opacity-75 hover:opacity-100 text-md p-2" variant="text" color="pink">MAKE ADMIN</Button>}
 			<Button onClick={handleMute} className="opacity-75 hover:opacity-100 text-md p-2" variant="text" color="white">MUTE</Button>
-			<Button onClick={() => kick(member)} className="opacity-75 hover:opacity-100 text-md p-2" variant="text" color="white">KICK</Button>
-			<Button onClick={() => ban} className="opacity-75 hover:opacity-100 text-md p-2" variant="text" color="red">BAN</Button>
+			<Button onClick={kick} className="opacity-75 hover:opacity-100 text-md p-2" variant="text" color="white">KICK</Button>
+			<Button onClick={ban} className="opacity-75 hover:opacity-100 text-md p-2" variant="text" color="red">BAN</Button>
 		</div>
 	</MenuList>
   )

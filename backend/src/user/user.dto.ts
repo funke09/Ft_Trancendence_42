@@ -93,3 +93,13 @@ export class addChannelMemberDto {
 	username : string;
 	channelID: number;
 }
+
+export class BanUserDto {
+	userID: number;
+	channelID: number;
+}
+
+export class KickUserDto {
+	userID: number;
+	channelID: number;
+}

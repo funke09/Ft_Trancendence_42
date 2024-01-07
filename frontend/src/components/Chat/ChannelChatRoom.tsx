@@ -36,14 +36,22 @@ function Message({ msg, user }: { msg: any, user: any }) {
 export function ChannelChatRoom({user, setSelected, channel} : {user: any, setSelected: any, channel: any}) {
 	const [chat, setChat] = useState<any>(channel);
 	const [messages, setMessages] = useState<any>([]);
+	const [flagged, setFlagged] = useState<boolean>(false);
 	const scrollRef = useRef<Readonly<HTMLDivElement> | null>(null);
 	const channelAvatar: string = `https://via.placeholder.com/100/413040/e3e3e3?text=${channel.name.charAt(0).toUpperCase()}`
 
-	console.log(chat);
 	useEffect(() => {
 		if (!chatSocket.connected) chatSocket.connect();
 		
 		setMessages(chat?.msgs)
+
+		api.get(`/user/isFlagged/${chat.id}`)
+		.then((res: any) => {
+			setFlagged(res.data)
+		})
+		.catch((err: any) => {
+			toast.error(err?.response?.data?.messages?.toString(), {theme: 'dark'});
+		})
 
 		store.subscribe(() => {
 			setChat(store.getState().chat.GroupChats.find((chat: any) => chat.id === channel.id));
@@ -71,7 +79,7 @@ export function ChannelChatRoom({user, setSelected, channel} : {user: any, setSe
 				setMessages((prev: any) => [...prev, newMsg]);
 		});
 
-	}, [chat]);
+	}, [chat, flagged]);
 
 	useEffect(() => {
 		const lastMsg = scrollRef.current?.lastElementChild;
@@ -83,17 +91,8 @@ export function ChannelChatRoom({user, setSelected, channel} : {user: any, setSe
 
 	///////////// SEND MSG ///////////////
 	const [msg, setMsg] = useState("");
-	const [flagged, setFlagged] = useState<boolean>(false);
 
 	const sendMsg = (msg: any) => {
-		api.get(`/user/isFlagged/${chat.id}`)
-			.then((res: any) => {
-				setFlagged(res.data)
-			})
-			.catch((err: any) => {
-				toast.error(err?.response?.data?.messages?.toString(), {theme: 'dark'});
-			})
-		
 		if (!flagged) {
 			msg.message = msg.message.trim();
 			if (!msg || msg.message === "") return;
@@ -171,6 +170,7 @@ export function ChannelChatRoom({user, setSelected, channel} : {user: any, setSe
 					placeholder="Type a Message..."
 					color='white'
 					value={msg}
+					disabled={flagged}
 					onChange={(e) => setMsg(e.currentTarget.value)}
 					onKeyDown={(e) => {
 						if (e.key === "Enter") sendMsg({ message: msg, from: "me" });
@@ -179,6 +179,7 @@ export function ChannelChatRoom({user, setSelected, channel} : {user: any, setSe
 				<IconButton
 					color="pink"
 					size="md"
+					disabled={flagged}
 					onClick={() => {
 						sendMsg({
 							message: msg,
