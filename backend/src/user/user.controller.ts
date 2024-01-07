@@ -37,6 +37,7 @@ import {
   setUsernameDto,
   userIdDto,
   KickUserDto,
+  UpdatePasswordDto,
 } from './user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterService } from './multer.service';
@@ -293,5 +294,20 @@ export class UserController {
 		return this.channelService.kickUser(req.user.id, body.userID, body.channelID);
 	else
 		throw new BadRequestException("Channel ID or User ID not valid");
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/channelPassword')
+  async updatePassword(@Req() req: any, @Body() body: UpdatePasswordDto) {
+    if (!body || !body.channelId) throw new NotFoundException("Channels ID not valid");
+    return await this.channelService.updatePassword(req.user.id, body.channelId, body.newPassword)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/isBanned/:memberId/:channelId')
+  async isBanned( @Param('memberId', ParseIntPipe) memberId: number, @Param('channelId', ParseIntPipe) channelId: number) {
+	if (!memberId || !channelId) throw new BadRequestException("Member ID or Channel ID not valid");
+	const res = await this.channelService.isBanned(memberId, channelId);
+	return res;
   }
 }

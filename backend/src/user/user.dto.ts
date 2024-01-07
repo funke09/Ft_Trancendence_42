@@ -108,3 +108,12 @@ export class KickUserDto {
 	userID: number;
 	channelID: number;
 }
+
+export class UpdatePasswordDto {
+	@IsNotEmpty()
+	@IsNumber()
+	@IsPositive()
+	@IsInt()
+	channelId: number;
+	newPassword: string | null;
+  }

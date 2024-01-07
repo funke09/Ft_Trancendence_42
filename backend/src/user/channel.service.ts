@@ -330,7 +330,6 @@ export class ChannelService {
 	}
   
 	const muteExpiry = new Date(new Date().getTime() + 5 * 60000); // 5 minutes in milliseconds
-	console.log('mute period:', muteExpiry);
 
 	// connect this user to muted relation in channel
 	await this.prisma.channel.update({
@@ -349,7 +348,6 @@ export class ChannelService {
 		muteExpiry: muteExpiry
 	  }
 	});
-	console.log("mute tab:",tab);
 	return HttpStatus.ACCEPTED;
   }
 
@@ -477,6 +475,7 @@ export class ChannelService {
     
     return HttpStatus.ACCEPTED;
     }
+
     async kickUser(id: number, targetID: number, channelID: number): Promise<any> {
       const channel = await this.prisma.channel.findUnique({
         where: { id: channelID },
@@ -503,4 +502,58 @@ export class ChannelService {
       return HttpStatus.ACCEPTED;
     }
   
+	async updatePassword(id: number, channelId: number, newPassword: string): Promise<any> {
+		const channel = await this.prisma.channel.findUnique({
+		  where: { id: channelId },
+		});
+	
+		const user = await this.prisma.user.findUnique({
+		  where: {id: id},
+		})
+		if (!user) throw new NotFoundException("User not found");
+	
+		if (channel.ownerId !== id) throw new BadRequestException("User is not Owner of channel");
+		let hash: string = '';
+		if (newPassword) {
+			if (channel.password !== '') {
+				const pwMatches = await argon.verify(channel.password, newPassword);
+				if (pwMatches)
+				  throw new BadRequestException('This Password is already in use')
+			}
+			hash = await argon.hash(newPassword);
+		}
+	   
+		// Update the channel type and password
+		if (!newPassword) {
+		  await this.prisma.channel.update({
+			where: { id: channelId },
+			data: { type: 'public', password: '' },
+		  });
+		} else if (newPassword.length > 7){
+		  await this.prisma.channel.update({
+			where: { id: channelId },
+			data: { type: 'protected', password: hash },
+		  });
+		}
+		return HttpStatus.ACCEPTED;
+	}
+
+	async isBanned(memberId: number, channelId: number): Promise<boolean> {
+		const user = await this.prisma.user.findUnique({
+			where: { id: memberId },
+		});
+		if (!user) throw new NotFoundException('User not found');
+
+		const channel = await this.prisma.channel.findUnique({
+		  where: { id: channelId },
+		  include: {
+			banned: true,
+		  },
+		});
+
+		if (!channel) throw new NotFoundException('Channel not found');
+
+		if (channel.banned.some((banned) => banned.id === memberId)) return true;
+		return false;
+	}
 }

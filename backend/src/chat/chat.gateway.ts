@@ -206,6 +206,10 @@ export class ChatGateway {
       return;
     }
 
+	// check if the message is from a blocked user
+	const isBlocked = await this.chatService.isUserBlocked(userObj.username, payload.id);
+	if (isBlocked) return;
+
     const isInChannel = client.rooms.has(channelName);
     if (!isInChannel) client.join(channelName);
 

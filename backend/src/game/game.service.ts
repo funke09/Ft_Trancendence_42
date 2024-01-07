@@ -114,6 +114,16 @@ export class GameService {
     const fromUsername = this.getUsernameBySocket(fromClient);
     if (!fromUsername) return;
 
+	// check if username is a a valid user
+	const user = await this.prisma.user.findUnique({
+		where: { username: data.username },
+	});
+	if (!user) {
+		fromClient.emit('error', `${data.username} is not a valid user`);
+		fromClient.emit('invite-canceled', {});
+		return;
+	}
+
     if (this.isInGame(data.username)) {
       fromClient.emit('error', `${data.username} is Already in a game`);
       fromClient.emit('invite-canceled', {});

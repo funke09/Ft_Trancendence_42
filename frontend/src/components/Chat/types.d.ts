@@ -73,3 +73,8 @@ export class KickUserDto {
 	userID: number;
 	channelID: number;
 }
+
+export class UpdatePasswordDto {
+	channelId: number;
+	newPassword: string;
+};

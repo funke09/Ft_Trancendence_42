@@ -46,12 +46,12 @@ export function ChannelChatRoom({user, setSelected, channel} : {user: any, setSe
 		setMessages(chat?.msgs)
 
 		api.get(`/user/isFlagged/${chat.id}`)
-		.then((res: any) => {
-			setFlagged(res.data)
-		})
-		.catch((err: any) => {
-			toast.error(err?.response?.data?.messages?.toString(), {theme: 'dark'});
-		})
+			.then((res: any) => {
+				setFlagged(res.data)
+			})
+			.catch((err: any) => {
+				toast.error(err?.response?.data?.messages?.toString(), {theme: 'dark'});
+			})
 
 		store.subscribe(() => {
 			setChat(store.getState().chat.GroupChats.find((chat: any) => chat.id === channel.id));
@@ -155,6 +155,7 @@ export function ChannelChatRoom({user, setSelected, channel} : {user: any, setSe
 			{/* messages */}
 			<div className="flex-1 overflow-y-auto notif p-4" ref={scrollRef}>
 				{messages.map((msg: AnyMsgDto, index: number) => {
+					
 					return (
 						<div key={index} className='mb-5'>
 							<Message msg={msg} user={user} />

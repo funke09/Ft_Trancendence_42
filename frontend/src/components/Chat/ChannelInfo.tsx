@@ -1,19 +1,78 @@
-import chat from '@/pages/chat';
 import chatSocket from '@/sockets/chatSocket';
-import { Badge, Typography, Card, List, IconButton, Button, Dialog, Input } from '@material-tailwind/react';
+import { Badge, Typography, Card, List, IconButton, Button, Dialog, Input, Chip } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react'
 import Loading from '../Layout/Loading';
 import ChannelMembers from './ChannelMembers';
 import api from '@/api';
 import { ToastContainer, toast } from 'react-toastify';
-import { LeaveChannelDto, addChannelMemberDto } from './types';
+import { LeaveChannelDto, UpdatePasswordDto, addChannelMemberDto } from './types';
 import store, { setCurrentChatGroup } from '@/redux/store';
+
+const ChannelSettings = ({chat, handle} : {chat:any, handle: any}) => {
+	const [password, setPassword] = useState("*********");
+	const [type, setType] = useState(chat.type);
+
+	useEffect(() => {
+		if (password !== null)
+			setType('protected');
+		if (password === '')
+			setType('public');
+	}, [password]);
+	
+	const changePassword = ({ target } : {target: any}) => {
+		setPassword(target.value);
+	}
+
+	function savePassword(password: string) {
+		let body: UpdatePasswordDto = {
+			channelId: chat.id,
+			newPassword: password,
+		}
+		api.post('/user/channelPassword', body)
+			.then((res: any) => {
+				handle();
+				toast.success("Channel Password has been updated")
+			})
+			.catch((err: any) => {
+				toast.error(err?.response?.data.message ?? "An Error Occurred!", { theme: "dark" });
+			})
+	}
+
+	return (
+		<div className='flex w-full h-full flex-col m-auto items-center my-10 gap-y-10 transition-all duration-300'>
+			<div className="flex flex-row justify-around gap-y-10">
+				<Chip value={'public'} className={`${type === 'public' ? 'bg-green-500' : 'bg-white/10'}`}/>
+				<Chip value={'protected'} className={`${type === 'protected' ? 'bg-green-500' : 'bg-white/10'}`}/>
+			</div>
+			<div className="relative flex w-full max-w-[20rem]">
+				<Input
+					size="lg"
+					value={password}
+					variant="standard"
+					color="white"
+					label="Password"
+					type="password"
+					onChange={changePassword}
+					crossOrigin={undefined}
+					containerProps={{className: "min-w-0",}}
+					className='text-white'
+				/>
+				<Button
+					size="sm"
+					onClick={() => savePassword(password)}
+					color={password !== "*********" ? "green" : "blue-gray"}
+					disabled={password == "*********"}
+					className="!absolute right-1 top-1 rounded">
+				SAVE
+				</Button>
+			</div>
+		</div>
+	)
+}
 
 const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar: string, manager: boolean}) => {
 	const [loading, setLoading] = useState(false);
 	const [members, setMembers] = useState<any>([]);
-	const [admins, setAdmins] = useState<any>([]);
-	const [owner, setOwner] = useState<any>(null);
 	const [refresh, setRefresh] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -86,13 +145,35 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 			});
 	}
 
+	const [openSettings, setOpenSettings] = useState(false);
+	const handleSettings = () => setOpenSettings(!openSettings);
+	const user = store.getState().profile.user;
+	const [isBanned, setIsBanned] = useState(false);
+
+	useEffect(() => {
+		api.get(`/user/isBanned/${user.id}/${chat.id}`)
+			.then((res: any) => {
+				setIsBanned(res.data);
+			})
+			.catch((err: any) => {
+				toast.error(err?.response?.data.message ?? "An Error Occurred!", { theme: "dark" });
+			})
+	}, [isBanned])
+
 	return (
 		<div className='flex flex-col items-center w-full my-5 gap-y-2'>
-			<div className='absolute right-3 z-[20] transition-all duration-300 hover:scale-110'>
-				<IconButton color='white' variant='text' className='rounded-full text-[14px] bg-white/10 hover:bg-white/20'>
-					<i className="fa-solid fa-gear fa-lg"></i>
-				</IconButton>
-			</div>
+			{chat.ownerId === store.getState().profile.user.id &&
+				<div className='absolute right-3 z-[20] transition-all duration-300 hover:scale-110'>
+					<IconButton onClick={handleSettings} color='white' variant='text' className='rounded-full text-[14px] bg-white/10 hover:bg-white/20'>
+						<i className="fa-solid fa-gear fa-lg"></i>
+					</IconButton>
+					{openSettings &&
+						<Dialog size='xs' open={openSettings} handler={handleSettings} className='bg-primary1 rounded-[30px]'>
+							<ChannelSettings handle={handleSettings} chat={chat} />
+						</Dialog>
+					}
+				</div>
+			}
 			<Badge className='bg-white/10' placement='bottom-end' content={
 				<i className={`fa-solid ${
 					chat.type === 'protected' ? 'fa-lock' :
@@ -111,7 +192,7 @@ const ChannelInfo = ({chat, channelAvatar, manager} : {chat: any, channelAvatar:
 						<ChannelMembers manager={manager} members={members} channel={chat}/>
 					</List>
 				}
-				{manager &&
+				{(manager && !isBanned) &&
 					<div className="absolute top-2 right-3 z-[20] transition-all duration-300 hover:rotate-180">
 						<IconButton color="pink" size= "sm" className="rounded-full" onClick={() => setOpen(!open)}>
 							<i className="fa-solid fa-plus"/>
