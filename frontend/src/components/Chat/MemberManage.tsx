@@ -4,12 +4,22 @@ import { MenuList, Button, Dialog, DialogBody, Typography, Input } from '@materi
 import { channel } from 'diagnostics_channel'
 import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
-import { MakeAdminDto, UserMuteDto } from './types';
+import { MakeAdminDto, UserMuteDto, KickUserDto } from './types';
 
 const MemberManage = ({member, channel} : {member: any, channel: any}) => {
 
-	const kick = () => {
-		// api.post(`/user/kickFromChannel`)
+	const kick = async () => {
+		let body: KickUserDto = {
+			userID: member.id,
+			channelID: channel.id,
+		};
+		api.post('/user/kickUser', body)
+		.then((res: any) => {
+			toast.success(`${member.username} was kicked`, {theme: 'dark'});
+		})
+		.catch((err: any) => {
+			toast.error(err?.response?.data.message ?? "An Error Occurred!", { theme: "dark" });
+		});
 	}
 
 	const ban = () => {

@@ -23,6 +23,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
 import {
 	BanUserDto,
+  UnBanUserDto,
   BlockFriendDto,
   CreateChannelDto,
   JoinChannelDto,
@@ -35,6 +36,7 @@ import {
   setPasswordDto,
   setUsernameDto,
   userIdDto,
+  KickUserDto,
 } from './user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterService } from './multer.service';
@@ -271,6 +273,24 @@ export class UserController {
   async banUser(@Req() req: any, @Body() body: BanUserDto) {
 	if (body.channelID && body.userID)
 		return this.channelService.banUser(req.user.id, body.userID, body.channelID);
+	else
+		throw new BadRequestException("Channel ID or User ID not valid");
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/unbanUser')
+  async unbanUser(@Req() req: any, @Body() body: UnBanUserDto) {
+	if (body.channelID && body.userID)
+		return this.channelService.unbanUser(req.user.id, body.userID, body.channelID);
+	else
+		throw new BadRequestException("Channel ID or User ID not valid");
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/kickUser')
+  async kickUser(@Req() req: any, @Body() body: KickUserDto) {
+	if (body.channelID && body.userID)
+		return this.channelService.kickUser(req.user.id, body.userID, body.channelID);
 	else
 		throw new BadRequestException("Channel ID or User ID not valid");
   }

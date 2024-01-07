@@ -445,6 +445,62 @@ export class ChannelService {
   
 	return HttpStatus.ACCEPTED;
   }
+
+  async unbanUser(id: number, targetID: number, channelID: number): Promise<any> {
+    const channel = await this.prisma.channel.findUnique({
+      where: { id: channelID },
+      include: {
+      banned: true,
+      },
+    });
+    if (!channel) throw new NotFoundException('Channel not found');
+    
+    const targetUser = await this.prisma.user.findUnique({
+      where: { id: targetID },
+    });
+    if (!targetUser) throw new NotFoundException('Target user not found');
+    
+    if (!channel.adminsIds.includes(id))
+      throw new BadRequestException('You are not the admin of this channel');
+    
+    if (!channel.banned.some((banned) => banned.id === targetID))
+      throw new BadRequestException('Target user is not banned from this channel');
+    
+    await this.prisma.channel.update({
+      where: { id: channelID },
+      data: {
+      banned: {
+        disconnect: { id: targetID },
+      },
+      },
+    });
+    
+    return HttpStatus.ACCEPTED;
+    }
+    async kickUser(id: number, targetID: number, channelID: number): Promise<any> {
+      const channel = await this.prisma.channel.findUnique({
+        where: { id: channelID },
+      });
+      if (!channel) throw new NotFoundException('Channel not found');
   
+      const targetUser = await this.prisma.user.findUnique({
+        where: { id: targetID },
+      });
+      if (!targetUser) throw new NotFoundException('Target user not found');
+  
+      if (!channel.adminsIds.includes(id))
+        throw new BadRequestException('You are not the admin of this channel');
+  
+      await this.prisma.channel.update({
+        where: { id: channelID },
+        data: {
+          member: {
+            disconnect: { id: targetID },
+          },
+        },
+      });
+  
+      return HttpStatus.ACCEPTED;
+    }
   
 }

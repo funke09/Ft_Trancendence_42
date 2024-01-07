@@ -68,3 +68,8 @@ export class IsFlaggedDto {
 	userID: number;
 	channelID: number;
 }
+
+export class KickUserDto {
+	userID: number;
+	channelID: number;
+}

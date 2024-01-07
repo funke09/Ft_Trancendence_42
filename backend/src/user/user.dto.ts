@@ -99,6 +99,11 @@ export class BanUserDto {
 	channelID: number;
 }
 
+export class UnBanUserDto {
+	userID: number;
+	channelID: number;
+}
+
 export class KickUserDto {
 	userID: number;
 	channelID: number;
