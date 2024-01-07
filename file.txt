@@ -1,0 +1,80 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red109\green109\blue109;\red255\green255\blue255;\red70\green137\blue204;
+\red193\green193\blue193;\red212\green214\blue154;\red202\green202\blue202;\red140\green211\blue254;\red67\green192\blue160;
+\red66\green179\blue255;\red194\green126\blue101;\red183\green111\blue179;\red167\green197\blue152;\red89\green138\blue67;
+}
+{\*\expandedcolortbl;;\cssrgb\c50196\c50196\c50196;\cssrgb\c100000\c100000\c100000;\cssrgb\c33725\c61176\c83922;
+\cssrgb\c80000\c80000\c80000;\cssrgb\c86275\c86275\c66667;\cssrgb\c83137\c83137\c83137;\cssrgb\c61176\c86275\c99608;\cssrgb\c30588\c78824\c69020;
+\cssrgb\c30980\c75686\c100000;\cssrgb\c80784\c56863\c47059;\cssrgb\c77255\c52549\c75294;\cssrgb\c70980\c80784\c65882;\cssrgb\c41569\c60000\c33333;
+}
+\margl1440\margr1440\vieww19100\viewh13560\viewkind0
+\deftab720
+\pard\pardeftab720\sl360\partightenfactor0
+
+\f0\fs24 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\sl360\partightenfactor0
+\cf4 const\cf5  \cf6 ChangeChannelPasswordDialog\cf5  \cf7 =\cf5  (\{ \cf8 show\cf5 , \cf6 onClose\cf5 , \cf8 channelId\cf5  \}\cf7 :\cf5  \{ \cf8 show\cf7 :\cf5  \cf9 boolean\cf5 ; \cf6 onClose\cf7 :\cf5  () \cf4 =>\cf5  \cf9 void\cf5 ; \cf8 channelId\cf7 :\cf5  \cf9 string\cf5  \}) \cf4 =>\cf5  \{\
+    \cf4 const\cf5  [\cf10 password\cf5 , \cf6 setPassword\cf5 ] \cf7 =\cf5  \cf6 useState\cf5 (\cf11 ''\cf5 );\
+   \
+    \cf4 const\cf5  \cf6 handleChangePassword\cf5  \cf7 =\cf5  \cf4 async\cf5  () \cf4 =>\cf5  \{\
+      \cf12 try\cf5  \{\
+        \cf4 const\cf5  \cf10 res\cf5  \cf7 =\cf5  \cf12 await\cf5  \cf10 api\cf5 .\cf6 post\cf5 (\cf11 '/channel/changePassword'\cf5 , \{ \cf8 channelId\cf5 , \cf8 password\cf5  \});\
+        \cf12 if\cf5  (\cf10 res\cf5 .\cf8 status\cf5  \cf7 ===\cf5  \cf13 200\cf5 ) \{\
+          \cf6 toast\cf5 .\cf6 success\cf5 (\cf11 'Password changed successfully'\cf5 , \{ \cf8 theme:\cf5  \cf11 'dark'\cf5  \});\
+          \cf6 onClose\cf5 (); \cf14 // Close the dialog\cf5 \
+        \}\
+      \} \cf12 catch\cf5  (\cf8 error\cf7 :\cf5  \cf9 any\cf5 ) \{\
+        \cf6 toast\cf5 .\cf6 error\cf5 (\cf8 error\cf5 ?.\cf8 response\cf5 ?.\cf8 data\cf5 ?.\cf8 messages\cf5 ?.\cf6 toString\cf5 (), \{ \cf8 theme:\cf5  \cf11 'dark'\cf5  \});\
+      \}\
+    \};\
+   \
+    \cf12 if\cf5  (\cf7 !\cf8 show\cf5 ) \cf12 return\cf5  \cf4 null\cf5 ;\
+   \
+    \cf12 return\cf5  (   \
+      \cf2 <\cf9 Dialog\cf5  \cf8 open\cf7 =\cf4 \{\cf8 show\cf4 \}\cf5  \cf8 handler\cf7 =\cf4 \{\cf6 onClose\cf4 \}\cf2 >\cf5 \
+        \cf2 <\cf9 DialogBody\cf2 >\cf5 \
+          \cf2 <\cf9 Input\cf5  \cf8 type\cf7 =\cf11 "password"\cf5  \cf8 value\cf7 =\cf4 \{\cf10 password\cf4 \}\cf5  \cf8 onChange\cf7 =\cf4 \{\cf7 (\cf8 e\cf7 ) \cf4 =>\cf7  \cf6 setPassword\cf7 (\cf8 e\cf7 .\cf8 target\cf7 .\cf8 value\cf7 )\cf4 \}\cf5  \cf8 placeholder\cf7 =\cf11 "New Password"\cf5  \cf8 crossOrigin\cf7 =\cf4 \{undefined\}\cf5  \cf2 />\cf5 \
+          \cf2 <\cf9 Button\cf5  \cf8 onClick\cf7 =\cf4 \{\cf6 handleChangePassword\cf4 \}\cf2 >\cf5 Change Password\cf2 </\cf9 Button\cf2 >\cf5 \
+        \cf2 </\cf9 DialogBody\cf2 >\cf5 \
+      \cf2 </\cf9 Dialog\cf2 >\cf5 \
+    );\
+   \};\
+   \
+\pard\pardeftab720\sl360\partightenfactor0
+\cf2 \
+\
+\pard\pardeftab720\sl360\partightenfactor0
+\cf5     \cf14 // Function to open the change password dialog\cf5 \
+    \cf4 const\cf5  [\cf10 showChangePassword\cf5 , \cf6 setShowChangePassword\cf5 ] \cf7 =\cf5  \cf6 useState\cf5 (\cf4 false\cf5 );\
+    \cf4 const\cf5  \cf6 openChangePasswordDialog\cf5  \cf7 =\cf5  () \cf4 =>\cf5  \{\
+        \cf6 setShowChangePassword\cf5 (\cf7 !\cf10 showChangePassword\cf5 );\
+    \};\
+\pard\pardeftab720\sl360\partightenfactor0
+\cf2 \
+\
+\
+\
+<\cf4 div\cf5  \cf8 className\cf7 =\cf11 'flex flex-col items-center w-full my-5 gap-y-2'\cf2 >\cf5 \
+            \cf2 <\cf4 div\cf5  \cf8 className\cf7 =\cf11 "flex justify-end  w-full mr-3.5 "\cf2 >\cf5 \
+                \cf2 <\cf9 IconButton\cf5  \cf8 color\cf7 =\cf11 "pink"\cf5  \cf8 className\cf7 =\cf11 "rounded-full"\cf5  \cf8 onClick\cf7 =\cf4 \{\cf6 openChangePasswordDialog\cf4 \}\cf2 >\cf5 \
+                    \cf2 <\cf4 i\cf5  \cf8 className\cf7 =\cf11 "fa-solid fa-cog fa-lg "\cf2 />\cf5 \
+                \cf2 </\cf9 IconButton\cf2 >\cf5 \
+            \cf2 </\cf4 div\cf2 >\cf5 \
+            \cf2 <\cf9 ChangeChannelPasswordDialog\cf5  \cf8 show\cf7 =\cf4 \{\cf10 showChangePassword\cf4 \}\cf5  \cf8 onClose\cf7 =\cf4 \{\cf6 openChangePasswordDialog\cf4 \}\cf5  \cf8 channelId\cf7 =\cf4 \{\cf8 chat\cf7 .\cf8 id\cf4 \}\cf5  \cf2 />\cf5 \
+            \cf2 <\cf9 Badge\cf5  \cf8 className\cf7 =\cf11 'bg-white/10'\cf5  \cf8 placement\cf7 =\cf11 'bottom-end'\cf5  \cf8 content\cf7 =\cf4 \{\cf5 \
+\pard\pardeftab720\sl360\partightenfactor0
+\cf7                 \cf2 <\cf4 div\cf2 >\cf7  \cf4 \{\cf14 /* Wrap the content inside a single parent element */\cf4 \}\cf5 \
+\cf7                     \cf2 <\cf9 Typography\cf7  \cf8 variant\cf7 =\cf11 'h3'\cf7  \cf8 color\cf7 =\cf11 'white'\cf2 >\cf4 \{\cf8 chat\cf7 ?.\cf8 name\cf4 \}\cf2 </\cf9 Typography\cf2 >\cf5 \
+\cf7                     \cf2 <\cf4 i\cf7  \cf8 className\cf7 =\cf4 \{\cf11 `fa-solid \cf4 $\{\cf5 \
+\cf7                         \cf8 chat\cf7 .\cf8 type\cf7  === \cf11 'protected'\cf7  ? \cf11 'fa-lock'\cf7  :\cf5 \
+\cf7                         \cf8 chat\cf7 .\cf8 type\cf7  === \cf11 'private'\cf7  ? \cf11 'fa-eye-slash'\cf7  :\cf5 \
+\cf7                         \cf8 chat\cf7 .\cf8 type\cf7  === \cf11 'public'\cf7  ? \cf11 'fa-globe'\cf7  : \cf11 ''\cf5 \
+\cf7                     \cf4 \}\cf11 `\cf4 \}\cf7  \cf2 />\cf5 \
+\cf7                 \cf2 </\cf4 div\cf2 >\cf5 \
+\cf7                 \cf4 \}\cf2 >\cf5 \
+                \
+                \cf2 <\cf4 img\cf5  \cf8 src\cf7 =\cf4 \{\cf8 channelAvatar\cf4 \}\cf5  \cf8 width\cf7 =\cf4 \{\cf13 100\cf4 \}\cf5  \cf8 height\cf7 =\cf4 \{\cf13 100\cf4 \}\cf5  \cf8 alt\cf7 =\cf11 'channel'\cf5  \cf8 className\cf7 =\cf11 'rounded-full'\cf2 />\cf5 \
+            \cf2 </\cf9 Badge\cf2 > \'85\cf5 \
+}
