@@ -49,3 +49,8 @@ export class JoinChannelDto {
 export class LeaveChannelDto {
 	channelID: number;
 }
+
+export class UserMuteDto {
+	userID: number;
+	channelID: number;
+}

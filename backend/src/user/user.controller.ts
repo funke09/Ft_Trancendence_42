@@ -27,6 +27,7 @@ import {
   JoinChannelDto,
   LeaveChannelDto,
   UnblockFriendDto,
+  UserMuteDto,
   pinDto,
   setPasswordDto,
   setUsernameDto,
@@ -228,4 +229,13 @@ export class UserController {
 	if (!channelID) throw new BadRequestException("Channel ID not valid");
 	return this.channelService.removeChannel(req.user.id, channelID);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/muteUser')
+  async muteUser(@Req() req: any, @Body() body: UserMuteDto) {
+	if (!body || body.channelID) throw new BadRequestException("Channel ID not valid");
+	if (!body || body.userID) throw new BadRequestException("User ID not valid");
+	
+	return this.channelService.muteUser(req.user.id, body.userID, body.channelID);
+}
 }

@@ -78,3 +78,8 @@ export class LeaveChannelDto {
 	@IsInt()
 	channelID: number;
 }
+
+export class UserMuteDto {
+	userID: number;
+	channelID: number;
+}

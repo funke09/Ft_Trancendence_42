@@ -245,4 +245,18 @@ export class ChannelService {
 
 	return HttpStatus.ACCEPTED;
   }
+
+  async muteUser(id: number, targetID: number, channelID: number) : Promise<any> {
+	const channel = await this.prisma.channel.findUnique({where: {id: channelID}});
+	if (!channel) throw new NotFoundException("Channel not found");
+
+	// check if user id exist
+	// check if user id is in adminsIds of channel
+
+	// check if targetID user is a member
+
+	// if all checks out, connect target user to muted [] in db
+
+	// 
+  }
 }
