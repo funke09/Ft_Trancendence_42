@@ -418,7 +418,7 @@ export class Game {
     this.endGameCallback(this.id);
     this.stopGame(false);
   }
-
+  
   stopGame(backup: boolean = true) {
     Events.off(this.engine, 'collisionStart', this.onCollisionStart);
     Events.off(this.engine, 'collisionEnd', this.onCollisionEnd);
@@ -458,7 +458,7 @@ export class Game {
           this.score.player1 < this.score.player2 ? this.client1 : this.client2,
       });
     }
-    this.client1 = null;
+	    this.client1 = null;
     this.client2 = null;
   }
 }

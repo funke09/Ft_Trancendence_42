@@ -22,6 +22,7 @@ import { JwtAuthGuard } from 'src/auth/utils/Guards';
 import { AuthService } from 'src/auth/auth.service';
 import { Response } from 'express';
 import {
+	BanUserDto,
   BlockFriendDto,
   CreateChannelDto,
   JoinChannelDto,
@@ -263,5 +264,14 @@ export class UserController {
   async isFlagged(@Req() req: any, @Param('channelID', ParseIntPipe) channelID: number) {
 	if (!channelID) throw new NotFoundException("Channel ID not valid");
 	return this.channelService.isFlagged(req.user.id, channelID);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/banUser')
+  async banUser(@Req() req: any, @Body() body: BanUserDto) {
+	if (body.channelID && body.userID)
+		return this.channelService.banUser(req.user.id, body.userID, body.channelID);
+	else
+		throw new BadRequestException("Channel ID or User ID not valid");
   }
 }
