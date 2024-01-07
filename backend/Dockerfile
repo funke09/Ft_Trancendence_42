@@ -9,21 +9,25 @@ COPY package*.json ./
 
 # Install dependencies
 RUN apt-get update && \
-    apt-get install -y build-essential
-RUN npm install \
+    apt-get install -y build-essential netcat-openbsd && \
+    npm install \
     && npm install --target_arch=x64 --target_platform=linux --target_libc=glibc -f \
     && npm i -g @nestjs/cli \
-    && npm i -g prisma \
-    && npx prisma generate \
-    && npx prisma migrate dev
-
+    && npm i -g prisma
 
 # Copy the rest of the application code to the container
 COPY . .
+COPY script.sh /script.sh
+RUN chmod +x /script.sh
+
+# Generate Prisma Client
+RUN npx prisma generate --schema ./schema.prisma
 
 # Expose the port that the app will run on
 EXPOSE 5000
 
+# Build the application
 RUN npm run build
-# Command to run the application
-CMD ["npm", "run", "start"]
+
+# Command to run the application with script script
+CMD /script.sh && npx prisma migrate deploy && npm run start

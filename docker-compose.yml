@@ -2,6 +2,21 @@ version: '3.5'
 
 services:
 
+  postgres:
+    container_name: postgres
+    build: ./database
+    env_file:
+      - .env
+    networks:
+      - warper-network
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/:/var/lib/postgresql/data
+    environment:
+      - PGDATA=/var/lib/postgresql/custom-data
+    restart: always
+
   backend:
     container_name: backend
     build: ./backend
@@ -18,21 +33,6 @@ services:
     depends_on:
       - postgres  
 
-  postgres:
-    container_name: postgres
-    build: ./database
-    env_file:
-      - .env
-    networks:
-      - warper-network
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./database/:/var/lib/postgresql/data
-    environment:
-      - PGDATA=/var/lib/postgresql/custom-data
-    restart: unless-stopped
-
   frontend:
     container_name: frontend
     build: ./frontend
@@ -44,6 +44,8 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/app
+    depends_on:
+      - postgres  
     restart: unless-stopped
 
 networks:
