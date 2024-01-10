@@ -2,7 +2,7 @@
 
 Welcome to ft_transcendence, a web application built for the mighty pong contest. This project challenges you to work with unconventional technologies and frameworks, pushing you to explore new territories in computer science.
 
-![Project Wallpaper]()
+![Project Wallpaper](wall.png)
 ## Table of Contents
 - [Overview](#overview)
 - [Security Concerns](#security-concerns)
