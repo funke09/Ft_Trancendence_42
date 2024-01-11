@@ -2,6 +2,7 @@
 
 Welcome to ft_transcendence, a web application built for the mighty pong contest. This project challenges you to work with unconventional technologies and frameworks, pushing you to explore new territories in computer science.
 
+
 ![Project Wallpaper](wall.png)
 ## Table of Contents
 - [Overview](#overview)
@@ -14,7 +15,7 @@ Welcome to ft_transcendence, a web application built for the mighty pong contest
 - [Admin](#admin)
 
 ## Overview
-ft_transcendence is a web application that facilitates Pong tournaments, real-time multiplayer games, and more. The tech stack includes nestjs for the backend, PostgreSQL for the database, and nextjs for the frontend. The deployment is streamlined with Docker-compose.
+ft_transcendence is a web application that facilitates Pong tournaments, real-time multiplayer games, and more. The tech stack includes nestjs for the backend, PostgreSQL for the database, and nextjs for the front-end. The deployment is streamlined with Docker-compose.
 
 ## Security Concerns
 - Passwords are encrypted in the database.
