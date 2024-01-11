@@ -1,0 +1,36 @@
+// Define your User model
+enum Status {
+  ONLINE
+  OFFLINE
+  // Add other status values as needed
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  username String
+  email    String   @unique
+  password String
+  // ... other fields
+}
+
+// Define your Status model
+model Status {
+  id   Int      @id @default(autoincrement())
+  name String
+  // ... other fields
+}
+
+// Define your GameStatus model
+model GameStatus {
+  id     Int      @id @default(autoincrement())
+  status String
+  // ... other fields
+}
+
+// Define your datasource
+// Make sure to replace "your-database-url" with your actual PostgreSQL connection URL
+// You can use environment variables here as well, e.g., url = env("DATABASE_URL")
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:mysecretpasswordD@localhost:5432/trans"
+}

@@ -15,6 +15,8 @@ import * as qrcode from 'qrcode';
 
 @Injectable()
 export class AuthService {
+
+=======
   constructor(
     private prisma: PrismaService,
     private JwtService: JwtService,

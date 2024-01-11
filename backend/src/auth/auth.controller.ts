@@ -17,14 +17,18 @@ import {
   setUsernameDto,
 } from 'src/user/user.dto';
 
+
+
+interface AuthenticatedRequest extends Request {
+	user: any; // Replace 'any' with the actual type of your user object
+}
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get('42')
   @UseGuards(AuthGuard('42'))
-  async ftAuth() {}
-
+  
   @Get('42/redirect')
   @UseGuards(AuthGuard('42'))
   async ftRedirect(@Req() req, @Res({ passthrough: true }) res: Response) {
