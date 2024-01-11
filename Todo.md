@@ -67,3 +67,14 @@ Real-Time Updates:
     Check the logic in the login method. If a user with the provided username exists, the method should authenticate the user and log them in, not attempt to create a new user.
 
     Issue-2 ( - && - ): ...
+-----------------------------------------------
+
+To-do list to guide you through deploying your app on Vercel and setting up a CI/CD pipeline with Jenkins:
+
+1. **Vercel Deployment:**
+   - [ ] Sign up for a Vercel account.
+   - [ ] Connect your GitHub repository to Vercel.
+   - [ ] Configure your Next.js app for deployment with Vercel (use either the CLI or the Vercel website).
+
+2. **Configure Database Connections:**
+   - [ ] Ensure that Vercel environment variables include the necessary PostgreSQL database connection details.
