@@ -8,7 +8,7 @@ Welcome to ft_transcendence, a web application built for the mighty pong contest
 - [Overview](#overview)
 - [Security Concerns](#security-concerns)
 - [User Account](#user-account)
-- [Chat](#chat)
+- [Chat-](#cha)
 - [Game](#game)
 - [Guilds](#guilds)
 - [Tournament](#tournament)
