@@ -52,7 +52,7 @@ ft_transcendence is a web application that facilitates Pong tournaments, real-ti
 - Guild wars with start/end dates, points, and war times.
 - War history page for each guild.
 
-## Tournament 
+## Tournament
 - Permanent ladder tournament with a matchmaking system.
 - Casual and rated gameplay.
 - Administrator-created or automated tournaments with various rules (round robin, single/double eliminations, swiss).
