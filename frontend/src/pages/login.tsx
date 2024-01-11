@@ -269,13 +269,13 @@ const Auth: React.FC = () => {
 			{side &&
 				<section className="w-1/4 relative min-[0px] flex bg-[#382A39] bg-opacity-75">
 					<div className="absolute flex-grow top-4 left-4 opacity-95">
-						<Image src="/images/egypt.png" alt="pyramid" width={200} height={200}></Image>
+						<img src="/images/egypt.png" alt="pyramid" width={200} height={200}/>
 					</div>
 					<div className="flex-grow flex items-center justify-center">
-						<Image src="/images/controller.png" alt="controller" width={500} height={500}></Image>
+						<img src="/images/controller.png" alt="controller" width={500} height={500}/>
 					</div>
 					<div className="absolute bottom-4 right-4 opacity-75">
-						<Image src="/images/no9at.png" alt="no9at" width={200} height={100}></Image>
+						<img src="/images/no9at.png" alt="no9at" width={200} height={100}/>
 					</div>
 				</section>
 			}
@@ -286,8 +286,8 @@ const Auth: React.FC = () => {
 							color={activeTab === 'signup' ? "pink" : "gray"}
 							className={`nav-button w-[7rem] h-[3rem] rounded-3xl hover:bg-primary1  ${
 							activeTab === 'signup'
-							? 'shadow-md font-semibold text-white text-[1rem]'
-							: 'shadow-md font-semibold text-[#342938] text-[1rem] transition-all'
+							? 'shadow-md font-semibold text-white text-[0.2rem]'
+							: 'shadow-md font-semibold text-[#342938] text-[0.2rem] transition-all'
 							} ease-in`}
 							onClick={switchToSignUp}
 						>
@@ -299,7 +299,7 @@ const Auth: React.FC = () => {
 							activeTab === 'login'
 							? 'shadow-md font-semibold text-white text-[1rem]'
 							: 'shadow-md font-semibold text-[#342938] text-[1rem] transition-all'
-							} ease-in`}
+							}  ease-in`}
 							onClick={switchToLogin}
 						>
 						LOGIN

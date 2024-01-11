@@ -62,9 +62,7 @@ Real-Time Updates:
     ...
 --------+--+-+++++-----------------------------
 
-
 To-do list to guide you through deploying your app on Vercel and setting up a CI/CD pipeline with Jenkins:
-
 1. **Vercel Deployment:**
    - [ ] Sign up for a Vercel account.
    - [ ] Connect your GitHub repository to Vercel.

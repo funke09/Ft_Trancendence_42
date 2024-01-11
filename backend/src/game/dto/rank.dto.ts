@@ -1,3 +1,3 @@
 export class RankDto {
-	name: string;
+  name: string;
 }

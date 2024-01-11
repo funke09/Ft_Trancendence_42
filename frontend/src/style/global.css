@@ -59,6 +59,48 @@ body::before {
 	margin-left: 2rem;
 }
 
+.button-animate {
+	transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* Online state */
+.online {
+	border-radius: 50%;
+	border: 2px solid #34d399;
+	box-shadow: 0 0 15px rgba(52, 211, 153, 0.6);
+	ring: 8px solid #34d399;
+	ring-opacity: 0.3;
+}
+  
+  /* Away state */
+.away {
+	border-radius: 50%;
+	border: 2px solid #fbbf24;
+	box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+	ring: 8px solid #fbbf24;
+	ring-opacity: 0.3;
+}
+  
+  /* In-game state */
+.in-game {
+	border-radius: 50%;
+	border: 2px solid #6366f1;
+	box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+	ring: 8px solid #6366f1;
+	ring-opacity: 0.3;
+}
+  
+  /* Offline state */
+.offline {
+	border-radius: 50%;
+	border: 2px solid #e5e7eb;
+	box-shadow: 0 0 15px rgba(229, 231, 235, 0.6);
+	ring: 8px solid #e5e7eb;
+	ring-opacity: 0.3;
+ }
+
 /* .header {
 	background: #382A39BF;
 	opacity: 75%;
@@ -104,7 +146,7 @@ body::before {
 .nav-button {
 	color: #EAEAEA;
 	/* font-family: 'Manrope'; */
-	font-size: 1rem;
+	font-size: 0.9rem;
 	font-style: bold;
 	font-weight: 700;
 	line-height: normal;
@@ -186,6 +228,24 @@ body::before {
         height: auto; /* Allow height to adjust based on content */
         border-radius: 1.25rem; /* Rounded corners for smaller screens */
     }
+}
+
+.custom-sidebar {
+    position: absolute;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    background-color: #0d4d53;
+    transition: right 0.3s ease-in-out;
+    z-index: 10;
+}
+
+.slide-in {
+    right: 0;
+}
+
+.slide-out {
+    right: -300px;
 }
 
 
@@ -323,4 +383,129 @@ body::before {
     display: block;
     margin: -40px auto 0 8px;
     padding: auto;
+}
+
+
+.card {
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.1s ease;
+	width: 200px;
+  	margin: 0 10px;
+	max-width: 1200px;
+}
+
+.border-1 {
+	max-width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+	
+}
+.team-h{
+	font-family: fantasy;
+}
+.card:hover {
+	box-shadow: 0 8px 16px 0 rgba(8, 238, 246, 0.464);
+    transform: translateY(-4px);
+}
+
+.card-image img {
+    width: 100%;
+    height: auto;
+}
+
+.card-content {
+    padding: 15px;
+}
+
+.github-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+
+.features-container {
+    background-color: #372938;
+	max-width:  1200px;
+	margin: auto;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    /* margin-top: 8rem; */
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.features-header {
+    background-color: #ae1d6c;
+
+    text-align: center;
+    padding: 10px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: 0px 8px 15px rgba(2, 41, 41, 0.464);
+}
+
+.features-header h1 {
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.features-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.feature-card {
+	height: 200px;
+	width: 500px;
+    background-color: #371b32;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 20px rgba(57, 8, 53, 0.464);
+}
+
+.feature-text h3, .feature-text p {
+    color: white;
+}
+.feature-card img {
+	margin: 0 auto;
+  }
+
+@media (max-width: 768px) {
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.hom-page {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Sur tous types d'écran, quand la largeur de la fenêtre est comprise entre 1024px et 1280px */
+@media all and (min-width: 1024px) and (max-width: 1280px)
+{
+	.home-page {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
 }

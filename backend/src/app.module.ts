@@ -8,23 +8,19 @@ import { GameModule } from './game/game.module';
 import { ChatModule } from './chat/chat.module';
 
 @Module({
-	imports: [
-		ConfigModule.forRoot({ isGlobal: true }),
-		AuthModule,
-		UserModule,
-		GameModule,
-		ChatModule,
-	],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    AuthModule,
+    UserModule,
+    GameModule,
+    ChatModule,
+  ],
 })
 export class AppModule implements NestModule {
-	configure(consumer: MiddlewareConsumer) {
-		consumer
-		 .apply(AuthorisationHeaderMiddleware)
-		 .forRoutes(
-			'/game/*',
-			'/user/*',
-			'/chat/*'
-		);
-		consumer.apply(AccessControlMiddleware).forRoutes('*');
-	}
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthorisationHeaderMiddleware)
+      .forRoutes('/game/*', '/user/*', '/chat/*');
+    consumer.apply(AccessControlMiddleware).forRoutes('*');
+  }
 }

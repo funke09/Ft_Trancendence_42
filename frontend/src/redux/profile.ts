@@ -23,6 +23,7 @@ export interface UserType {
 	};
 	Games: any[];
 	Friends: any[];
+	channels: any[];
 }
 
 const initialStateProfile: { user: UserType } = {
@@ -49,6 +50,7 @@ const initialStateProfile: { user: UserType } = {
 		},
 		Games: [],
 		Friends: [],
+		channels: [],
 	},
 }
 

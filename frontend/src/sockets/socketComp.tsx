@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react"
 import gameSocket from "./gameSocket";
-import store, { addFriend, addNewMsgToGroup, addNewMsgToPrivate, setGame, setGroupChat, setNotif, setPrivateChat, setSocket } from "@/redux/store";
+import store, { addFriend, addNewMsgToGroup, addNewMsgToPrivate, setCurrentChat, setCurrentChatGroup, setGame, setGroupChat, setNotif, setPrivateChat, setSocket } from "@/redux/store";
 import { AchievDto, NotifType, RankDto, SocketRes } from "./types";
 import chatSocket from "./chatSocket";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 const SocketComp = () => {
 	const [connectedGame, setConnectedGame] = useState(false);
@@ -17,6 +17,7 @@ const SocketComp = () => {
 				gameSocket.connect();
 			else
 				setConnectedGame(!connectedGame);
+
 			if (!chatSocket.connected)
 				chatSocket.connect();
 			else
@@ -51,19 +52,15 @@ const SocketComp = () => {
 		});
 		
 		gameSocket.on("connect", () => {
-		console.log("/game: Connected to server");
 		})
 
 		gameSocket.on("disconnect", () => {
-			console.log("/game: Disconnected from server");
 		})
 
 		chatSocket.on("connect", () => {
-			console.log('/chat: Connected to server');
 		})
 
 		chatSocket.on("disconnect", () => {
-			console.log('/chat: Disconnected from server')
 		})
 
 		chatSocket.on("msg", (data: any) => {
@@ -77,12 +74,12 @@ const SocketComp = () => {
 			const newMsg = {
 				text: data.text,
 				createdAt: new Date(),
-				senderId: data.senderId,
+				fromId: data.fromId,
 				user: {
 					avatar: data.avatar,
-					username: data.senderUsername,
+					username: data.fromUsername,
 				},
-				senderUsername: data.senderUsername,
+				fromUsername: data.fromUsername,
 				channelId: data.channelId,
 			};
 			store.dispatch(addNewMsgToGroup(newMsg));
@@ -94,9 +91,10 @@ const SocketComp = () => {
 
 		chatSocket.on('notification', (data: NotifType) => {
 			store.dispatch(addFriend(data));
-			if (data.type == 'AcceptRequest')
+			if (data.type == 'AcceptRequest') {
 				chatSocket.emit("reconnect");
-			toast.success(data.msg)
+				toast.success(data.msg)
+			}
 		});
 
 		chatSocket.on('privateChat', (data) => {
@@ -107,13 +105,26 @@ const SocketComp = () => {
 			store.dispatch(setGroupChat(data));
 		});
 
+		chatSocket.on('channelRemoved', (data: any) => {
+			const current: any = store.getState().chat.currentChatGroup;
+			
+			if (current && current.id === data) {
+				store.dispatch(setCurrentChatGroup(null));				
+				store.dispatch(setGroupChat(store.getState().chat.GroupChats.filter((c: any) => c.id !== data)))
+			}
+		})
+
 		return () => {
 			gameSocket.disconnect();
 			chatSocket.disconnect();
 		};
 	}, [gameSocket, chatSocket]);
 
-	return <></>;
+	return (
+		<>
+			<ToastContainer/>
+		</>
+	);
 };
 
 export default SocketComp;
